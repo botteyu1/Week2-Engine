@@ -89,10 +89,11 @@ void FDevice::CreateDeviceAndSwapChain(HWND hWindow)
 }
 
 void FDevice::ReleaseDeviceAndSwapChain()
-{    if (DeviceContext)
 {
-	DeviceContext->Flush(); // 남이있는 GPU 명령 실행
-}
+	if ( DeviceContext )
+	{
+		DeviceContext->Flush(); // 남이있는 GPU 명령 실행
+	}
 
 	if (SwapChain)
 	{
