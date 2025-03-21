@@ -31,11 +31,11 @@ UDebugDrawManager::~UDebugDrawManager()
 
 void UDebugDrawManager::Initialize()
 {
-	FVertexBuffer::Create(TEXT("DebugVertexBuffer"), VertexBuffer, true);
-	FIndexBuffer::Create(TEXT("DebugIndexBuffer"), IndexBuffer, true);
+	UVertexBuffer::Create(TEXT("DebugVertexBuffer"), VertexBuffer, true);
+	UIndexBuffer::Create(TEXT("DebugIndexBuffer"), IndexBuffer, true);
 	ClearDebug();
 
-	std::shared_ptr<FMesh> Mesh = FMesh::Create("DebugBatchMesh", "DebugVertexBuffer", "DebugIndexBuffer", D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
+	std::shared_ptr<UMesh> Mesh = UMesh::Create("DebugBatchMesh", "DebugVertexBuffer", "DebugIndexBuffer", D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
 
 	D3D11_RASTERIZER_DESC rasterizerDesc = {};
 	rasterizerDesc.FillMode = D3D11_FILL_SOLID;
@@ -46,9 +46,9 @@ void UDebugDrawManager::Initialize()
 	rasterizerDesc.MultisampleEnable = FALSE;
 	rasterizerDesc.AntialiasedLineEnable = TRUE; // 안티앨리어싱된 라인 활성화
 
-	FRasterizer::Create(TEXT("DebugRasterizerState"), rasterizerDesc);
+	URasterizer::Create(TEXT("DebugRasterizerState"), rasterizerDesc);
 
-	std::shared_ptr<FMaterial> Material = FMaterial::Create("DebugBatchMaterial");
+	std::shared_ptr<UMaterial> Material = UMaterial::Create("DebugBatchMaterial");
 	Material->SetVertexShader(TEXT("ShaderLine_VS"));
 	Material->SetPixelShader(TEXT("ShaderLine_PS"));
 	Material->SetRasterizer(TEXT("DebugRasterizerState"));

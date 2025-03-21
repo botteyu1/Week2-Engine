@@ -4,11 +4,11 @@
 #include "Core/Rendering/FDevice.h"
 #include "Debug/DebugConsole.h"
 
-FPixelShader::FPixelShader()
+UPixelShader::UPixelShader()
 {
 }
 
-FPixelShader::~FPixelShader()
+UPixelShader::~UPixelShader()
 {
 	if (nullptr != ShaderPtr)
 	{
@@ -17,7 +17,7 @@ FPixelShader::~FPixelShader()
 	}
 }
 
-void FPixelShader::Setting()
+void UPixelShader::Setting()
 {
 	if (nullptr == ShaderPtr)
 	{
@@ -27,7 +27,7 @@ void FPixelShader::Setting()
 	FDevice::Get().GetDeviceContext()->PSSetShader(ShaderPtr, nullptr, 0);
 }
 
-void FPixelShader::ShaderLoad(const LPCWSTR& _Path, const FString& _EntryPoint, UINT _VersionHight, UINT _VersionLow)
+void UPixelShader::ShaderLoad(const LPCWSTR& _Path, const FString& _EntryPoint, UINT _VersionHight, UINT _VersionLow)
 {
 	ID3DBlob* Error = nullptr;
 	DWORD shaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;

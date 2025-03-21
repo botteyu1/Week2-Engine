@@ -6,11 +6,11 @@
 #include "Debug/DebugConsole.h"
 #include "DirectXTK/DDSTextureLoader.h"
 
-FTexture::FTexture()
+UTexture::UTexture()
 {
 }
 
-FTexture::~FTexture()
+UTexture::~UTexture()
 {
 	if (nullptr != DSV)
 	{
@@ -36,40 +36,40 @@ FTexture::~FTexture()
 	}
 }
 
-void FTexture::VSSetting(UINT InSlot)
+void UTexture::VSSetting(UINT InSlot)
 {
 	FDevice::Get().GetDeviceContext()->VSSetShaderResources(InSlot, 1, &SRV);
 }
 
-void FTexture::PSSetting(UINT InSlot)
+void UTexture::PSSetting(UINT InSlot)
 {
 	FDevice::Get().GetDeviceContext()->PSSetShaderResources(InSlot, 1, &SRV);
 }
 
-void FTexture::CSSetting(UINT InSlot)
+void UTexture::CSSetting(UINT InSlot)
 {
 	FDevice::Get().GetDeviceContext()->CSSetShaderResources(InSlot, 1, &SRV);
 }
 
-void FTexture::VSReset(UINT InSlot)
+void UTexture::VSReset(UINT InSlot)
 {
 	ID3D11ShaderResourceView* ResetRes = nullptr;
 	FDevice::Get().GetDeviceContext()->VSSetShaderResources(InSlot, 1, &ResetRes);
 }
-void FTexture::PSReset(UINT InSlot)
+void UTexture::PSReset(UINT InSlot)
 {
 	ID3D11ShaderResourceView* ResetRes = nullptr;
 	FDevice::Get().GetDeviceContext()->PSSetShaderResources(InSlot, 1, &ResetRes);
 }
 
-void FTexture::CSReset(UINT InSlot)
+void UTexture::CSReset(UINT InSlot)
 {
 	ID3D11ShaderResourceView* ResetRes = nullptr;
 	FDevice::Get().GetDeviceContext()->CSSetShaderResources(InSlot, 1, &ResetRes);
 }
 
 
-void FTexture::CreateRenderTargetView()
+void UTexture::CreateRenderTargetView()
 {
 	if (nullptr != RTV)
 	{
@@ -91,7 +91,7 @@ void FTexture::CreateRenderTargetView()
 	}
 }
 
-void FTexture::CreateShaderResourceView()
+void UTexture::CreateShaderResourceView()
 {
 	if (nullptr != SRV)
 	{
@@ -129,7 +129,7 @@ void FTexture::CreateShaderResourceView()
 	}
 }
 
-void FTexture::CreateDepthStencilView()
+void UTexture::CreateDepthStencilView()
 {
 	if (nullptr != DSV)
 	{
@@ -158,7 +158,7 @@ void FTexture::CreateDepthStencilView()
 	}
 }
 
-void FTexture::ResLoad(const FString& InPath)
+void UTexture::ResLoad(const FString& InPath)
 
 {
 	std::string str = *InPath;
@@ -174,7 +174,7 @@ void FTexture::ResLoad(const FString& InPath)
 	Resource->QueryInterface(__uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&Texture2D));
 }
 
-void FTexture::ResCreate(ID3D11Texture2D* InRes)
+void UTexture::ResCreate(ID3D11Texture2D* InRes)
 {
 	Texture2D = InRes;
 
@@ -184,7 +184,7 @@ void FTexture::ResCreate(ID3D11Texture2D* InRes)
 }
 
 
-void FTexture::ResCreate(const D3D11_TEXTURE2D_DESC& _Desc)
+void UTexture::ResCreate(const D3D11_TEXTURE2D_DESC& _Desc)
 {
 	Desc = _Desc;
 

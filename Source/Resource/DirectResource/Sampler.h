@@ -7,18 +7,18 @@
 #include "Core/Container/Array.h"
 #include "Core/hal/PlatformType.h"
 
-class FSampler :
-	public FResource<FSampler> 
+class USampler :
+	public UResource<USampler> 
 {
 public:
-	FSampler();
-	~FSampler();
+	USampler();
+	~USampler();
 
 
 
-	static std::shared_ptr<FSampler> Create(const FString& _Name, const D3D11_SAMPLER_DESC& _Desc)
+	static std::shared_ptr<USampler> Create(const FString& _Name, const D3D11_SAMPLER_DESC& _Desc)
 	{
-		std::shared_ptr<FSampler> Res = FSampler::CreateRes(_Name);
+		std::shared_ptr<USampler> Res = USampler::CreateRes(_Name);
 		Res->ResCreate(_Desc);
 		return Res;
 	}

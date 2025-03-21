@@ -19,18 +19,18 @@
 
 void FDevice::InitResource()
 {
-	const std::shared_ptr<FVertexShader> VS = FVertexShader::Load(L"Shaders/ShaderW0.hlsl","Simple_VS","mainVS");
-	FInputLayout::Create("Simple_VS" , VS);
-	FPixelShader::Load(L"Shaders/ShaderW0.hlsl","Simple_PS","mainPS");
+	const std::shared_ptr<UVertexShader> VS = UVertexShader::Load(L"Shaders/ShaderW0.hlsl","Simple_VS","mainVS");
+	UInputLayout::Create("Simple_VS" , VS);
+	UPixelShader::Load(L"Shaders/ShaderW0.hlsl","Simple_PS","mainPS");
 
 	{
 		
-		std::shared_ptr<FVertexShader> TempVS = FVertexShader::Load(L"Shaders/Font_VS.hlsl","Font_VS","Font_VS");
+		std::shared_ptr<UVertexShader> TempVS = UVertexShader::Load(L"Shaders/Font_VS.hlsl","Font_VS","Font_VS");
 		//FInputLayout::Create("Font_VS" , VS);
 	}
-	FPixelShader::Load(L"Shaders/Font_PS.hlsl", "Font_PS", "Font_PS");
-	FPixelShader::Load(L"Shaders/SubUV_PS.hlsl", "SubUV_PS", "SubUV_PS");
-	FConstantBuffer::Create("DefaultConstantBuffer", sizeof(FConstantsComponentData));
+	UPixelShader::Load(L"Shaders/Font_PS.hlsl", "Font_PS", "Font_PS");
+	UPixelShader::Load(L"Shaders/SubUV_PS.hlsl", "SubUV_PS", "SubUV_PS");
+	UConstantBuffer::Create("DefaultConstantBuffer", sizeof(FConstantsComponentData));
 
 	
 	//FPixelShader::Load(L"Shaders/Font_PS.hlsl","Font_PS","Font_PS");
@@ -40,7 +40,7 @@ void FDevice::InitResource()
 		RasterizerDesc.CullMode = D3D11_CULL_BACK;  // 백 페이스 컬링
 		RasterizerDesc.FrontCounterClockwise = FALSE;
 	
-		FRasterizer::Create("DefaultRasterizer", RasterizerDesc);
+		URasterizer::Create("DefaultRasterizer", RasterizerDesc);
 	}
 
 	{
@@ -49,7 +49,7 @@ void FDevice::InitResource()
 		RasterizerDesc.CullMode = D3D11_CULL_NONE;  // 백 페이스 컬링
 		RasterizerDesc.FrontCounterClockwise = FALSE;
 
-		FRasterizer::Create("DebugRasterizer", RasterizerDesc);
+		URasterizer::Create("DebugRasterizer", RasterizerDesc);
 	}
 
 	{
@@ -72,7 +72,7 @@ void FDevice::InitResource()
 		DepthStencilDesc.DepthFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_LESS_EQUAL;
 		DepthStencilDesc.StencilEnable = false;
 
-		FDepthStencilState::Create("DefaultDepthStencilState", DepthStencilDesc);
+		UDepthStencilState::Create("DefaultDepthStencilState", DepthStencilDesc);
 	}
 
 	{
@@ -82,7 +82,7 @@ void FDevice::InitResource()
 		AlwaysVisibleDepthStencilDesc.DepthFunc = D3D11_COMPARISON_ALWAYS;       // Optional since testing is disabled
 		AlwaysVisibleDepthStencilDesc.StencilEnable = false;                     // Stencil not needed
 
-		FDepthStencilState::Create("AlwaysVisibleDepthStencilState", AlwaysVisibleDepthStencilDesc);
+		UDepthStencilState::Create("AlwaysVisibleDepthStencilState", AlwaysVisibleDepthStencilDesc);
 	}
 
 
@@ -112,7 +112,7 @@ void FDevice::InitResource()
 		blendDesc.RenderTarget[1].BlendOpAlpha = D3D11_BLEND_OP_ADD;
 		blendDesc.RenderTarget[1].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 	
-		FBlendState::Create("DefaultBlendState", blendDesc);
+		UBlendState::Create("DefaultBlendState", blendDesc);
 	}
 
 	{
@@ -132,12 +132,12 @@ void FDevice::InitResource()
 		samplerDesc.MinLOD = 0;
 		samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
-		FSampler::Create("LinearSamplerState", samplerDesc);
+		USampler::Create("LinearSamplerState", samplerDesc);
 	}
 	
 	{
 		// TextureSRV
-		std::shared_ptr<FTexture> TextureImage = FTexture::Load("font_atlas.dds", "SubUVTexture");
+		std::shared_ptr<UTexture> TextureImage = UTexture::Load("font_atlas.dds", "SubUVTexture");
 		TextureImage->CreateShaderResourceView();
 	}
 
@@ -159,12 +159,12 @@ void FDevice::InitResource()
 		blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 
 		//안개처럼 알파값이 계속 누적됨
-		FBlendState::Create("AddBlendState", blendDesc);
+		UBlendState::Create("AddBlendState", blendDesc);
 	}
 
 	////Material
 	{
-		std::shared_ptr<FMaterial> Mat = FMaterial::Create("DefaultMaterial");
+		std::shared_ptr<UMaterial> Mat = UMaterial::Create("DefaultMaterial");
 		Mat->SetRasterizer("DefaultRasterizer");
 		Mat->SetBlendState("DefaultBlendState");
 		Mat->SetDepthState("DefaultDepthStencilState");
@@ -173,7 +173,7 @@ void FDevice::InitResource()
 	}
 	
 	{
-		std::shared_ptr<FMaterial> Mat = FMaterial::Create("AlwaysVisibleMaterial");
+		std::shared_ptr<UMaterial> Mat = UMaterial::Create("AlwaysVisibleMaterial");
 		Mat->SetRasterizer("DefaultRasterizer");
 		Mat->SetBlendState("DefaultBlendState");
 		Mat->SetDepthState("AlwaysVisibleDepthStencilState");
@@ -182,7 +182,7 @@ void FDevice::InitResource()
 	}
 
 	{
-		std::shared_ptr<FMaterial> Mat = FMaterial::Create("FontMaterial");
+		std::shared_ptr<UMaterial> Mat = UMaterial::Create("FontMaterial");
 		Mat->SetRasterizer("DefaultRasterizer");
 		Mat->SetBlendState("DefaultBlendState");
 		Mat->SetDepthState("DefaultDepthStencilState");
@@ -191,7 +191,7 @@ void FDevice::InitResource()
 	}
 
 	{
-		std::shared_ptr<FMaterial> Mat = FMaterial::Create("SubUVMaterial");
+		std::shared_ptr<UMaterial> Mat = UMaterial::Create("SubUVMaterial");
 		Mat->SetRasterizer("DefaultRasterizer");
 		Mat->SetBlendState("DefaultBlendState");
 		Mat->SetDepthState("DefaultDepthStencilState");
@@ -200,7 +200,7 @@ void FDevice::InitResource()
 	}
 
 	{
-		std::shared_ptr<FMaterial> Mat = FMaterial::Create("DebugMaterial");
+		std::shared_ptr<UMaterial> Mat = UMaterial::Create("DebugMaterial");
 		Mat->SetRasterizer("DebugRasterizer");
 		Mat->SetBlendState("DefaultBlendState");
 		Mat->SetDepthState("DefaultDepthStencilState");
@@ -216,9 +216,9 @@ void FDevice::InitResource()
 
 		UGeometryGenerator::CreateCube(size, vertices, indices);
 		
-		FVertexBuffer::Create(FString("Cube"), vertices);
-		FIndexBuffer::Create(FString("Cube"), indices);
-		FMesh::Create("Cube");
+		UVertexBuffer::Create(FString("Cube"), vertices);
+		UIndexBuffer::Create(FString("Cube"), indices);
+		UMesh::Create("Cube");
 	}
 
 	{
@@ -231,9 +231,9 @@ void FDevice::InitResource()
 
 		UGeometryGenerator::CreateSphere(radius, slices, stacks, vertices, indices);
 		
-		FVertexBuffer::Create(FString("Sphere"), vertices);
-		FIndexBuffer::Create(FString("Sphere"), indices);
-		FMesh::Create("Sphere");
+		UVertexBuffer::Create(FString("Sphere"), vertices);
+		UIndexBuffer::Create(FString("Sphere"), indices);
+		UMesh::Create("Sphere");
 
 		
 	}
@@ -261,9 +261,9 @@ void FDevice::InitResource()
 		indices.Add(TriangleIndices[1]);
 		indices.Add(TriangleIndices[2]);
 		
-		FVertexBuffer::Create(FString("Triangle"), vertices);
-		FIndexBuffer::Create(FString("Triangle"), indices);
-		FMesh::Create("Triangle");
+		UVertexBuffer::Create(FString("Triangle"), vertices);
+		UIndexBuffer::Create(FString("Triangle"), indices);
+		UMesh::Create("Triangle");
 		
 	}
 	
@@ -297,10 +297,10 @@ void FDevice::InitResource()
 		indices.Add(QuadIndices[4]);
 		indices.Add(QuadIndices[5]);
 
-		FVertexBuffer::Create(FString("Quad"), vertices);
-		FIndexBuffer::Create(FString("Quad"), indices);
+		UVertexBuffer::Create(FString("Quad"), vertices);
+		UIndexBuffer::Create(FString("Quad"), indices);
 
-		FMesh::Create("Quad");
+		UMesh::Create("Quad");
 	}
 
 	{
@@ -323,10 +323,10 @@ void FDevice::InitResource()
 		indices.Add(tempIndices[0]);
 		indices.Add(tempIndices[1]);
 		
-		FVertexBuffer::Create(FString("Line"), vertices);
-		FIndexBuffer::Create(FString("Line"), indices);
+		UVertexBuffer::Create(FString("Line"), vertices);
+		UIndexBuffer::Create(FString("Line"), indices);
 		
-		FMesh::Create(FString("Line"), D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
+		UMesh::Create(FString("Line"), D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
 	}
 	{
 		TArray<FVertexSimple> vertices;
@@ -339,10 +339,10 @@ void FDevice::InitResource()
 
 		UGeometryGenerator::CreateCylinder(BottomRadius, TopRadius, height, slices, stacks, vertices , indices);
 		
-		FVertexBuffer::Create(FString("Cylinder"), vertices);
-		FIndexBuffer::Create(FString("Cylinder"), indices);
+		UVertexBuffer::Create(FString("Cylinder"), vertices);
+		UIndexBuffer::Create(FString("Cylinder"), indices);
 		 
-		FMesh::Create(FString("Cylinder"));
+		UMesh::Create(FString("Cylinder"));
 	}
 
 	{
@@ -354,11 +354,11 @@ void FDevice::InitResource()
 		float height = 1.f;
 
 		UGeometryGenerator::CreateCone(radius, height, slices, stacks, vertices, indices);
-		FVertexBuffer::Create(FString("Cone"), vertices);
-		FIndexBuffer::Create(FString("Cone"), indices);
+		UVertexBuffer::Create(FString("Cone"), vertices);
+		UIndexBuffer::Create(FString("Cone"), indices);
 
 
-		FMesh::Create(FString("Cone"));
+		UMesh::Create(FString("Cone"));
 	}
 	
 	{
@@ -369,10 +369,10 @@ void FDevice::InitResource()
 		memcpy(vertices.GetData(), GizmoArrowVertices, sizeof(GizmoArrowVertices));
 		indices.SetNum(sizeof(GizmoArrowIndices) / sizeof(uint32));
 		memcpy(indices.GetData(), GizmoArrowIndices, sizeof(GizmoArrowIndices));
-		FVertexBuffer::Create(FString(TEXT("GizmoArrow")), vertices);
-		FIndexBuffer::Create(FString(TEXT("GizmoArrow")), indices);
+		UVertexBuffer::Create(FString(TEXT("GizmoArrow")), vertices);
+		UIndexBuffer::Create(FString(TEXT("GizmoArrow")), indices);
 
-		FMesh::Create(TEXT("GizmoArrow"));
+		UMesh::Create(TEXT("GizmoArrow"));
 	}
 
 	{
@@ -384,10 +384,10 @@ void FDevice::InitResource()
 		indices.SetNum(sizeof(GizmoRotationIndices) / sizeof(uint32));
 		memcpy(indices.GetData(), GizmoRotationIndices, sizeof(GizmoRotationIndices));
 
-		FVertexBuffer::Create(FString(TEXT("GizmoRotation")), vertices);
-		FIndexBuffer::Create(FString(TEXT("GizmoRotation")), indices);
+		UVertexBuffer::Create(FString(TEXT("GizmoRotation")), vertices);
+		UIndexBuffer::Create(FString(TEXT("GizmoRotation")), indices);
 
-		FMesh::Create(TEXT("GizmoRotation"));
+		UMesh::Create(TEXT("GizmoRotation"));
 	}
 
 	{
@@ -399,10 +399,10 @@ void FDevice::InitResource()
 		indices.SetNum(sizeof(GizmoScaleIndices) / sizeof(uint32));
 		memcpy(indices.GetData(), GizmoScaleIndices, sizeof(GizmoScaleIndices));
 
-		FVertexBuffer::Create(FString(TEXT("GizmoScale")), vertices);
-		FIndexBuffer::Create(FString(TEXT("GizmoScale")), indices);
+		UVertexBuffer::Create(FString(TEXT("GizmoScale")), vertices);
+		UIndexBuffer::Create(FString(TEXT("GizmoScale")), indices);
 
-		FMesh::Create(TEXT("GizmoScale"));
+		UMesh::Create(TEXT("GizmoScale"));
 	}
 
 }

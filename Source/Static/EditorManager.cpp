@@ -25,7 +25,7 @@ void UEditorManager::Init()
 	textureDesc.Usage = D3D11_USAGE_DEFAULT;
 	textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
 	
-	UUIDTexture = FTexture::Create("UUIDTexture", textureDesc);
+	UUIDTexture = UTexture::Create("UUIDTexture", textureDesc);
 	UUIDTexture->CreateRenderTargetView();
 
 
@@ -86,6 +86,11 @@ void UEditorManager::SelectActor(AActor* NewActor)
 void UEditorManager::SetCamera(ACamera* NewCamera)
 {
     Camera = NewCamera;
+}
+
+void UEditorManager::SetGizmo(AGizmoActor* InGizmo)
+{
+	Gizmo = InGizmo;
 }
 
 FVector4 UEditorManager::EncodeUUID(uint32 UUID)
@@ -217,7 +222,7 @@ void UEditorManager::OnUpdateWindowSize(uint32 Width, uint32 Height)
 
 	if (UUIDTexture != nullptr)
 	{
-		FTexture::Release("UUIDTexture");
+		UTexture::Release("UUIDTexture");
 		UUIDTexture = nullptr;
 	}
 
@@ -230,7 +235,7 @@ void UEditorManager::OnUpdateWindowSize(uint32 Width, uint32 Height)
 	textureDesc.SampleDesc.Count = 1;
 	textureDesc.Usage = D3D11_USAGE_DEFAULT;
 	textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-	UUIDTexture = FTexture::Create("UUIDTexture", textureDesc);
+	UUIDTexture = UTexture::Create("UUIDTexture", textureDesc);
 	UUIDTexture->CreateRenderTargetView();
 }
 
@@ -249,7 +254,7 @@ void UEditorManager::OnResizeComplete()
 	textureDesc.Usage = D3D11_USAGE_DEFAULT;
 	textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
 
-	UUIDTexture = FTexture::Create("UUIDTexture", textureDesc);
+	UUIDTexture = UTexture::Create("UUIDTexture", textureDesc);
 	UUIDTexture->CreateRenderTargetView();
 }
 

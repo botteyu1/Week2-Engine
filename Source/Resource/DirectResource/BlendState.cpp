@@ -5,11 +5,11 @@
 #include "Debug/DebugConsole.h"
 
 
-FBlendState::FBlendState()
+UBlendState::UBlendState()
 {
 }
 
-FBlendState::~FBlendState()
+UBlendState::~UBlendState()
 {
 	if (nullptr != State)
 	{
@@ -18,7 +18,7 @@ FBlendState::~FBlendState()
 	}
 }
 
-void FBlendState::Setting()
+void UBlendState::Setting()
 {
 	if (nullptr == State)
 	{
@@ -28,7 +28,7 @@ void FBlendState::Setting()
 	FDevice::Get().GetDeviceContext()->OMSetBlendState(State, nullptr, Mask);
 }
 
-void FBlendState::ResCreate(const D3D11_BLEND_DESC& _Desc)
+void UBlendState::ResCreate(const D3D11_BLEND_DESC& _Desc)
 {
 	Desc = _Desc;
 	if (S_OK != FDevice::Get().GetDevice()->CreateBlendState(&_Desc, &State))

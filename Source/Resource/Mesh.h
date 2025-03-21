@@ -12,24 +12,24 @@
 #include "Resource/DirectResource/IndexBuffer.h"
 #include "Debug/DebugConsole.h"
 
-class FMesh : public FResource<FMesh>
+class UMesh : public UResource<UMesh>
 {
 public:
-	FMesh() = default;
+	UMesh() = default;
 
-	static std::shared_ptr<FMesh> Create(const FString& InName, D3D_PRIMITIVE_TOPOLOGY Topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST)
+	static std::shared_ptr<UMesh> Create(const FString& InName, D3D_PRIMITIVE_TOPOLOGY Topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST)
 	{
 		return Create(InName, InName, InName, Topology);
 	}
 
-	static std::shared_ptr<FMesh> Create(
+	static std::shared_ptr<UMesh> Create(
 		const FString& InName, const FString& VertexName, const FString& IndexName
 		, D3D_PRIMITIVE_TOPOLOGY Topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST
 	)
 	{
-		std::shared_ptr<FMesh> Res = CreateRes(InName);
-		Res->VertexBuffer = FVertexBuffer::Find(VertexName);
-		Res->IndexBuffer = FIndexBuffer::Find(IndexName);
+		std::shared_ptr<UMesh> Res = CreateRes(InName);
+		Res->VertexBuffer = UVertexBuffer::Find(VertexName);
+		Res->IndexBuffer = UIndexBuffer::Find(IndexName);
 		Res->Topology = Topology;
 
 		if (nullptr == Res->VertexBuffer
@@ -41,12 +41,12 @@ public:
 		return Res;
 	}
 
-	static std::shared_ptr<FMesh> Create(
-		const FString& InName, const std::shared_ptr<FVertexBuffer>& InVertex, const std::shared_ptr<FIndexBuffer>& InIndex,
+	static std::shared_ptr<UMesh> Create(
+		const FString& InName, const std::shared_ptr<UVertexBuffer>& InVertex, const std::shared_ptr<UIndexBuffer>& InIndex,
 		D3D_PRIMITIVE_TOPOLOGY Topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST
 	)
 	{
-		std::shared_ptr<FMesh> Res = CreateRes(InName);
+		std::shared_ptr<UMesh> Res = CreateRes(InName);
 		Res->VertexBuffer = InVertex;
 		Res->IndexBuffer = InIndex;
 		Res->Topology = Topology;
@@ -68,18 +68,18 @@ public:
 	void Setting(ERenderFlags);
 	void Draw();
 
-	std::shared_ptr<FVertexBuffer> GetVertexBuffer()
+	std::shared_ptr<UVertexBuffer> GetVertexBuffer()
 	{
 		return VertexBuffer;
 	}
 
-	std::shared_ptr<FIndexBuffer> GetIndexBuffer()
+	std::shared_ptr<UIndexBuffer> GetIndexBuffer()
 	{
 		return IndexBuffer;
 	}
 	
 private:
-	std::shared_ptr<FVertexBuffer> VertexBuffer = nullptr;
-	std::shared_ptr<FIndexBuffer> IndexBuffer = nullptr;
+	std::shared_ptr<UVertexBuffer> VertexBuffer = nullptr;
+	std::shared_ptr<UIndexBuffer> IndexBuffer = nullptr;
 	D3D_PRIMITIVE_TOPOLOGY Topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 };

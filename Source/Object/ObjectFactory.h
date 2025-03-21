@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include <concepts>
 #include <memory>
 
@@ -20,29 +20,74 @@ public:
      * @tparam T UObject를 상속받은 클래스
      * @return 캐스팅된 UObject*
      */
-    template<typename T>
-        requires std::derived_from<T, UObject>
-    static T* ConstructObject()
-    {
-        UE_LOG("DEBUG: Construct %s Object", typeid(T).name());
 
-        constexpr size_t ObjectSize = sizeof(T);
-        void* RawMemory = FPlatformMemory::Malloc<EAT_Object>(ObjectSize);
+	 // raw 포인터 반환 버전
+	template<typename T>
+		requires std::derived_from<T, UObject>
+	static T* ConstructObject()
+	{
+		return ConstructObjectShared<T>().get();
+	}
 
-        T* ObjectPtr = new (RawMemory) T();
-        std::shared_ptr<T> NewObject(ObjectPtr, [ObjectSize](T* Obj)
-        {
-            Obj->~T();
-            FPlatformMemory::Free<EAT_Object>(Obj, ObjectSize);
-        });
-        NewObject->UUID = UEngineStatics::GenUUID();
-    	NewObject->NamePrivate = T::StaticClass()->GetName() + "__" + FString::FromInt(NewObject->UUID);
-    	NewObject->ClassPrivate = T::StaticClass();
+	// shared_ptr 반환 버전
+	template<typename T>
+		requires std::derived_from<T, UObject>
+	static std::shared_ptr<T> ConstructObjectShared()
+	{
+		UE_LOG("DEBUG: Construct %s Object", typeid(T).name());
 
-        // Object 제거시 Index가 달라지기 때문에 임시 주석처리 <- RemoveSwap으로 해결 가능
-        // NewObject->InternalIndex = UEngine::Get().GObjects.Add(NewObject);
-        UEngine::Get().GObjects.Add(NewObject->GetUUID(), NewObject);
+		constexpr size_t ObjectSize = sizeof(T);
+		void* RawMemory = FPlatformMemory::Malloc<EAT_Object>(ObjectSize);
 
-        return NewObject.get();
-    }
+		T* ObjectPtr = new (RawMemory) T();
+		std::shared_ptr<T> NewObject(ObjectPtr, [ObjectSize](T* Obj)
+			{
+				Obj->~T();
+				FPlatformMemory::Free<EAT_Object>(Obj, ObjectSize);
+			});
+		NewObject->UUID = UEngineStatics::GenUUID();
+		NewObject->NamePrivate = T::StaticClass()->GetName() + "__" + FString::FromInt(NewObject->UUID);
+		NewObject->ClassPrivate = T::StaticClass();
+
+		FString str = T::StaticClass()->GetName();
+
+		UEngine::Get().GObjects.Add(NewObject->GetUUID(), NewObject);
+
+		return NewObject;
+	}
+
+	 // raw 포인터 반환 버전
+	template<typename T>
+		requires std::derived_from<T, UObject>
+	static T* ConstructObject(const FString& _FName)
+	{
+		return ConstructObjectShared<T>(_FName).get();
+	}
+
+	// shared_ptr 반환 버전
+	template<typename T>
+		requires std::derived_from<T, UObject>
+	static std::shared_ptr<T> ConstructObjectShared(const FString& _FName)
+	{
+		UE_LOG("DEBUG: Construct %s Object", typeid(T).name());
+
+		constexpr size_t ObjectSize = sizeof(T);
+		void* RawMemory = FPlatformMemory::Malloc<EAT_Object>(ObjectSize);
+
+		T* ObjectPtr = new (RawMemory) T();
+		std::shared_ptr<T> NewObject(ObjectPtr, [ObjectSize](T* Obj)
+			{
+				Obj->~T();
+				FPlatformMemory::Free<EAT_Object>(Obj, ObjectSize);
+			});
+		NewObject->UUID = UEngineStatics::GenUUID();
+		NewObject->NamePrivate = _FName + "__" + FString::FromInt(NewObject->UUID);
+		NewObject->ClassPrivate = T::StaticClass();
+
+		FString str = T::StaticClass()->GetName();
+
+		UEngine::Get().GObjects.Add(NewObject->GetUUID(), NewObject);
+
+		return NewObject;
+	}
 };

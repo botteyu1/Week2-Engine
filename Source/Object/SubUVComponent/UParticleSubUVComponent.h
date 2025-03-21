@@ -82,16 +82,16 @@ private:
 	FSubUVVertexConstantsData VertexConstants;
     FSubUVPixelConstantsData PixelConstants;
 
-	std::shared_ptr<FVertexBuffer> VertexBuffer = nullptr;
-	std::shared_ptr<FIndexBuffer> IndexBuffer = nullptr;
-	std::shared_ptr<FInputLayout> InputLayout = nullptr;
-	std::shared_ptr<FConstantBuffer> ConstantBuffer = nullptr;
+	std::shared_ptr<UVertexBuffer> VertexBuffer = nullptr;
+	std::shared_ptr<UIndexBuffer> IndexBuffer = nullptr;
+	std::shared_ptr<UInputLayout> InputLayout = nullptr;
+	std::shared_ptr<UConstantBuffer> ConstantBuffer = nullptr;
 	D3D_PRIMITIVE_TOPOLOGY Topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	//class std::shared_ptr<class FPixelShader> PixelShader = nullptr;
 	//class std::shared_ptr<class FVertexShader> VertexShader = nullptr;
 	ID3D11VertexShader* VertexShader = nullptr;
 	ID3D11PixelShader* PixelShader = nullptr;
-	std::shared_ptr<FBlendState> BlendState = nullptr;
-	std::shared_ptr<FDepthStencilState> DepthStencilStat = nullptr;
-	std::shared_ptr<FRasterizer> Rasterizer = nullptr;
+	std::shared_ptr<UBlendState> BlendState = nullptr;
+	std::shared_ptr<UDepthStencilState> DepthStencilStat = nullptr;
+	std::shared_ptr<URasterizer> Rasterizer = nullptr;
 };

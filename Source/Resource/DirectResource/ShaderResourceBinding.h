@@ -28,7 +28,7 @@ class FConstantBufferBinding  : public FShaderResourceBinding
 public:
 	friend class FRenderResourceCollection;
 	
-	std::shared_ptr<FConstantBuffer> Res;
+	std::shared_ptr<UConstantBuffer> Res;
 	
 
 	const void* CPUDataPtr = nullptr;
@@ -44,7 +44,7 @@ class FTextureBinding  : public FShaderResourceBinding
 public:
 	friend class FRenderResourceCollection;
 	
-	std::shared_ptr<FTexture> Res;
+	std::shared_ptr<UTexture> Res;
 
 	void Setting() override;
 	void Reset() override;
@@ -56,7 +56,7 @@ class FSamplerBinding  : public FShaderResourceBinding
 public:
 	friend class FRenderResourceCollection;
 	
-	std::shared_ptr<FSampler> Res;
+	std::shared_ptr<USampler> Res;
 
 	void Setting() override;
 	void Reset() override;

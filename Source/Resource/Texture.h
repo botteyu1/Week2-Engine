@@ -7,13 +7,13 @@
 #include "Core/Container/Array.h"
 
 
-class FTexture : public FResource<FTexture> 
+class UTexture : public UResource<UTexture> 
 {
 public:
 
 	// constructor & destructor
-	FTexture();
-	virtual ~FTexture() override;
+	UTexture();
+	virtual ~UTexture() override;
 
 	// static std::shared_ptr<FTexture> Load(std::string_view _Path, 
 	// D3D11_FILTER _Filter = D3D11_FILTER::D3D11_FILTER_MIN_MAG_MIP_LINEAR,
@@ -22,11 +22,11 @@ public:
 	// 	return Load(Path.GetStringPath(), Path.GetFileName(), _Filter, _Address);
 	//}
 
-	static std::shared_ptr<FTexture> Load(const FString& InPath, const FString& InName)
+	static std::shared_ptr<UTexture> Load(const FString& InPath, const FString& InName)
 		// D3D11_FILTER _Filter = D3D11_FILTER::D3D11_FILTER_MIN_MAG_MIP_LINEAR,
 		// D3D11_TEXTURE_ADDRESS_MODE _Address = D3D11_TEXTURE_ADDRESS_MODE::D3D11_TEXTURE_ADDRESS_CLAMP)
 	{
-		std::shared_ptr<FTexture> NewRes = CreateRes(InName);
+		std::shared_ptr<UTexture> NewRes = CreateRes(InName);
 		NewRes->ResLoad(InPath);
 		// NewRes->Filter = _Filter;
 		// NewRes->Address = _Address;
@@ -34,17 +34,17 @@ public:
 	}
 	
 	//리소스 등록
-	static std::shared_ptr<FTexture> Create(const FString& InName, ID3D11Texture2D* InRes)
+	static std::shared_ptr<UTexture> Create(const FString& InName, ID3D11Texture2D* InRes)
 	{
-		std::shared_ptr<FTexture> NewRes = CreateRes(InName);
+		std::shared_ptr<UTexture> NewRes = CreateRes(InName);
 		NewRes->ResCreate(InRes);
 		return NewRes;
 	}
 	
 	//텍스쳐 생성
-	static std::shared_ptr<FTexture> Create(const FString& InName, const D3D11_TEXTURE2D_DESC& InDesc)
+	static std::shared_ptr<UTexture> Create(const FString& InName, const D3D11_TEXTURE2D_DESC& InDesc)
 	{
-		std::shared_ptr<FTexture> NewRes = CreateRes(InName);
+		std::shared_ptr<UTexture> NewRes = CreateRes(InName);
 		NewRes->ResCreate(InDesc);
 		return NewRes;
 	}

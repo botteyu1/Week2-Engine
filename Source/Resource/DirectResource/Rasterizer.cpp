@@ -6,11 +6,11 @@
 #include "Resource/DirectResource/ViewMode.h"
 
 
-FRasterizer::FRasterizer()
+URasterizer::URasterizer()
 {
 }
 
-FRasterizer::~FRasterizer()
+URasterizer::~URasterizer()
 {
 	if (nullptr != State)
 	{
@@ -19,7 +19,7 @@ FRasterizer::~FRasterizer()
 	}
 }
 
-void FRasterizer::Setting()
+void URasterizer::Setting()
 {
 	if (nullptr == State)
 	{
@@ -28,7 +28,7 @@ void FRasterizer::Setting()
 	FDevice::Get().GetDeviceContext()->RSSetState(State);
 }
 
-void FRasterizer::ResCreate(const D3D11_RASTERIZER_DESC& _Desc)
+void URasterizer::ResCreate(const D3D11_RASTERIZER_DESC& _Desc)
 {
 	Desc = _Desc;
 	if (S_OK != FDevice::Get().GetDevice()->CreateRasterizerState(&_Desc, &State))

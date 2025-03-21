@@ -6,11 +6,11 @@
 #include "Debug/DebugConsole.h"
 
 
-FVertexShader::FVertexShader()
+UVertexShader::UVertexShader()
 {
 }
 
-FVertexShader::~FVertexShader()
+UVertexShader::~UVertexShader()
 {
 		if (nullptr != ShaderPtr)
 	{
@@ -19,7 +19,7 @@ FVertexShader::~FVertexShader()
 	}
 }
 
-void FVertexShader::Setting()
+void UVertexShader::Setting()
 {
 
 	if (nullptr == ShaderPtr)
@@ -31,7 +31,7 @@ void FVertexShader::Setting()
 	FDevice::Get().GetDeviceContext()->VSSetShader(ShaderPtr, nullptr, 0);
 }
 
-void FVertexShader::ShaderLoad(const LPCWSTR& _Path, const FString& _EntryPoint, UINT _VersionHight, UINT _VersionLow)
+void UVertexShader::ShaderLoad(const LPCWSTR& _Path, const FString& _EntryPoint, UINT _VersionHight, UINT _VersionLow)
 {	// std::string*
 	ID3DBlob* Error = nullptr;
 	DWORD shaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;

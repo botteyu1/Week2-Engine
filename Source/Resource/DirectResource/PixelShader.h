@@ -10,17 +10,17 @@
 #include "Core/hal/PlatformType.h"
 
 
-class FPixelShader :
-	public FResource<FPixelShader> , public FShader
+class UPixelShader :
+	public UResource<UPixelShader> , public FShader
 {
 public:
-	FPixelShader();
-	~FPixelShader();
+	UPixelShader();
+	~UPixelShader();
 
 	
-	static std::shared_ptr<FPixelShader> Load(const LPCWSTR& _Path, const FString& _Name, const FString&  _EntryPoint, UINT _VersionHight = 5, UINT _VersionLow = 0)
+	static std::shared_ptr<UPixelShader> Load(const LPCWSTR& _Path, const FString& _Name, const FString&  _EntryPoint, UINT _VersionHight = 5, UINT _VersionLow = 0)
 	{
-		std::shared_ptr<FPixelShader> Res = FPixelShader::CreateRes(_Name);
+		std::shared_ptr<UPixelShader> Res = UPixelShader::CreateRes(_Name);
 		Res->ShaderLoad(_Path, _EntryPoint, _VersionHight, _VersionLow);
 		return Res;
 	}

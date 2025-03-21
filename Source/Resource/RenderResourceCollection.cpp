@@ -7,19 +7,19 @@
 
 void FRenderResourceCollection::SetMesh(const FString& _Name)
 {
-	Mesh = FMesh::Find(_Name);
+	Mesh = UMesh::Find(_Name);
 
 	SetMesh(Mesh);
 }
 
 void FRenderResourceCollection::SetMaterial(const FString& _Name)
 {
-	Material = FMaterial::Find(_Name);
+	Material = UMaterial::Find(_Name);
 
 	SetMaterial(Material);
 }
 
-void FRenderResourceCollection::SetMesh(std::shared_ptr<FMesh> _Mesh)
+void FRenderResourceCollection::SetMesh(std::shared_ptr<UMesh> _Mesh)
 {
 	Mesh = _Mesh;
 
@@ -30,13 +30,13 @@ void FRenderResourceCollection::SetMesh(std::shared_ptr<FMesh> _Mesh)
 
 	if (nullptr == Layout && nullptr != Material)
 	{
-		Layout = std::make_shared<FInputLayout>();
+		Layout = std::make_shared<UInputLayout>();
 		
 		Layout->ResCreate(Material->GetVertexShader());
 	}
 }
 
-void FRenderResourceCollection::SetMaterial(std::shared_ptr<FMaterial> _Material)
+void FRenderResourceCollection::SetMaterial(std::shared_ptr<UMaterial> _Material)
 {
 	Material = _Material;
 
@@ -48,7 +48,7 @@ void FRenderResourceCollection::SetMaterial(std::shared_ptr<FMaterial> _Material
 
 	if (nullptr == Layout && nullptr != Mesh)
 	{
-		Layout = std::make_shared<FInputLayout>();
+		Layout = std::make_shared<UInputLayout>();
 		Layout->ResCreate( Material->GetVertexShader());
 	}
 }
@@ -89,7 +89,7 @@ void FRenderResourceCollection::Reset()
 std::shared_ptr<FTextureBinding> FRenderResourceCollection::SetTextureBinding(const FString& _Name, int _BindPoint,
                                                                               bool bIsUseVertexShader, bool bIsUsePixelShader)
 {
-	std::shared_ptr<FTexture> Res = FTexture::Find(_Name);
+	std::shared_ptr<UTexture> Res = UTexture::Find(_Name);
 
 	// if (Res == nullptr)
 	// {
@@ -113,7 +113,7 @@ std::shared_ptr<FTextureBinding> FRenderResourceCollection::SetTextureBinding(co
 std::shared_ptr<FSamplerBinding> FRenderResourceCollection::SetSamplerBinding(const FString& _Name, int _BindPoint,
                                                                               bool bIsUseVertexShader, bool bIsUsePixelShader)
 {
-	std::shared_ptr< FSampler> Res = FSampler::Find(_Name);
+	std::shared_ptr< USampler> Res = USampler::Find(_Name);
 
 	// if (Res == nullptr)
 	// {
@@ -141,12 +141,12 @@ std::shared_ptr<FConstantBufferBinding> FRenderResourceCollection::SetConstantBu
 	/*std::shared_ptr<class FConstantBufferBinding>* Binding = ConstantBufferBindings.Find(_Name);
 
 	if()*/
-	std::shared_ptr<FConstantBuffer> Res = FConstantBuffer::Find(_Name);
+	std::shared_ptr<UConstantBuffer> Res = UConstantBuffer::Find(_Name);
 
 	if (Res == nullptr)
 	{
 		//없으면 그 사이즈의 이름으로 만듦 이름이 겹치면 몰?루
-		Res = FConstantBuffer::Create(_Name, _DataSize);
+		Res = UConstantBuffer::Create(_Name, _DataSize);
 	}
 	
 	std::shared_ptr<FConstantBufferBinding> Binding = std::make_shared<FConstantBufferBinding>();

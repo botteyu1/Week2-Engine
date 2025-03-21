@@ -8,18 +8,18 @@
 #include "Resource/DirectResource/Rasterizer.h"
 #include "Core/Utils/Utils.h"
 
-FMaterial::FMaterial()
+UMaterial::UMaterial()
 {
 	SetRasterizer("DefaultRasterizer");
 	SetBlendState("DefaultBlendState");
 	SetDepthState("DefaultDepthStencilState");
 }
 
-FMaterial::~FMaterial()
+UMaterial::~UMaterial()
 {
 }
 
-void FMaterial::VertexShader()
+void UMaterial::VertexShader()
 {
 	if (nullptr == VertexShaderPtr)
 	{
@@ -29,7 +29,7 @@ void FMaterial::VertexShader()
 	VertexShaderPtr->Setting();
 }
 
-void FMaterial::Rasterizer()
+void UMaterial::Rasterizer()
 {
 	if (nullptr == RasterizerPtr)
 	{
@@ -39,7 +39,7 @@ void FMaterial::Rasterizer()
 	RasterizerPtr->Setting();
 }
 
-void FMaterial::PixelShader()
+void UMaterial::PixelShader()
 {
 	if (nullptr == PixelShaderPtr)
 	{
@@ -49,7 +49,7 @@ void FMaterial::PixelShader()
 	PixelShaderPtr->Setting();
 }
 
-void FMaterial::Blend()
+void UMaterial::Blend()
 {
 	if (nullptr == BlendStatePtr)
 	{
@@ -59,7 +59,7 @@ void FMaterial::Blend()
 	BlendStatePtr->Setting();
 }
 
-void FMaterial::DepthStencil()
+void UMaterial::DepthStencil()
 {
 	// if (false == IsDepth)
 	// {
@@ -75,9 +75,9 @@ void FMaterial::DepthStencil()
 	DepthStencilPtr->Setting();
 }
 
-void FMaterial::SetVertexShader(const FString& InValue)
+void UMaterial::SetVertexShader(const FString& InValue)
 {
-	VertexShaderPtr = FVertexShader::Find(InValue);
+	VertexShaderPtr = UVertexShader::Find(InValue);
 
 	if (nullptr == VertexShaderPtr)
 	{
@@ -85,9 +85,9 @@ void FMaterial::SetVertexShader(const FString& InValue)
 	}
 }
 
-void FMaterial::SetRasterizer(const FString& InValue)
+void UMaterial::SetRasterizer(const FString& InValue)
 {
-	RasterizerPtr = FRasterizer::Find(InValue);
+	RasterizerPtr = URasterizer::Find(InValue);
 
 	if (nullptr == RasterizerPtr)
 	{
@@ -96,9 +96,9 @@ void FMaterial::SetRasterizer(const FString& InValue)
 	}
 }
 
-void FMaterial::SetPixelShader(const FString& InValue)
+void UMaterial::SetPixelShader(const FString& InValue)
 {
-	PixelShaderPtr = FPixelShader::Find(InValue);
+	PixelShaderPtr = UPixelShader::Find(InValue);
 
 	if (nullptr == PixelShaderPtr)
 	{
@@ -107,9 +107,9 @@ void FMaterial::SetPixelShader(const FString& InValue)
 	}
 }
 
-void FMaterial::SetBlendState(const FString& InValue)
+void UMaterial::SetBlendState(const FString& InValue)
 {
-	BlendStatePtr = FBlendState::Find(InValue);
+	BlendStatePtr = UBlendState::Find(InValue);
 
 	if (nullptr == BlendStatePtr)
 	{
@@ -118,9 +118,9 @@ void FMaterial::SetBlendState(const FString& InValue)
 	}
 }
 
-void FMaterial::SetDepthState(const FString& InValue)
+void UMaterial::SetDepthState(const FString& InValue)
 {
-	DepthStencilPtr = FDepthStencilState::Find(InValue);
+	DepthStencilPtr = UDepthStencilState::Find(InValue);
 
 	if (nullptr == DepthStencilPtr)
 	{
@@ -129,7 +129,7 @@ void FMaterial::SetDepthState(const FString& InValue)
 	}
 }
 
-void FMaterial::Setting(ERenderFlags renderFlags)
+ void UMaterial::Setting(ERenderFlags renderFlags)
 {
 	VertexShader();
 	if ( FFlag::Get(renderFlags, ERenderFlags::Wirefame) )
