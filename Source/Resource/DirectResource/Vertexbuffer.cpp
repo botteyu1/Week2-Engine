@@ -67,7 +67,7 @@ void FVertexBuffer::ResCreateDynamic(const void* _Data, size_t _VertexSize, size
 	VertexCount = static_cast<UINT>(_VertexCount);
 	
 	BufferInfo.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	BufferInfo.ByteWidth = static_cast<UINT>(VertexSize * VertexCount);
+	BufferInfo.ByteWidth = static_cast<UINT>(VertexSize * _VertexCount);
 
 	BufferInfo.CPUAccessFlags = D3D11_CPU_ACCESS_FLAG::D3D11_CPU_ACCESS_WRITE;
 	BufferInfo.Usage = D3D11_USAGE_DYNAMIC;

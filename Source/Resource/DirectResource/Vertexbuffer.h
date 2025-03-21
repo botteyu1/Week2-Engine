@@ -18,6 +18,7 @@ public:
 	template<typename VertexType>																//동적으로 버텍스버퍼를 업데이트 할지 예 :라인 배치
 	static std::shared_ptr<FVertexBuffer> Create(const FString& _Name, const TArray<VertexType>& _Data, bool _bIsDynamic = false)
 	{
+		constexpr int Default_Dynamice_Size = 1024;
 		std::shared_ptr<FVertexBuffer> Res = FVertexBuffer::CreateRes(_Name);
 	
 		for(const auto& Vertex : _Data)

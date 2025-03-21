@@ -5,6 +5,7 @@
 
 #include "Core/Math/Vector.h"
 #include "Resource/DirectResource/ViewMode.h"
+#include "Static/FLineBatchManager.h"
 //#include "Resource/RenderResourceCollection.h"
 
 
@@ -13,7 +14,8 @@ struct FVector4;
 enum class ERenderFlags;
 
 class ACamera;
-
+class UWorld;
+class FLineBatchManager;
 class URenderer
 {
 public:
@@ -43,7 +45,7 @@ private:
 public:
 	
     /** Renderer를 초기화 합니다. */
-    void Create(HWND hWindow);
+    void Create(HWND hWindow, UWorld* world);
 
     /** Renderer에 사용된 모든 리소스를 해제합니다. */
     void Release();
@@ -71,6 +73,7 @@ public:
 
 public:
 	inline FViewModeManager* GetViewMode() { return ViewMode.get(); }
+	inline FLineBatchManager* GetBatchManager() { return LineBatchManager.get(); }
 
 protected:
     /** 뎁스 스텐실 상태를 생성합니다. */
@@ -137,6 +140,7 @@ public:
 	FVector GetFrameBufferWindowSize() const;
 
 private:
-	std::unique_ptr<FViewModeManager> ViewMode;
+	std::shared_ptr<FViewModeManager> ViewMode;
+	std::shared_ptr<FLineBatchManager> LineBatchManager;
 	FRenderResourceCollection* overrideRenderState;
 };

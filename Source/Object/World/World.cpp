@@ -113,7 +113,8 @@ void UWorld::Render()
 
 	RenderMainTexture(*Renderer);
 
-	FLineBatchManager::Get().Render();
+	//FLineBatchManager::Get().Render();
+	UEngine::Get().GetRenderer()->GetBatchManager()->Render();
 
 	AActor* SelectedActor = UEngine::Get().GetEditor()->GetSelectedActor();
 	if (SelectedActor != nullptr)
@@ -129,7 +130,7 @@ void UWorld::Render()
 	UDebugDrawManager::Get().Render();
 
 
-	FLineBatchManager::Get().Render();
+	//FLineBatchManager::Get().Render();
 
 	FUUIDBillBoard::Get().Render();
 
@@ -324,7 +325,7 @@ void UWorld::RayCasting(const FVector& MouseNDCPos)
 	FMatrix ProjMatrix = Camera->GetProjectionMatrix(); 
 	FRay worldRay = FRay(Camera->GetViewMatrix(), ProjMatrix, MouseNDCPos.X, MouseNDCPos.Y);
 
-	FLineBatchManager::Get().AddLine(worldRay.GetOrigin(), worldRay.GetDirection() * Camera->GetFar(), FVector4::CYAN);
+	UEngine::Get().GetRenderer()->GetBatchManager()->AddLine(worldRay.GetOrigin(), worldRay.GetDirection() * Camera->GetFar(), FVector4::CYAN);
 
 	AActor* SelectedActor = nullptr;
 	float minDistance = FLT_MAX;
@@ -413,7 +414,7 @@ void UWorld::PickByPixel(const FVector& MousePos)
 void UWorld::OnChangedGridSize()
 {
 	UConfigManager::Get().SetValue(TEXT("World"), TEXT("GridSize"), FString::SanitizeFloat(GridSize));
-	FLineBatchManager::Get().DrawWorldGrid(GridSize, GridSize);
+	UEngine::Get().GetRenderer()->GetBatchManager()->MakeWorldGrid(GridSize, GridSize/100.f);
 }
 
 UWorldInfo UWorld::GetWorldInfo() const

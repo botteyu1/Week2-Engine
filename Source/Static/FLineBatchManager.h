@@ -3,10 +3,8 @@
 #define _TCHAR_DEFINED
 #include <d3d11.h>
 
-#include "Core/AbstractClass/Singleton.h"
 #include "Primitive/PrimitiveVertices.h"
 #include "Core/Container/Array.h"
-#include "Resource/RenderResourceCollection.h"
 #include "Core/Math/Matrix.h"
 
 struct FLineConstantInfo
@@ -14,8 +12,8 @@ struct FLineConstantInfo
 	FMatrix ViewProjectionMatrix;
 };
 
-
-class FLineBatchManager : public TSingleton<FLineBatchManager>
+class FRenderResourceCollection;
+class FLineBatchManager
 {
 public:
 	// 라인 추가 함수
@@ -24,9 +22,9 @@ public:
 	// 배치 처리 함수
 	void Flush();
 
-	void DrawWorldGrid(float GridSize, float GridSpacing, const FVector4& GridColor = FVector4{1.0f,1.0f,1.0f,1.0f }, bool bCenterGrid = true);
+	void MakeWorldGrid(float GridSize, float GridSpacing, const FVector4& GridColor = FVector4{1.0f,1.0f,1.0f,1.0f }, bool bCenterGrid = true);
 
-	FRenderResourceCollection& GetRenderResourceCollection() { return RenderResourceCollection; }
+	FRenderResourceCollection& GetRenderResourceCollection() { return *RenderResourceCollection; }
 private:
 	TArray<FLineVertexSimple> VertexBuffer;
 	TArray<uint32> IndexBuffer;
@@ -61,7 +59,7 @@ private:
 	
 	FLineConstantInfo LineConstantInfo;
 	
-	FRenderResourceCollection RenderResourceCollection;
+	std::unique_ptr<FRenderResourceCollection> RenderResourceCollection;
 };
 
 

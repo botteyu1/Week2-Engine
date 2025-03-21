@@ -22,7 +22,7 @@
 #include "Resource/DirectResource/Rasterizer.h"
 #include "Resource/DirectResource/ShaderResourceBinding.h"
 
-void URenderer::Create(HWND hWindow)
+void URenderer::Create(HWND hWindow, UWorld* world)
 {
     //CreateDeviceAndSwapChain(hWindow);
     //CreateFrameBuffer();
@@ -33,10 +33,11 @@ void URenderer::Create(HWND hWindow)
 
 	ViewMode = std::make_unique<FViewModeManager>();
 	ViewMode->Initialize(); // require resource
-	FLineBatchManager::Get().Create(); // require device
-	FUUIDBillBoard::Get().Create(); // require device
-
-	FLineBatchManager::Get().Create();
+	LineBatchManager = std::make_unique<FLineBatchManager>();
+	LineBatchManager->MakeWorldGrid(world->GetGridSize(), world->GetGridSize() / 100.f); // create vertex
+	LineBatchManager->Create(); // require device, vertex
+	
+	// FUUIDBillBoard::Get().Create(); // require device
 
 	//LoadTexture(L"font_atlas.png");
 	LoadTexture(L"Pretendard_Kor.png");

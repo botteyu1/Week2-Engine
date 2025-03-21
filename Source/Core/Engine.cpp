@@ -71,10 +71,7 @@ void UEngine::Initialize(
 	FDevice::Get().Init(WindowHandle); // require window
 	InitEditor(); // require FDevice 나중에 멀티쓰레드로?
 	InitWorld(); // require Editor
-
-	
-	
-    InitRenderer(); // require FDevice
+	InitRenderer(); // require FDevice
 	UDebugDrawManager::Get().Initialize();
 
 	InitializedScreenWidth = ScreenWidth;
@@ -225,7 +222,8 @@ void UEngine::InitRenderer()
 {
 	// 렌더러 초기화
 	Renderer = std::make_unique<URenderer>();
-	Renderer->Create(WindowHandle);
+	Renderer->Create(WindowHandle, World);
+
 	//Renderer->CreateShader();
 	//Renderer->CreateConstantBuffer();
 }
@@ -254,8 +252,7 @@ void UEngine::InitWorld()
 	//FLineBatchManager::Get().AddLine(FVector{ 6.0f,6.0f,7.0f }, { -6.f,-6.f,-7.0f });
 	//FLineBatchManager::Get().AddLine(FVector{ 6.0f,6.0f,8.0f }, { -6.f,-6.f,-8.0f });
 
-	FLineBatchManager::Get().DrawWorldGrid(World->GetGridSize(), World->GetGridSize() / 100.f);
-	//FLineBatchManager::Get().DrawWorldGrid(10, 1 );
+	// FLineBatchManager::Get().MakeWorldGrid(World->GetGridSize(), World->GetGridSize() / 100.f);
 
     //// Test
     //AArrow* Arrow = World->SpawnActor<AArrow>();

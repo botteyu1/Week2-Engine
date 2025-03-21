@@ -18,8 +18,9 @@ public:
 	
 static std::shared_ptr<FIndexBuffer> Create(const FString&  _Name, const TArray<uint32>& _Data , bool _bIsDynamic = false)
 	{
+	constexpr int Default_Dynamice_Size = 1024;
 		std::shared_ptr<FIndexBuffer> Res = FIndexBuffer::CreateRes(_Name);
-	
+
 		Res->bIsDynamic = _bIsDynamic;
 		if (Res->bIsDynamic == false)
 		{
