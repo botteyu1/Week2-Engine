@@ -247,3 +247,9 @@ UConeComp::UConeComp()
 {
 	SetMesh("Cone");
 }
+
+UDiceComp::UDiceComp()
+{
+	SetMesh("Dice");
+	SetMaterial("TextureMaterial");
+}

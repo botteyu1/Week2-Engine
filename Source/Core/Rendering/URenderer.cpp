@@ -35,6 +35,7 @@ void URenderer::Create(HWND hWindow)
 
 	//LoadTexture(L"font_atlas.png");
 	LoadTexture(L"Pretendard_Kor.png");
+	LoadTextures();
 }
 
 void URenderer::Release()
@@ -144,6 +145,12 @@ void URenderer::LoadTexture(const wchar_t* texturePath)
 	FDevice::Get().GetDevice()->CreateSamplerState(&samplerDesc, &FontSamplerState);
 	FDevice::Get().GetDeviceContext()->PSSetShaderResources(0, 1, &FontTextureSRV);
 	FDevice::Get().GetDeviceContext()->PSSetSamplers(0, 1, &FontSamplerState);
+}
+
+void URenderer::LoadTextures()
+{
+	DirectX::CreateWICTextureFromFile(FDevice::Get().GetDevice(), FDevice::Get().GetDeviceContext(), L"Dice.png", nullptr, &FontTextureSRV);
+	FDevice::Get().GetDeviceContext()->PSSetShaderResources(2, 1, &FontTextureSRV);
 }
 
 

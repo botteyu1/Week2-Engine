@@ -61,6 +61,7 @@ public:
     // void RenderPrimitiveInternal(UPrimitiveComponent& PrimitiveComp) const;
 
 	void LoadTexture(const wchar_t* texturePath);
+	void LoadTextures();
 	ID3D11ShaderResourceView* FontTextureSRV = nullptr;
 	ID3D11SamplerState* FontSamplerState = nullptr;
 

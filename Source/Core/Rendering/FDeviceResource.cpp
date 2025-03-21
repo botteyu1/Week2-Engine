@@ -15,6 +15,7 @@
 #include "Resource/Material.h"
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 #include "Primitive/UGeometryGenerator.h"
+#include "Object/Assets/AssetManager.h"
 
 
 void FDevice::InitResource()
@@ -30,6 +31,8 @@ void FDevice::InitResource()
 	}
 	UPixelShader::Load(L"Shaders/Font_PS.hlsl", "Font_PS", "Font_PS");
 	UPixelShader::Load(L"Shaders/SubUV_PS.hlsl", "SubUV_PS", "SubUV_PS");
+	std::shared_ptr<UVertexShader> TextureVS = UVertexShader::Load(L"Shaders/Texture_VS.hlsl", "Texture_VS", "Texture_VS");
+	UPixelShader::Load(L"Shaders/Texture_PS.hlsl", "Texture_PS", "Texture_PS");
 	UConstantBuffer::Create("DefaultConstantBuffer", sizeof(FConstantsComponentData));
 
 	
@@ -128,6 +131,9 @@ void FDevice::InitResource()
 		// TextureSRV
 		std::shared_ptr<UTexture> TextureImage = UTexture::Load("font_atlas.dds", "SubUVTexture");
 		TextureImage->CreateShaderResourceView();
+
+		std::shared_ptr<UTexture> DiceImage = UTexture::Load("Dice.png", "DiceTexture");
+		DiceImage->CreateShaderResourceView();
 	}
 
 	{
@@ -197,6 +203,15 @@ void FDevice::InitResource()
 		Mat->SetPixelShader("Simple_PS");
 	}
 
+	{
+		std::shared_ptr<UMaterial> Mat = UMaterial::Create("TextureMaterial");
+		Mat->SetRasterizer("DefaultRasterizer");
+		Mat->SetBlendState("DefaultBlendState");
+		Mat->SetDepthState("DefaultDepthStencilState");
+		Mat->SetVertexShader("Texture_VS");
+		Mat->SetPixelShader("Texture_PS");
+	}  
+
 	/// Mesh
 	{
 		TArray<FVertexSimple> vertices;
@@ -223,8 +238,6 @@ void FDevice::InitResource()
 		UVertexBuffer::Create(FString("Sphere"), vertices);
 		UIndexBuffer::Create(FString("Sphere"), indices);
 		UMesh::Create("Sphere");
-
-		
 	}
 
 	{
@@ -394,4 +407,14 @@ void FDevice::InitResource()
 		UMesh::Create(TEXT("GizmoScale"));
 	}
 
+	{
+		TArray<FVertexSimple> vertices;
+		TArray<uint32> indices;
+
+		UAssetManager::Get().ObjParsing("cube-tex.obj", vertices, indices);
+		UVertexBuffer::Create(FString(TEXT("Dice")), vertices);
+		UIndexBuffer::Create(FString(TEXT("Dice")), indices);
+
+		UMesh::Create(TEXT("Dice"));
+	}
 }
