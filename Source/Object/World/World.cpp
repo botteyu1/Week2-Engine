@@ -403,7 +403,7 @@ void UWorld::PickByPixel(const FVector& MousePos)
 void UWorld::OnChangedGridSize()
 {
 	UConfigManager::Get().SetValue(TEXT("World"), TEXT("GridSize"), FString::SanitizeFloat(GridSize));
-	FLineBatchManager::Get().DrawWorldGrid(GridSize, GridSize/100.f);
+	FLineBatchManager::Get().DrawWorldGrid(GridSize, GridSize);
 }
 
 UWorldInfo UWorld::GetWorldInfo() const

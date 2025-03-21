@@ -29,8 +29,9 @@ void URenderer::Create(HWND hWindow)
     //CreatePickingTexture(hWindow);
 
 	FViewMode::Get().Initialize(FDevice::Get().GetDevice());
-	FLineBatchManager::Get().Create();
 	FUUIDBillBoard::Get().Create();
+
+	FLineBatchManager::Get().Create();
 
 	//LoadTexture(L"font_atlas.png");
 	LoadTexture(L"Pretendard_Kor.png");

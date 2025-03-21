@@ -244,6 +244,7 @@ void UEngine::InitWorld()
 	//FLineBatchManager::Get().AddLine(FVector{ 6.0f,6.0f,8.0f }, { -6.f,-6.f,-8.0f });
 
 	FLineBatchManager::Get().DrawWorldGrid(World->GetGridSize(), World->GetGridSize() / 100.f);
+	//FLineBatchManager::Get().DrawWorldGrid(10, 1 );
 
     //// Test
     //AArrow* Arrow = World->SpawnActor<AArrow>();

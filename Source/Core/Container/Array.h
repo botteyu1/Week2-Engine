@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include <algorithm>
 #include <utility>
 #include <vector>
@@ -73,6 +73,7 @@ public:
     SizeType RemoveAll(const Predicate& Pred);
 
     T* GetData();
+    const T* GetData() const;
 
     /**
      * Array에서 Item을 찾습니다.
@@ -239,6 +240,12 @@ template <typename T, typename Allocator>
 T* TArray<T, Allocator>::GetData()
 {
     return PrivateVector.data();
+}
+
+template <typename T, typename Allocator>
+const T* TArray<T, Allocator>::GetData() const
+{
+    return (const T*) PrivateVector.data();
 }
 
 template <typename T, typename Allocator>
