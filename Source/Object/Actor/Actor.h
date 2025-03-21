@@ -46,8 +46,29 @@ private:
 
 	uint32 Depth;
 	bool bIsPicked = false;
+	ETickState TickState; //현재 Tick 여부 상태
+	bool bHidden = false ;
+
 public:
 	bool IsPicked() const { return bIsPicked; }
+	bool IsActorTickEnabled() const
+	{
+		return TickState != ETickState::Disabled;
+	}
+
+	bool IsHidden() const
+	{
+		return bHidden;
+	}
+	void SetActorHiddenInGame(bool bNewHidden)
+	{
+		if (IsHidden() != bNewHidden)
+		{
+			bHidden = bNewHidden;
+		}
+	}
+
+	void SetTickFunctionEnable(bool bInEnabled);
 
 public:
 	template<typename T>
@@ -192,7 +213,7 @@ public:
 	void SetUseVertexColor(bool bUseVertexColor);
 
 protected:
-	bool bCanEverTick = true;
+	bool bCanEverTick = true; //원래 Tick을 하는 액터인지
 	USceneComponent* RootComponent = nullptr;
 
 private:

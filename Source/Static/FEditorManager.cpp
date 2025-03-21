@@ -53,6 +53,16 @@ void FEditorManager::SelectActor(AActor* NewActor)
 		Gizmo = UEngine::Get().GetWorld()->SpawnActor<AGizmoActor>();
 		Gizmo->SetDepth(1);
     }
+	if (NewActor == nullptr)
+	{
+		Gizmo->SetActorHiddenInGame(true);
+		Gizmo->SetTickFunctionEnable(false);
+	}
+	else
+	{
+		Gizmo->SetActorHiddenInGame(false);
+		Gizmo->SetTickFunctionEnable(true);
+	}
 
 	if (SelectedActor == NewActor)
 		return;
@@ -69,7 +79,8 @@ void FEditorManager::SelectActor(AActor* NewActor)
         SelectedActor->Pick();
 		    const FTransform newActorTransform = NewActor->GetActorTransform();
 		    Gizmo->SetActorTransform(newActorTransform);
-	   }
+	}
+
 }
 
 void FEditorManager::SetCamera(ACamera* NewCamera)
@@ -145,6 +156,10 @@ void FEditorManager::LateTick([[maybe_unused]] float DeltaTime)
 			{
 				Gizmo->SetSelectedAxis(GizmoCom->GetSelectedAxis());
 			}
+		}
+		else
+		{
+			SelectActor(nullptr);
 		}
 	}
 

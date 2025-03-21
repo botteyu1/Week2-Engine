@@ -108,6 +108,8 @@ void AGizmoActor::Tick(float DeltaTime)
 	AActor::Tick(DeltaTime);
 
 
+
+
 	if (SelectedAxis != ESelectedAxis::None and APlayerInput::Get().GetKeyPress(EKeyCode::LButton))
 	{
 		if (AActor* Actor = FEditorManager::Get().GetSelectedActor())
