@@ -413,12 +413,12 @@ void UWorld::RayCasting(const FVector& MouseNDCPos)
 			}
 		}
 
+	}
 
-		if (SelectedActor)
-		{
-			FEditorManager::Get().SelectActor(SelectedActor);
-			FUUIDBillBoard::Get().SetTarget(SelectedActor);
-		}
+	if (SelectedActor)
+	{
+		FEditorManager::Get().SelectActor(SelectedActor);
+		FUUIDBillBoard::Get().SetTarget(SelectedActor);
 	}
 }
 
