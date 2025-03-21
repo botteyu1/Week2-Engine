@@ -132,7 +132,7 @@ void UParticleSubUVComponent::Render()
 
 	VertexConstants.MVP = MVP;
 
-	GetRenderResourceCollection().Render();
+	GetRenderResourceCollection().Render(ERenderFlags::None);
 }
 
 void UParticleSubUVComponent::Play()

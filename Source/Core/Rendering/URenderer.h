@@ -4,17 +4,22 @@
 #include <d3d11.h>
 
 #include "Core/Math/Vector.h"
+#include "Resource/DirectResource/ViewMode.h"
+//#include "Resource/RenderResourceCollection.h"
+
 
 struct FVertexSimple;
 struct FVector4;
+enum class ERenderFlags;
 
 class ACamera;
 
 class URenderer
 {
 public:
-	friend class FLineBatchManager;
-	
+	//friend class FLineBatchManager;
+
+	ERenderFlags renderFlags;
 private:
   //   struct alignas(16) FConstantsComponentDatas
   //   {
@@ -64,7 +69,8 @@ public:
 	ID3D11ShaderResourceView* FontTextureSRV = nullptr;
 	ID3D11SamplerState* FontSamplerState = nullptr;
 
-    
+public:
+	inline FViewModeManager* GetViewMode() { return ViewMode.get(); }
 
 protected:
     /** 뎁스 스텐실 상태를 생성합니다. */
@@ -129,4 +135,8 @@ public:
 
 public:
 	FVector GetFrameBufferWindowSize() const;
+
+private:
+	std::unique_ptr<FViewModeManager> ViewMode;
+	FRenderResourceCollection* overrideRenderState;
 };

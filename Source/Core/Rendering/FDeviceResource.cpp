@@ -53,6 +53,17 @@ void FDevice::InitResource()
 	}
 
 	{
+		D3D11_RASTERIZER_DESC RasterizerDesc = {};
+		RasterizerDesc.FillMode = D3D11_FILL_SOLID;
+		RasterizerDesc.CullMode = D3D11_CULL_BACK;
+		RasterizerDesc.FrontCounterClockwise = FALSE;
+		RasterizerDesc.DepthClipEnable = TRUE;
+		RasterizerDesc.MultisampleEnable = TRUE;
+
+		FRasterizer::Create("SolidRasterizer", RasterizerDesc);
+	}
+
+	{
 		D3D11_DEPTH_STENCIL_DESC DepthStencilDesc = {};
 		DepthStencilDesc.DepthEnable = true;
 		// 깊이 테스트만 하고 안쓸수도 있다.

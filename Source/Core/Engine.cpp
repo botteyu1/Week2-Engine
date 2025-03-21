@@ -1,7 +1,6 @@
 #include "Engine.h"
 
 #include "Debug/DebugDrawManager.h"
-#include "Input/PlayerController.h"
 #include "Input/PlayerInput.h"
 #include "Math/Vector.h"
 #include "Object/Actor/Camera.h"
@@ -69,12 +68,13 @@ void UEngine::Initialize(
 
     InitWindow(InScreenWidth, InScreenHeight);
 	InitInput();
-	FDevice::Get().Init(WindowHandle);
-	InitEditor(); // 나중에 멀티쓰레드로?
+	FDevice::Get().Init(WindowHandle); // require window
+	InitEditor(); // require FDevice 나중에 멀티쓰레드로?
+	InitWorld(); // require Editor
 
-	InitWorld();
 	
-    InitRenderer();
+	
+    InitRenderer(); // require FDevice
 	UDebugDrawManager::Get().Initialize();
 
 	InitializedScreenWidth = ScreenWidth;
@@ -131,7 +131,6 @@ void UEngine::Run()
 		{		
 			FVector winSize = Renderer->GetFrameBufferWindowSize();
 			InputManager->Update(WindowHandle, winSize.X, winSize.Y);
-			APlayerController::Get().ProcessPlayerInput(EngineDeltaTime);
 		}
 
 
@@ -247,7 +246,7 @@ void UEngine::InitWorld()
 
 	World->SetCamera(World->SpawnActor<ACamera>());
 
-	UEngine::Get().GetEditor()->SetCamera(World->GetCamera());
+	UEngine::Get().GetEditor()->SetCamera(World->GetCamera()); // require editor
 
 	////Test
 	//FLineBatchManager::Get().AddLine(FVector{ 3.0f,3.0f,0.0f }, { -3.f,-3.f,0.0f });

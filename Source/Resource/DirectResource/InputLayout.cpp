@@ -38,7 +38,7 @@ void FInputLayout::ResCreate(std::shared_ptr<FVertexShader> _Shader)
 	}
 }
 
-void FInputLayout::Setting()
+void FInputLayout::Setting(ERenderFlags renderFlags)
 {
 	if (nullptr == LayOut)
 	{

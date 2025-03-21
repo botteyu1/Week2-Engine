@@ -87,7 +87,7 @@ void USpotLightComponent::Render()
 		Data.MVP = MVP;
 		Data.bUseVertexColor = true;
 
-		GetRenderResourceCollection().Render();
+		GetRenderResourceCollection().Render(ERenderFlags::None);
 		//GuideMesh->Render();
 	}
 }

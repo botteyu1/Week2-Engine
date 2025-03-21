@@ -132,9 +132,6 @@
     <ClCompile Include="Source\Object\Actor\Arrow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Core\Input\PlayerController.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Core\Input\PlayerInput.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -282,9 +279,6 @@
     <ClCompile Include="Source\Core\Math\BoxSphereBounds.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Core\Rendering\FViewMode.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Debug\EngineShowFlags.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -361,6 +355,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Static\EditorManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Resource\DirectResource\ViewMode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -477,9 +474,6 @@
     <ClInclude Include="Source\Object\Actor\Arrow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Core\Input\PlayerController.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Core\Input\PlayerInput.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -519,16 +513,10 @@
     <ClInclude Include="Source\Object\Actor\Arrow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Core\Input\PlayerController.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Core\Input\PlayerInput.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Core\EngineTypes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Static\FEditorManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Core\UObject\Object.h">
@@ -699,9 +687,6 @@
     <ClInclude Include="Source\Core\Math\BoxSphereBounds.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Core\Rendering\FViewMode.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Debug\EngineShowFlags.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -787,6 +772,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Static\EditorManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Resource\DirectResource\ViewMode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

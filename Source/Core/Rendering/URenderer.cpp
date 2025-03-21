@@ -2,7 +2,6 @@
 #include <d3dcompiler.h>
 #include "DirectXTK/WICTextureLoader.h"
 #include "FDevice.h"
-#include "FViewMode.h"
 #include "Debug/DebugConsole.h"
 #include "Core/Math/Transform.h"
 #include "DirectXTK/DDSTextureLoader.h"
@@ -13,6 +12,7 @@
 #include "Static/EditorManager.h"
 #include "Static/FUUIDBillBoard.h"
 #include "Static/FLineBatchManager.h"
+
 #include "Resource/DirectResource/Vertexbuffer.h"
 #include "Resource/DirectResource/PixelShader.h"
 #include "Resource/DirectResource/VertexShader.h"
@@ -28,9 +28,13 @@ void URenderer::Create(HWND hWindow)
     //CreateFrameBuffer();
     //CreatePickingTexture(hWindow);
 
-	FViewMode::Get().Initialize(FDevice::Get().GetDevice());
-	FLineBatchManager::Get().Create();
-	FUUIDBillBoard::Get().Create();
+	overrideRenderState = nullptr;
+	renderFlags = ERenderFlags::None;
+
+	ViewMode = std::make_unique<FViewModeManager>();
+	ViewMode->Initialize(); // require resource
+	FLineBatchManager::Get().Create(); // require device
+	FUUIDBillBoard::Get().Create(); // require device
 
 	//LoadTexture(L"font_atlas.png");
 	LoadTexture(L"Pretendard_Kor.png");
@@ -116,9 +120,8 @@ void URenderer::ReleaseConstantBuffer()
 
 void URenderer::Render(FRenderResourceCollection& InRenderResourceCollection)
 {
-	InRenderResourceCollection.Render();
+	InRenderResourceCollection.Render(renderFlags);
 }
-
 
 void URenderer::LoadTexture(const wchar_t* texturePath)
 {

@@ -12,7 +12,7 @@
 
 void UEditorManager::Init()
 {
-	const int Width = static_cast<int>(FDevice::Get().GetViewPortInfo().Width);
+	const int Width = static_cast<int>(FDevice::Get().GetViewPortInfo().Width); // require FDevice
 	const int Height = static_cast<int>(FDevice::Get().GetViewPortInfo().Height);
 
 	D3D11_TEXTURE2D_DESC textureDesc = {};

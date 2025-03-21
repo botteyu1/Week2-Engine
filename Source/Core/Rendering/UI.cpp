@@ -1,7 +1,6 @@
 #include "UI.h"
 
 #include "FDevice.h"
-#include "FViewMode.h"
 #include "Core/Engine.h"
 #include "Core/Input/PlayerInput.h"
 #include "Debug/DebugConsole.h"
@@ -18,8 +17,9 @@
 #include "Object/World/World.h"
 #include "Static/EditorManager.h"
 #include "Static/FUUIDBillBoard.h"
+#include "Resource/DirectResource/ViewMode.h"
 // #include "FDevice.h"
-// #include "FViewMode.h"
+// #include "FViewModeManager.h"
 // #include "Core/Engine.h"
 // #include "Core/Input/PlayerInput.h"
 // #include "Debug/DebugConsole.h"
@@ -581,13 +581,14 @@ void UI::RenderShowFlagsPanel() const
 void UI::RenderViewModePanel() const
 {
 	if (ImGui::Begin("View Mode"))
-	{													
+	{
+		FViewModeManager* viewMode = UEngine::Get().GetRenderer()->GetViewMode();
 		static const char* viewModeNames[] = { "Default", "Solid", "Wireframe" };
-		int currentViewMode = static_cast<int>(FViewMode::Get().GetViewMode());
+		int currentViewMode = static_cast<int>(viewMode->GetCurrentViewMode());
 
 		if (ImGui::Combo("View Mode", &currentViewMode, viewModeNames, IM_ARRAYSIZE(viewModeNames)))
 		{
-			FViewMode::Get().SetViewMode((static_cast<EViewModeIndex>(currentViewMode)));
+			viewMode->SetViewMode((static_cast<EViewModeIndex>(currentViewMode)));
 		}
 	}
 	ImGui::End();

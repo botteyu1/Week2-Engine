@@ -53,18 +53,19 @@ void FRenderResourceCollection::SetMaterial(std::shared_ptr<FMaterial> _Material
 	}
 }
 
-void FRenderResourceCollection::Render()
+void FRenderResourceCollection::Render(ERenderFlags mainFlags)
 {
-	Mesh->Setting();
-	Layout->Setting();
-	Material->Setting(); 
+	ERenderFlags flag = (mainFlags == ERenderFlags::None) ? CollectionFlag : mainFlags;
+	Mesh->Setting(flag);
+	Layout->Setting(flag);
+	Material->Setting(flag);
 
 	for (auto& Binding : ConstantBufferBindings)
 	{
 		Binding.Value->Setting();
 	}
   
-  for (auto& Binding : TextureBindings)
+	for ( auto& Binding : TextureBindings )
 	{
 		Binding.Value->Setting();
 	}

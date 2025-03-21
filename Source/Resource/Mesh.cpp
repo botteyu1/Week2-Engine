@@ -1,9 +1,10 @@
 #include "Mesh.h"
 #include "Core/Engine.h"
+#include "Core/Utils/Utils.h"
 #include "Core/Rendering/FDevice.h"
 
 
-void FMesh::Setting()
+void FMesh::Setting(ERenderFlags renderFlags)
 {
 	if (nullptr == VertexBuffer)
 	{

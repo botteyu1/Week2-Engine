@@ -7,6 +7,7 @@
 #include "Core/Container/String.h"
 #include "Core/Container/Array.h"
 #include "DirectResource/Shader.h"
+#include "Resource/RenderResourceCollection.h"
 #include "Resource/DirectResource/Vertexbuffer.h"
 #include "Resource/DirectResource/IndexBuffer.h"
 #include "Debug/DebugConsole.h"
@@ -64,7 +65,7 @@ public:
 		Topology = InTopology;
 	}
 
-	void Setting();
+	void Setting(ERenderFlags);
 	void Draw();
 
 	std::shared_ptr<FVertexBuffer> GetVertexBuffer()

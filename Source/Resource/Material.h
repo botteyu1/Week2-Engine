@@ -1,8 +1,9 @@
 #pragma once
 #include "Resource/Resource.h"
 #include "Core/Container/String.h"
+#include "Resource/RenderResourceCollection.h"
 #include "Resource/DirectResource/Vertexbuffer.h"
-
+#include "Core/Utils/Utils.h"
 
 class FDepthStencilState;
 class FRasterizer;
@@ -43,7 +44,7 @@ public:
 		return PixelShaderPtr;
 	}
 
-	void Setting();
+	void Setting(ERenderFlags);
 	
 private:
 	std::shared_ptr<FVertexShader> VertexShaderPtr = nullptr;

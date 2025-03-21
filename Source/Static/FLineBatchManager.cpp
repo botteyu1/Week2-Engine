@@ -124,7 +124,7 @@ void FLineBatchManager::Render()
 	LineConstantInfo.ViewProjectionMatrix = FMatrix::Transpose(UEngine::Get().GetWorld()->GetCamera()->GetViewProjectionMatrix());
 
 
-	RenderResourceCollection.Render();
+	RenderResourceCollection.Render(ERenderFlags::None);
 
 }
 

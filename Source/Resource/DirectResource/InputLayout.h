@@ -7,6 +7,7 @@
 #include "Resource/Resource.h"
 #include "Core/Container/String.h"
 #include "Core/Container/Array.h"
+#include "Resource/RenderResourceCollection.h"
 
 
 class FInputLayout:
@@ -31,7 +32,7 @@ public:
 	std::shared_ptr<FVertexShader> _Shader
 );
 
-	void Setting();
+	void Setting(ERenderFlags);
 	
 private:
 	
