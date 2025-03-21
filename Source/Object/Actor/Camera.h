@@ -12,16 +12,13 @@ namespace ECameraProjectionMode
     };
 }
 
-class ACamera : public AActor, public IGizmoInterface
+class ACamera : public AActor
 {
 	DECLARE_CLASS(ACamera, AActor)
     
 public:
     ACamera();
-
-	//~ Begin IGizmoInterface
-	virtual bool IsGizmo() override { return true; }
-	//~ End IGizmoInterface
+	virtual const char* GetTypeName() override;
 
 private:    
     float Near;

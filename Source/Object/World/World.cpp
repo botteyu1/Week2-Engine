@@ -11,6 +11,7 @@
 #include "Object/Actor/Cube.h"
 #include "Object/Actor/Cylinder.h"
 #include "Object/Actor/Sphere.h"
+#include "Object/Actor/SpotLight.h"
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 #include "Static/FEditorManager.h"
 #include "Static/FLineBatchManager.h"
@@ -329,6 +330,16 @@ void UWorld::LoadWorld(const char* InSceneName)
 		else if (ObjectInfo->ObjectType == "Cone")
 		{
 			Actor = SpawnActor<ACone>();
+		}
+		else if (ObjectInfo->ObjectType == "SpotLight") 
+		{
+			Actor = SpawnActor<ASpotLight>();
+		}
+		else if (ObjectInfo->ObjectType == "Camera") 
+		{
+			ACamera* Camera = FEditorManager::Get().GetCamera();
+			Camera->SetActorTransform(Transform);
+			continue;
 		}
 		
 		Actor->SetActorTransform(Transform);

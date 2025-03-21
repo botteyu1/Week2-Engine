@@ -21,6 +21,11 @@ ACamera::ACamera()
     SetActorTransform(StartPos);
 }
 
+const char* ACamera::GetTypeName()
+{
+	return "Camera";
+}
+
 void ACamera::BeginPlay()
 {
 	Super::BeginPlay();
