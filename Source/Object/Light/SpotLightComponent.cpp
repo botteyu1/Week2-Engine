@@ -22,9 +22,9 @@ USpotLightComponent::USpotLightComponent()
 
 	//UGeometryGenerator::CreateRadialCone(ConeHeight, OuterConeAngle, 16, &VertexBuffer, &IndexBuffer);
 
-	FVertexBuffer::Create("SpotLightGuideVertexBuffer", VertexBuffer, true);
-	FIndexBuffer::Create("SpotLightGuideIndexBuffer", IndexBuffer, true);
-	std::shared_ptr<FMesh> Mesh = FMesh::Create("SpotLightGuideMesh", "SpotLightGuideVertexBuffer", "SpotLightGuideIndexBuffer", D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	UVertexBuffer::Create("SpotLightGuideVertexBuffer", VertexBuffer, true);
+	UIndexBuffer::Create("SpotLightGuideIndexBuffer", IndexBuffer, true);
+	std::shared_ptr<UMesh> Mesh = UMesh::Create("SpotLightGuideMesh", "SpotLightGuideVertexBuffer", "SpotLightGuideIndexBuffer", D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	
 	//GuideMesh->SetMesh("SpotLightGuideMesh");
 	//GuideMesh->SetMaterial("DebugMaterial");

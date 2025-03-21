@@ -10,15 +10,15 @@
 #include "Core/HAL/PlatformType.h"
 
 
-class FIndexBuffer :
-	public FResource<FIndexBuffer> , public FDirectBuffer
+class UIndexBuffer :
+	public UResource<UIndexBuffer> , public FDirectBuffer
 
 {
 public:
 	
-static std::shared_ptr<FIndexBuffer> Create(const FString&  _Name, const TArray<uint32>& _Data , bool _bIsDynamic = false)
+static std::shared_ptr<UIndexBuffer> Create(const FString&  _Name, const TArray<uint32>& _Data , bool _bIsDynamic = false)
 	{
-		std::shared_ptr<FIndexBuffer> Res = FIndexBuffer::CreateRes(_Name);
+		std::shared_ptr<UIndexBuffer> Res = UIndexBuffer::CreateRes(_Name);
 	
 		Res->bIsDynamic = _bIsDynamic;
 		if (Res->bIsDynamic == false)

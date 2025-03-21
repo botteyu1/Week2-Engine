@@ -12,14 +12,14 @@
 #include "Resource/DirectResource/Vertexbuffer.h"
 
 
-class FVertexShader;
-class FRasterizer;
-class FDepthStencilState;
-class FBlendState;
-class FPixelShader;
+class UVertexShader;
+class URasterizer;
+class UDepthStencilState;
+class UBlendState;
+class UPixelShader;
 class FConstantBufferBinding;
-class FConstantBuffer;
-class FInputLayout;
+class UConstantBuffer;
+class UInputLayout;
 
 
 //상수버퍼로 객체의 정보를 넣을 구조체
@@ -79,8 +79,8 @@ public:
 	FConstantsComponentData& GetConstantsComponentData() { return ConstantsComponentData; }
 	//void SetConstantsComponentData(FConstantsComponentData& ) { bIsBillboard = bBillboard; }
 
-	std::shared_ptr<FMesh> GetMesh() const { return RenderResourceCollection.GetMesh(); }
-	std::shared_ptr<FMaterial> GetMaterial() const { return RenderResourceCollection.GetMaterial(); }
+	std::shared_ptr<UMesh> GetMesh() const { return RenderResourceCollection.GetMesh(); }
+	std::shared_ptr<UMaterial> GetMaterial() const { return RenderResourceCollection.GetMaterial(); }
 
 	void SetMesh(const FString& InName) { RenderResourceCollection.SetMesh(InName); }
 	void SetMaterial(const FString& InName) { RenderResourceCollection.SetMaterial(InName); }

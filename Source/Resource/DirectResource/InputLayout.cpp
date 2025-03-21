@@ -4,14 +4,14 @@
 #include "Debug/DebugConsole.h"
 
 
-D3D11_INPUT_ELEMENT_DESC FInputLayout:: LayoutDesc[] = {
+D3D11_INPUT_ELEMENT_DESC UInputLayout:: LayoutDesc[] = {
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
 
-FInputLayout::~FInputLayout()
+UInputLayout::~UInputLayout()
 {
 	if (nullptr != LayOut)
 	{
@@ -20,7 +20,7 @@ FInputLayout::~FInputLayout()
 	}
 }
 
-void FInputLayout::ResCreate(std::shared_ptr<FVertexShader> _Shader)
+void UInputLayout::ResCreate(std::shared_ptr<UVertexShader> _Shader)
 {
 	
 	//const std::vector<D3D11_INPUT_ELEMENT_DESC>& Infos = _Buffer->VertexInfoPtr->Infos;
@@ -38,7 +38,7 @@ void FInputLayout::ResCreate(std::shared_ptr<FVertexShader> _Shader)
 	}
 }
 
-void FInputLayout::Setting()
+void UInputLayout::Setting()
 {
 	if (nullptr == LayOut)
 	{

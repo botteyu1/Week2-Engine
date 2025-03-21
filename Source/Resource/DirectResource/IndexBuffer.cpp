@@ -6,7 +6,7 @@
 
 #include "Core/Rendering/FDevice.h"
 
-void FIndexBuffer::Setting() const
+void UIndexBuffer::Setting() const
 {
 	// ID3D11Buffer* Arr[1];
 
@@ -34,7 +34,7 @@ void FIndexBuffer::Setting() const
 	}
 }
 
-void FIndexBuffer::ResCreate(const void* _Data, size_t _IndexCount)
+void UIndexBuffer::ResCreate(const void* _Data, size_t _IndexCount)
 {
 	IndexCount = static_cast<UINT>(_IndexCount);
 
@@ -53,7 +53,7 @@ void FIndexBuffer::ResCreate(const void* _Data, size_t _IndexCount)
 	}
 }
 
-void FIndexBuffer::ResCreateDynamic(const void* _Data, size_t _IndexCount)
+void UIndexBuffer::ResCreateDynamic(const void* _Data, size_t _IndexCount)
 {
 
 	CPUDataPtr = _Data;

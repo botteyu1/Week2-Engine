@@ -3,11 +3,11 @@
 #include "Core/Rendering/FDevice.h"
 #include "Debug/DebugConsole.h"
 
-FDepthStencilState::FDepthStencilState()
+UDepthStencilState::UDepthStencilState()
 {
 }
 
-FDepthStencilState::~FDepthStencilState()
+UDepthStencilState::~UDepthStencilState()
 {
 	if (nullptr != State)
 	{
@@ -16,7 +16,7 @@ FDepthStencilState::~FDepthStencilState()
 	}
 }
 
-void FDepthStencilState::Setting()
+void UDepthStencilState::Setting()
 {
 	if (nullptr == State)
 	{
@@ -26,7 +26,7 @@ void FDepthStencilState::Setting()
 	FDevice::Get().GetDeviceContext()->OMSetDepthStencilState(State, 0);
 }
 
-void FDepthStencilState::ResCreate(const D3D11_DEPTH_STENCIL_DESC& _Desc)
+void UDepthStencilState::ResCreate(const D3D11_DEPTH_STENCIL_DESC& _Desc)
 {
 	Desc = _Desc;
 	if (S_OK != FDevice::Get().GetDevice()->CreateDepthStencilState(&Desc, &State))

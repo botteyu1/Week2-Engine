@@ -7,16 +7,16 @@
 #include "Core/Container/String.h"
 
 
-class FBlendState: public FResource<FBlendState> 
+class UBlendState: public UResource<UBlendState> 
 {
 public:
 
-	FBlendState();
-	virtual ~FBlendState() override;
+	UBlendState();
+	virtual ~UBlendState() override;
 	
-	static std::shared_ptr<FBlendState> Create(const FString& _Name, const D3D11_BLEND_DESC& _Desc)
+	static std::shared_ptr<UBlendState> Create(const FString& _Name, const D3D11_BLEND_DESC& _Desc)
 	{
-		std::shared_ptr<FBlendState> Res = CreateRes(_Name);
+		std::shared_ptr<UBlendState> Res = CreateRes(_Name);
 		Res->ResCreate(_Desc);
 		return Res;
 	}

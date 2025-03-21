@@ -6,11 +6,11 @@
 #include "Debug/DebugConsole.h"
 #include "DirectXTK/DDSTextureLoader.h"
 
-FSampler::FSampler()
+USampler::USampler()
 {
 }
 
-FSampler::~FSampler()
+USampler::~USampler()
 {
 	if (nullptr != State)
 	{
@@ -19,19 +19,19 @@ FSampler::~FSampler()
 	}
 }
 
-void FSampler::VSSetting(UINT _Slot)
+void USampler::VSSetting(UINT _Slot)
 {
 	FDevice::Get().GetDeviceContext()->VSSetSamplers(_Slot, 1, &State);
 }
 
-void FSampler::PSSetting(UINT _Slot)
+void USampler::PSSetting(UINT _Slot)
 {
 	FDevice::Get().GetDeviceContext()->PSSetSamplers(_Slot, 1, &State);
 }
 
 
 
-void FSampler::ResCreate(const D3D11_SAMPLER_DESC& _Desc)
+void USampler::ResCreate(const D3D11_SAMPLER_DESC& _Desc)
 {
 	Desc = _Desc;
 	if (S_OK != FDevice::Get().GetDevice()->CreateSamplerState(&_Desc, &State))

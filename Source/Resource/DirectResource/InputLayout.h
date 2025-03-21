@@ -9,26 +9,26 @@
 #include "Core/Container/Array.h"
 
 
-class FInputLayout:
-public FResource<FInputLayout> 
+class UInputLayout:
+public UResource<UInputLayout> 
 {
 public:
-	FInputLayout() = default;
-	~FInputLayout() override;
+	UInputLayout() = default;
+	~UInputLayout() override;
 	
 	static D3D11_INPUT_ELEMENT_DESC LayoutDesc[];
 
 
 	//인풋 레이아웃에는 INPUT_ELEMENT_DESC와 버텍스 쉐이더가 필요하나 일단 인풋 정보는 고정값
-	static std::shared_ptr<FInputLayout> Create(const FString&  _Name, std::shared_ptr<class FVertexShader> _Shader)
+	static std::shared_ptr<UInputLayout> Create(const FString&  _Name, std::shared_ptr<class UVertexShader> _Shader)
 	{
-		std::shared_ptr<FInputLayout> Res = FInputLayout::CreateRes(_Name);
+		std::shared_ptr<UInputLayout> Res = UInputLayout::CreateRes(_Name);
 		Res->ResCreate(_Shader);
 		return Res;
 	}
 
 	void ResCreate(
-	std::shared_ptr<FVertexShader> _Shader
+	std::shared_ptr<UVertexShader> _Shader
 );
 
 	void Setting();

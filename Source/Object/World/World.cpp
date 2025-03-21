@@ -343,7 +343,7 @@ void UWorld::RayCasting(const FVector& MouseNDCPos)
 		FMatrix primWorldMat = PrimitiveComponent->GetComponentTransform().GetMatrix();
 		FRay localRay = FRay::TransformRayToLocal(worldRay, primWorldMat.Inverse());
 
-		std::shared_ptr<FMesh> CurMesh = PrimitiveComponent->GetMesh();
+		std::shared_ptr<UMesh> CurMesh = PrimitiveComponent->GetMesh();
 		CurMesh->GetVertexBuffer();
 
 		float outT = 0.0f;

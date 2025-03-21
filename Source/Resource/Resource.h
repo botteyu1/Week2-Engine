@@ -11,24 +11,24 @@
 
 
 template <typename ResourcesType>
-class FResource : public UObject
+class UResource : public UObject
 {
 
 public:
-	FResource() = default;
-	virtual ~FResource() = default;
+	UResource() = default;
+	virtual ~UResource() = default;
 
 	// delete Function
-	FResource(const FResource& Other) = delete;
-	FResource(FResource&& Other) noexcept = delete;
-	FResource& operator=(const FResource& Other) = delete;
-	FResource& operator=(FResource&& Other) noexcept = delete;
+	UResource(const UResource& Other) = delete;
+	UResource(UResource&& Other) noexcept = delete;
+	UResource& operator=(const UResource& Other) = delete;
+	UResource& operator=(UResource&& Other) noexcept = delete;
 
 
 public:
 	// 부모 클래스와 현재 클래스 타입 정의
 	using Super = UObject;
-	using ThisClass = FResource<ResourcesType>;
+	using ThisClass = UResource<ResourcesType>;
 
 	// StaticClass 함수 구현
 	inline static UClass* StaticClass()
@@ -53,8 +53,8 @@ public:
 
 			UClass* ClassPtr = new (RawMemory) UClass{
 				ClssName.c_str(),
-				static_cast<uint32>(sizeof(FResource<ResourcesType>)),
-				static_cast<uint32>(alignof(FResource<ResourcesType>)),
+				static_cast<uint32>(sizeof(UResource<ResourcesType>)),
+				static_cast<uint32>(alignof(UResource<ResourcesType>)),
 				UObject::StaticClass()
 			};
 
@@ -127,7 +127,7 @@ private:
 
 
 template <typename ResourcesType>
-TMap<FName, std::shared_ptr<ResourcesType>> FResource<ResourcesType>::NameRes;
+TMap<FName, std::shared_ptr<ResourcesType>> UResource<ResourcesType>::NameRes;
 
 template <typename ResourcesType>
-std::mutex FResource<ResourcesType>::NameMutex;
+std::mutex UResource<ResourcesType>::NameMutex;
