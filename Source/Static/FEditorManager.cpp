@@ -25,7 +25,7 @@ void FEditorManager::Init()
 	textureDesc.Usage = D3D11_USAGE_DEFAULT;
 	textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
 	
-	UUIDTexture = FTexture::Create("UUIDTexture", textureDesc);
+	UUIDTexture = UTexture::Create("UUIDTexture", textureDesc);
 	UUIDTexture->CreateRenderTargetView();
 
 
@@ -222,7 +222,7 @@ void FEditorManager::OnUpdateWindowSize(uint32 Width, uint32 Height)
 
 	if (UUIDTexture != nullptr)
 	{
-		FTexture::Release("UUIDTexture");
+		UTexture::Release("UUIDTexture");
 		UUIDTexture = nullptr;
 	}
 
@@ -235,7 +235,7 @@ void FEditorManager::OnUpdateWindowSize(uint32 Width, uint32 Height)
 	textureDesc.SampleDesc.Count = 1;
 	textureDesc.Usage = D3D11_USAGE_DEFAULT;
 	textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-	UUIDTexture = FTexture::Create("UUIDTexture", textureDesc);
+	UUIDTexture = UTexture::Create("UUIDTexture", textureDesc);
 	UUIDTexture->CreateRenderTargetView();
 }
 
@@ -254,7 +254,7 @@ void FEditorManager::OnResizeComplete()
 	textureDesc.Usage = D3D11_USAGE_DEFAULT;
 	textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
 
-	UUIDTexture = FTexture::Create("UUIDTexture", textureDesc);
+	UUIDTexture = UTexture::Create("UUIDTexture", textureDesc);
 	UUIDTexture->CreateRenderTargetView();
 }
 

@@ -44,6 +44,9 @@ void UWorld::BeginPlay()
 		Actor->BeginPlay();
 	}
 
+
+	TMap<FName, AActor*> Actors;
+
 	APlayerInput::Get().RegisterMouseDownCallback(EKeyCode::LButton, [this](const FVector& MouseNDCPos)
 	{
 		RayCasting(MouseNDCPos);
@@ -358,7 +361,7 @@ void UWorld::RayCasting(const FVector& MouseNDCPos)
 					FMatrix primWorldMat = primTransform.GetMatrix();
 
 
-					std::shared_ptr<FMesh> CurMesh = PrimitiveComponent->GetMesh();
+					std::shared_ptr<UMesh> CurMesh = PrimitiveComponent->GetMesh();
 					FVector vertexMin = CurMesh->GetVertexBuffer().get()->GetMin();
 					FVector vertexMax = CurMesh->GetVertexBuffer().get()->GetMax();
 

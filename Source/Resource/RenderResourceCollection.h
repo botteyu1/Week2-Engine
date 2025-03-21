@@ -24,15 +24,15 @@ public:
 	void SetMaterial(const FString& _Name);
 
 	
-	void SetMesh(std::shared_ptr<class FMesh> _Mesh);
-	void SetMaterial(std::shared_ptr<class FMaterial> _Material);
+	void SetMesh(std::shared_ptr<class UMesh> _Mesh);
+	void SetMaterial(std::shared_ptr<class UMaterial> _Material);
 
-	std::shared_ptr<FMesh> GetMesh() const
+	std::shared_ptr<UMesh> GetMesh() const
 	{
 		return Mesh;
 	}
 
-	std::shared_ptr<FMaterial> GetMaterial() const
+	std::shared_ptr<UMaterial> GetMaterial() const
 	{
 		return Material;
 	}
@@ -67,10 +67,10 @@ private:
 	RenderMode Mode = RenderMode::Indexed;
 
 	//원래는 메쉬와 메테리얼의 정보 둘다 필요함 일단 버텍스 쉐이더 정보만 받아서 자동화
-	std::shared_ptr<class FInputLayout> Layout = nullptr;
+	std::shared_ptr<class UInputLayout> Layout = nullptr;
 	
-	std::shared_ptr<FMesh> Mesh = nullptr;
-	std::shared_ptr<FMaterial> Material = nullptr;
+	std::shared_ptr<UMesh> Mesh = nullptr;
+	std::shared_ptr<UMaterial> Material = nullptr;
 
 	TMap<FString, std::shared_ptr<FConstantBufferBinding>> ConstantBufferBindings;
 	TMap<FString, std::shared_ptr<FTextureBinding>> TextureBindings;

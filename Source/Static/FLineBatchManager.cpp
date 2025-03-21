@@ -133,13 +133,13 @@ void FLineBatchManager::Create()
 {
 
 	
-	FVertexBuffer::Create("LineVertexBuffer", VertexBuffer , true);
-	FIndexBuffer::Create("LineIndexBuffer", IndexBuffer , true);
-	std::shared_ptr<FMesh> Mesh =  FMesh::Create("LineBatchMesh" , "LineVertexBuffer", "LineIndexBuffer", D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
+	UVertexBuffer::Create("LineVertexBuffer", VertexBuffer , true);
+	UIndexBuffer::Create("LineIndexBuffer", IndexBuffer , true);
+	std::shared_ptr<UMesh> Mesh =  UMesh::Create("LineBatchMesh" , "LineVertexBuffer", "LineIndexBuffer", D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
 	
-	FVertexShader::Load(L"Shaders\\ShaderLine_VS.hlsl", "ShaderLine_VS", "ShaderLine_VS");
+	UVertexShader::Load(L"Shaders\\ShaderLine_VS.hlsl", "ShaderLine_VS", "ShaderLine_VS");
 	
-	FPixelShader::Load(L"Shaders\\ShaderLine_PS.hlsl", "ShaderLine_PS", "ShaderLine_PS");
+	UPixelShader::Load(L"Shaders\\ShaderLine_PS.hlsl", "ShaderLine_PS", "ShaderLine_PS");
 	
 
 	// 라인 렌더링을 위한 래스터라이저 상태 설정
@@ -153,10 +153,10 @@ void FLineBatchManager::Create()
 	rasterizerDesc.AntialiasedLineEnable = TRUE; // 안티앨리어싱된 라인 활성화
 
 	
-	FRasterizer::Create("LineRasterizerState", rasterizerDesc);
+	URasterizer::Create("LineRasterizerState", rasterizerDesc);
 
 	
-	std::shared_ptr<FMaterial> Material = FMaterial::Create("LineBatchMaterial");
+	std::shared_ptr<UMaterial> Material = UMaterial::Create("LineBatchMaterial");
 	Material->SetVertexShader("ShaderLine_VS");
 	Material->SetPixelShader("ShaderLine_PS");
 	Material->SetRasterizer("LineRasterizerState");

@@ -8,17 +8,17 @@
 #include "Core/Container/String.h"
 
 
-class FRasterizer:
-public FResource<FRasterizer> 
+class URasterizer:
+public UResource<URasterizer> 
 {
 public:
 	// constrcuter destructer
-	FRasterizer();
-	~FRasterizer();
+	URasterizer();
+	~URasterizer();
 
-	static std::shared_ptr<FRasterizer> Create(const FString& _Name, const D3D11_RASTERIZER_DESC& _Desc)
+	static std::shared_ptr<URasterizer> Create(const FString& _Name, const D3D11_RASTERIZER_DESC& _Desc)
 	{
-		std::shared_ptr<FRasterizer> Res = FRasterizer::CreateRes(_Name);
+		std::shared_ptr<URasterizer> Res = URasterizer::CreateRes(_Name);
 		Res->ResCreate(_Desc);
 		return Res;
 	}

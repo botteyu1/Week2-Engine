@@ -6,15 +6,15 @@
 #include "Debug/DebugConsole.h"
 
 
-FConstantBuffer::FConstantBuffer()
+UConstantBuffer::UConstantBuffer()
 {
 }
 
-FConstantBuffer::~FConstantBuffer()
+UConstantBuffer::~UConstantBuffer()
 {
 }
 
-void FConstantBuffer::ChangeData(const void* _Data, UINT _Size)
+void UConstantBuffer::ChangeData(const void* _Data, UINT _Size)
 {
 	if (nullptr == _Data)
 	{
@@ -48,7 +48,7 @@ void FConstantBuffer::ChangeData(const void* _Data, UINT _Size)
 	
 }
 
-void FConstantBuffer::VSSetting(UINT _Slot)
+void UConstantBuffer::VSSetting(UINT _Slot)
 {
 	if (nullptr == Buffer)
 	{
@@ -58,7 +58,7 @@ void FConstantBuffer::VSSetting(UINT _Slot)
 	FDevice::Get().GetDeviceContext()->VSSetConstantBuffers(_Slot, 1, &Buffer);
 }
 
-void FConstantBuffer::PSSetting(UINT _Slot)
+void UConstantBuffer::PSSetting(UINT _Slot)
 {
 	if (nullptr == Buffer)
 	{
@@ -68,7 +68,7 @@ void FConstantBuffer::PSSetting(UINT _Slot)
 	FDevice::Get().GetDeviceContext()->PSSetConstantBuffers(_Slot, 1, &Buffer);
 }
 
-void FConstantBuffer::CSSetting(UINT _Slot)
+void UConstantBuffer::CSSetting(UINT _Slot)
 {
 	if (nullptr == Buffer)
 	{
@@ -78,7 +78,7 @@ void FConstantBuffer::CSSetting(UINT _Slot)
 	FDevice::Get().GetDeviceContext()->CSSetConstantBuffers(_Slot, 1, &Buffer);
 }
 
-void FConstantBuffer::GSSetting(UINT _Slot)
+void UConstantBuffer::GSSetting(UINT _Slot)
 {
 	if (nullptr == Buffer)
 	{
@@ -88,7 +88,7 @@ void FConstantBuffer::GSSetting(UINT _Slot)
 	FDevice::Get().GetDeviceContext()->GSSetConstantBuffers(_Slot, 1, &Buffer);
 }
 
-void FConstantBuffer::ResCreate(int _ByteSize)
+void UConstantBuffer::ResCreate(int _ByteSize)
 {
 	BufferInfo.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	BufferInfo.ByteWidth = _ByteSize;

@@ -8,7 +8,7 @@
 
 
 
-void FVertexBuffer::Setting() const
+void UVertexBuffer::Setting() const
 {
 	if (nullptr == Buffer)
 	{
@@ -37,7 +37,7 @@ void FVertexBuffer::Setting() const
 	}
 }
 
-void FVertexBuffer::ResCreate(const void* _Data, size_t _VertexSize, size_t _VertexCount)
+void UVertexBuffer::ResCreate(const void* _Data, size_t _VertexSize, size_t _VertexCount)
 {
 	VertexSize = static_cast<UINT>(_VertexSize);
 	VertexCount = static_cast<UINT>(_VertexCount);
@@ -58,7 +58,7 @@ void FVertexBuffer::ResCreate(const void* _Data, size_t _VertexSize, size_t _Ver
 	}
 }
 
-void FVertexBuffer::ResCreateDynamic(const void* _Data, size_t _VertexSize, size_t _VertexCount)
+void UVertexBuffer::ResCreateDynamic(const void* _Data, size_t _VertexSize, size_t _VertexCount)
 {
 
 	CPUDataPtr = _Data;

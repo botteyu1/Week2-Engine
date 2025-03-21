@@ -7,17 +7,17 @@
 #include "Core/Container/String.h"
 
 
-class FDepthStencilState:
-public FResource<FDepthStencilState> 
+class UDepthStencilState:
+public UResource<UDepthStencilState> 
 {
 public:
 	// constrcuter destructer
-	FDepthStencilState();
-	~FDepthStencilState();
+	UDepthStencilState();
+	~UDepthStencilState();
 
-	static std::shared_ptr<FDepthStencilState> Create(const FString& _Name, const D3D11_DEPTH_STENCIL_DESC& _Desc)
+	static std::shared_ptr<UDepthStencilState> Create(const FString& _Name, const D3D11_DEPTH_STENCIL_DESC& _Desc)
 	{
-		std::shared_ptr<FDepthStencilState> Res = CreateRes(_Name);
+		std::shared_ptr<UDepthStencilState> Res = CreateRes(_Name);
 		Res->ResCreate(_Desc);
 		return Res;
 	}

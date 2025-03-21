@@ -3,7 +3,7 @@
 #include "Core/Rendering/FDevice.h"
 
 
-void FMesh::Setting()
+void UMesh::Setting()
 {
 	if (nullptr == VertexBuffer)
 	{
@@ -22,7 +22,7 @@ void FMesh::Setting()
 	IndexBuffer->Setting();
 }
 
-void FMesh::Draw()
+void UMesh::Draw()
 {
 	
 	FDevice::Get().GetDeviceContext()->DrawIndexed(IndexBuffer->GetIndexCount(), 0, 0);

@@ -9,18 +9,18 @@
 #include "Core/HAL/PlatformType.h"
 
 
-class FConstantBuffer :
-	public FResource<FConstantBuffer> , public FDirectBuffer
+class UConstantBuffer :
+	public UResource<UConstantBuffer> , public FDirectBuffer
 {
 public:
 
 	// constrcuter destructer
-	FConstantBuffer();
-	~FConstantBuffer();
+	UConstantBuffer();
+	~UConstantBuffer();
 	
-	static	std::shared_ptr<FConstantBuffer> Create(const FString&  _Name, uint32 _ByteSize)
+	static	std::shared_ptr<UConstantBuffer> Create(const FString&  _Name, uint32 _ByteSize)
 	{
-		std::shared_ptr<FConstantBuffer> Res = FConstantBuffer::CreateRes(_Name);
+		std::shared_ptr<UConstantBuffer> Res = UConstantBuffer::CreateRes(_Name);
 		Res->ResCreate(_ByteSize);
 		return Res;
 	}

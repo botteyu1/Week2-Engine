@@ -44,7 +44,7 @@ private:
 
 	
 
-	std::shared_ptr<class FTexture> UUIDTexture = nullptr;
+	std::shared_ptr<class UTexture> UUIDTexture = nullptr;
 	//std::shared_ptr<class FTexture> UUIDTextureDepthStecil = nullptr;
 };
 

@@ -4,19 +4,19 @@
 #include "Resource/DirectResource/Vertexbuffer.h"
 
 
-class FDepthStencilState;
-class FRasterizer;
-class FBlendState;
+class UDepthStencilState;
+class URasterizer;
+class UBlendState;
 
-class FMaterial : public FResource<FMaterial>
+class UMaterial : public UResource<UMaterial>
 {
 public:
-	FMaterial();
-	virtual ~FMaterial() override;
+	UMaterial();
+	virtual ~UMaterial() override;
 
-	static std::shared_ptr<FMaterial> Create(const FString& InName)
+	static std::shared_ptr<UMaterial> Create(const FString& InName)
 	{
-		std::shared_ptr<FMaterial> NewRes = CreateRes(InName);
+		std::shared_ptr<UMaterial> NewRes = CreateRes(InName);
 		return NewRes;
 	}
 
@@ -33,12 +33,12 @@ public:
 	void SetBlendState(const FString& InValue);
 	void SetDepthState(const FString& InValue);
 
-	std::shared_ptr<class FVertexShader> GetVertexShader()
+	std::shared_ptr<class UVertexShader> GetVertexShader()
 	{
 		return VertexShaderPtr;
 	}
 
-	std::shared_ptr<class FPixelShader> GetPixelShader()
+	std::shared_ptr<class UPixelShader> GetPixelShader()
 	{
 		return PixelShaderPtr;
 	}
@@ -46,11 +46,11 @@ public:
 	void Setting();
 	
 private:
-	std::shared_ptr<FVertexShader> VertexShaderPtr = nullptr;
-	std::shared_ptr<FPixelShader> PixelShaderPtr = nullptr;
-	std::shared_ptr<FRasterizer> RasterizerPtr = nullptr;
-	std::shared_ptr<FBlendState> BlendStatePtr = nullptr;
-	std::shared_ptr<FDepthStencilState> DepthStencilPtr = nullptr;
+	std::shared_ptr<UVertexShader> VertexShaderPtr = nullptr;
+	std::shared_ptr<UPixelShader> PixelShaderPtr = nullptr;
+	std::shared_ptr<URasterizer> RasterizerPtr = nullptr;
+	std::shared_ptr<UBlendState> BlendStatePtr = nullptr;
+	std::shared_ptr<UDepthStencilState> DepthStencilPtr = nullptr;
 
 };
 
