@@ -24,6 +24,7 @@ public:
     void SetCamera(ACamera* NewCamera);
 
 	AGizmoActor* GetGizmo() const {return Gizmo;}
+	void SetGizmo(AGizmoActor* InGizmo);
 
 	static FVector4 EncodeUUID(uint32 UUID);
 	static uint32 DecodeUUID(FVector4 color);
