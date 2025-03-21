@@ -6,7 +6,7 @@
 #include "Core/Math/Vector.h"
 #include "Resource/DirectResource/ViewMode.h"
 #include "Static/FLineBatchManager.h"
-//#include "Static/FUUIDBillBoard.h"
+#include "Static/FUUIDBillBoard.h"
 
 
 struct FVertexSimple;

@@ -60,7 +60,7 @@ void FDevice::InitResource()
 		RasterizerDesc.DepthClipEnable = TRUE;
 		RasterizerDesc.MultisampleEnable = TRUE;
 
-		FRasterizer::Create("SolidRasterizer", RasterizerDesc);
+		URasterizer::Create("SolidRasterizer", RasterizerDesc);
 	}
 
 	{

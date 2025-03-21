@@ -38,7 +38,7 @@ void UInputLayout::ResCreate(std::shared_ptr<UVertexShader> _Shader)
 	}
 }
 
-void UInputLayout::Setting()
+void UInputLayout::Setting(ERenderFlags)
 {
 	if (nullptr == LayOut)
 	{

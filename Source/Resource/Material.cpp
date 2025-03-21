@@ -133,7 +133,7 @@ void UMaterial::SetDepthState(const FString& InValue)
 {
 	VertexShader();
 	if ( FFlag::Get(renderFlags, ERenderFlags::Wirefame) )
-		FRasterizer::Find("DebugRasterizer")->Setting();
+		URasterizer::Find("DebugRasterizer")->Setting();
 	else
 		Rasterizer();
 	PixelShader();

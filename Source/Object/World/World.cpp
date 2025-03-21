@@ -235,8 +235,8 @@ void UWorld::ClearWorld()
 		
 		DestroyActor(Actor);
 	}
-	FEditorManager::Get().SetGizmo(nullptr);
-	FUUIDBillBoard::Get().UpdateString(L"");
+	UEngine::Get().GetEditor()->SetGizmo(nullptr);
+	UEngine::Get().GetRenderer()->GetUUIDBillBoard()->UpdateString(L"");
 
 	UE_LOG("Clear World");
 }

@@ -31,11 +31,11 @@ std::shared_ptr<FViewMode> FViewModeManager::CreateViewMode(
 {	
 	std::shared_ptr<FViewMode> resource = std::make_shared<FViewMode>();
 	if ( !RasterizerName.IsEmpty() )
-		resource->Rasterizer = FRasterizer::Find(RasterizerName).get();
+		resource->Rasterizer = URasterizer::Find(RasterizerName).get();
 	if ( !VertexShaderName.IsEmpty() )
-		resource->VertexShader = FVertexShader::Find(VertexShaderName).get();
+		resource->VertexShader = UVertexShader::Find(VertexShaderName).get();
 	if ( !PixelShaderName.IsEmpty() )
-		resource->PixelShader = FPixelShader::Find(PixelShaderName).get();
+		resource->PixelShader = UPixelShader::Find(PixelShaderName).get();
 
 	return resource;
 }

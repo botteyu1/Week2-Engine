@@ -1,5 +1,5 @@
 #pragma once
-#include <concepts>
+//#include <concepts>
 #include <memory>
 
 #include "Core/Engine.h"
@@ -51,7 +51,7 @@ public:
 
 		FString str = T::StaticClass()->GetName();
 
-		UEngine::Get().GObjects.Add(NewObject->GetUUID(), NewObject);
+		// UEngine::Get().GObjects.Add(NewObject->GetUUID(), NewObject);
 
 		return NewObject;
 	}
@@ -86,7 +86,7 @@ public:
 
 		FString str = T::StaticClass()->GetName();
 
-		UEngine::Get().GObjects.Add(NewObject->GetUUID(), NewObject);
+		// UEngine::Get().GObjects.Add(NewObject->GetUUID(), NewObject);
 
 		return NewObject;
 	}

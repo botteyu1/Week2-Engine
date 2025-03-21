@@ -1,7 +1,6 @@
 #pragma once
 #include <functional>
 
-#include "Core/AbstractClass/Singleton.h"
 #include "Core/Math/Vector.h"
 #include "Core/Container/Map.h"
 #include "Core/Container/Array.h"

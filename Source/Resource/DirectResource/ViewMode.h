@@ -17,9 +17,9 @@ enum class EViewModeIndex : uint32
 };
 
 struct FViewMode {
-	FRasterizer* Rasterizer;
-	FVertexShader* VertexShader;
-	FPixelShader* PixelShader;
+	URasterizer* Rasterizer;
+	UVertexShader* VertexShader;
+	UPixelShader* PixelShader;
 };
 
 // ViewMode에 따라 달라지는 Shader, RasterizerState 등을 관리
