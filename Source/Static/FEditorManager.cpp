@@ -88,6 +88,11 @@ void FEditorManager::SetCamera(ACamera* NewCamera)
     Camera = NewCamera;
 }
 
+void FEditorManager::SetGizmo(AGizmoActor* InGizmo)
+{
+	Gizmo = InGizmo;
+}
+
 FVector4 FEditorManager::EncodeUUID(uint32 UUID)
 {
 	const uint32 a = (UUID >> 24) & 0xff;

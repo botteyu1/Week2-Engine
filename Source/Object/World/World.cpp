@@ -26,6 +26,7 @@
 #include "Resource/Mesh.h"
 
 #include "Debug/DebugDrawManager.h"
+#include "Object/Gizmo/Axis.h"
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
@@ -220,11 +221,21 @@ void UWorld::ClearWorld()
 	for (AActor* Actor : CopyActors)
 	{
 		// if (!Actor->Implements<IGizmoInterface>()) // TODO: RTTI 개선하면 사용
-		if (!dynamic_cast<IGizmoInterface*>(Actor))
+		/*if (!dynamic_cast<IGizmoInterface*>(Actor))
 		{
 			DestroyActor(Actor);
+		}*/
+
+		// 이제 AGizmoActor와 AGizmoHandle을 삭제하기 때문에
+
+		if (Actor->IsA<ACamera>() || Actor->IsA<AAxis>()) {
+			continue;
 		}
+		
+		DestroyActor(Actor);
 	}
+	FEditorManager::Get().SetGizmo(nullptr);
+	FUUIDBillBoard::Get().UpdateString(L"");
 
 	UE_LOG("Clear World");
 }
