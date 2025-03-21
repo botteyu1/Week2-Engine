@@ -71,7 +71,7 @@ void UEngine::Initialize(
 	FDevice::Get().Init(WindowHandle); // require window
 	InitEditor(); // require FDevice 나중에 멀티쓰레드로?
 	InitWorld(); // require Editor
-	InitRenderer(); // require FDevice
+	InitRenderer(); // require FDevice, World
 	UDebugDrawManager::Get().Initialize();
 
 	InitializedScreenWidth = ScreenWidth;

@@ -6,16 +6,17 @@
 #include "Core/Math/Vector.h"
 #include "Resource/DirectResource/ViewMode.h"
 #include "Static/FLineBatchManager.h"
-//#include "Resource/RenderResourceCollection.h"
+//#include "Static/FUUIDBillBoard.h"
 
 
 struct FVertexSimple;
 struct FVector4;
 enum class ERenderFlags;
+class FUUIDBillBoard;
 
 class ACamera;
 class UWorld;
-class FLineBatchManager;
+
 class URenderer
 {
 public:
@@ -74,6 +75,7 @@ public:
 public:
 	inline FViewModeManager* GetViewMode() { return ViewMode.get(); }
 	inline FLineBatchManager* GetBatchManager() { return LineBatchManager.get(); }
+	inline FUUIDBillBoard* GetUUIDBillBoard() { return UUIDBillBoard.get(); }
 
 protected:
     /** 뎁스 스텐실 상태를 생성합니다. */
@@ -142,5 +144,5 @@ public:
 private:
 	std::shared_ptr<FViewModeManager> ViewMode;
 	std::shared_ptr<FLineBatchManager> LineBatchManager;
-	FRenderResourceCollection* overrideRenderState;
+	std::shared_ptr<FUUIDBillBoard> UUIDBillBoard;
 };

@@ -28,7 +28,6 @@ void URenderer::Create(HWND hWindow, UWorld* world)
     //CreateFrameBuffer();
     //CreatePickingTexture(hWindow);
 
-	overrideRenderState = nullptr;
 	renderFlags = ERenderFlags::None;
 
 	ViewMode = std::make_unique<FViewModeManager>();
@@ -37,7 +36,9 @@ void URenderer::Create(HWND hWindow, UWorld* world)
 	LineBatchManager->MakeWorldGrid(world->GetGridSize(), world->GetGridSize() / 100.f); // create vertex
 	LineBatchManager->Create(); // require device, vertex
 	
-	// FUUIDBillBoard::Get().Create(); // require device
+	UUIDBillBoard = std::make_unique<FUUIDBillBoard>();
+	UUIDBillBoard->Create();
+	//FUUIDBillBoard::Get().Create(); // require device
 
 	//LoadTexture(L"font_atlas.png");
 	LoadTexture(L"Pretendard_Kor.png");

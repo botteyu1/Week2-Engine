@@ -523,7 +523,7 @@ void UI::RenderSceneManager()
 					//CurActor->IsHighlightValue = false;
 				CurActor = Actor;
 				UEngine::Get().GetEditor()->SelectActor(CurActor);
-				FUUIDBillBoard::Get().SetTarget(CurActor);
+				UEngine::Get().GetRenderer()->GetUUIDBillBoard()->SetTarget(CurActor);
 			}
 		}
 	}

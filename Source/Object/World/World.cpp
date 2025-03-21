@@ -132,7 +132,7 @@ void UWorld::Render()
 
 	//FLineBatchManager::Get().Render();
 
-	FUUIDBillBoard::Get().Render();
+	UEngine::Get().GetRenderer()->GetUUIDBillBoard()->Render();
 
 
 	//DisplayPickingTexture(*Renderer);
@@ -395,7 +395,7 @@ void UWorld::RayCasting(const FVector& MouseNDCPos)
 			{
 				minDistance = distance;
 				SelectedActor = Actor;
-				FUUIDBillBoard::Get().SetTarget(SelectedActor);
+				UEngine::Get().GetRenderer()->GetUUIDBillBoard()->SetTarget(SelectedActor);
 			}
 		}
 	}

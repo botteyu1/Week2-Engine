@@ -13,7 +13,7 @@ struct FFontConstantInfo
 };
 
 
-class FUUIDBillBoard : public TSingleton<FUUIDBillBoard>
+class FUUIDBillBoard
 {
 public:
 	void Create();
