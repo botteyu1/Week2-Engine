@@ -41,6 +41,9 @@ void UWorld::BeginPlay()
 		Actor->BeginPlay();
 	}
 
+
+	TMap<FName, AActor*> Actors;
+
 	APlayerInput::Get().RegisterMouseDownCallback(EKeyCode::LButton, [this](const FVector& MouseNDCPos)
 	{
 		RayCasting(MouseNDCPos);

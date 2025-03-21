@@ -1,7 +1,8 @@
-﻿#pragma once
+#pragma once
 #include <unordered_map>
 #include "ContainerAllocator.h"
 #include "Pair.h"
+#include "Core/UObject/NameTypes.h"
 
 
 template <typename KeyType, typename ValueType, typename Allocator = FDefaultAllocator<std::pair<const KeyType, ValueType>>>
@@ -157,4 +158,16 @@ public:
     {
         PrivateMap.reserve(Number);
     }
+
 };
+
+// TMap 클래스 템플릿 정의 이후에 다음 코드를 추가합니다
+namespace std {
+	template <>
+	struct hash<FName> {
+		size_t operator()(const FName& Name) const {
+			// 언리얼 엔진의 FName 해시 함수는 ComparisonIndex와 Number를 더하는 방식
+			return Name.GetComparisonIndex();
+		}
+	};
+}
