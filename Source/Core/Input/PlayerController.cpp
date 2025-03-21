@@ -3,26 +3,26 @@
 #include "PlayerInput.h"
 #include "Core/Math/Quat.h"
 #include "Object/Actor/Camera.h"
-#include "Static/FEditorManager.h"
+#include "Static/EditorManager.h"
 
 
 void APlayerController::HandleCameraMovement(float DeltaTime) const
 {
     FVector NewVelocity(0, 0, 0);
 
-    if (APlayerInput::Get().GetKeyPress(EKeyCode::RButton) == false)
+    if (UEngine::Get().GetInput()->GetKeyPress(EKeyCode::RButton) == false)
     {
        // Camera->SetVelocity(NewVelocity);
 		return;
     }
 
-    ACamera* Camera = FEditorManager::Get().GetCamera();
+    ACamera* Camera = UEngine::Get().GetEditor()->GetCamera();
     
     //전프레임이랑 비교
     //x좌표 받아와서 x만큼 x축회전
     //y좌표 받아와서 y만큼 y축 회전
-    FVector DeltaPos = APlayerInput::Get().GetMouseDeltaPos();
-    //FQuat CameraRot = FEditorManager::Get().GetCamera()->GetActorTransform().GetRotation();
+    FVector DeltaPos = UEngine::Get().GetInput()->GetMouseDeltaPos();
+    //FQuat CameraRot = UEditorManager::Get().GetCamera()->GetActorTransform().GetRotation();
 
     FTransform CameraTransform = Camera->GetActorTransform();
 
@@ -42,12 +42,12 @@ void APlayerController::HandleCameraMovement(float DeltaTime) const
 
 void APlayerController::HandleGizmoMovement(float DeltaTime) const
 {
-    if (APlayerInput::Get().GetKeyDown(EKeyCode::LButton) == false)
+    if (UEngine::Get().GetInput()->GetKeyDown(EKeyCode::LButton) == false)
     {
         return;
     }
 
-    AActor* SelectedActor = FEditorManager::Get().GetSelectedActor();
+    AActor* SelectedActor = UEngine::Get().GetEditor()->GetSelectedActor();
     
     if (SelectedActor == nullptr) //이거를 나중엔 기즈모로 체크
     {

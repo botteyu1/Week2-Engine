@@ -13,7 +13,7 @@
         <mxCell id="iRMEyDaeMtuCpQb7a-bZ-3" value="UEngine" style="html=1;whiteSpace=wrap;" vertex="1" parent="1">
           <mxGeometry x="160" y="120" width="110" height="50" as="geometry" />
         </mxCell>
-        <mxCell id="iRMEyDaeMtuCpQb7a-bZ-5" value="APlayerController&lt;br&gt;( 인풋매니저)" style="html=1;whiteSpace=wrap;" vertex="1" parent="1">
+        <mxCell id="iRMEyDaeMtuCpQb7a-bZ-5" value="APlayerController" style="html=1;whiteSpace=wrap;" vertex="1" parent="1">
           <mxGeometry x="160" y="200" width="110" height="50" as="geometry" />
         </mxCell>
         <mxCell id="iRMEyDaeMtuCpQb7a-bZ-6" value="FDevice" style="html=1;whiteSpace=wrap;" vertex="1" parent="1">
@@ -133,8 +133,8 @@
         <mxCell id="iRMEyDaeMtuCpQb7a-bZ-56" value="UEngine" style="html=1;whiteSpace=wrap;" vertex="1" parent="1">
           <mxGeometry x="1100" y="120" width="110" height="50" as="geometry" />
         </mxCell>
-        <mxCell id="iRMEyDaeMtuCpQb7a-bZ-57" value="APlayerController&lt;br&gt;( 인풋매니저)" style="html=1;whiteSpace=wrap;" vertex="1" parent="1">
-          <mxGeometry x="1100" y="190" width="110" height="50" as="geometry" />
+        <mxCell id="iRMEyDaeMtuCpQb7a-bZ-57" value="APlayerInput&lt;div&gt;-&amp;gt;UInputManager&lt;/div&gt;" style="html=1;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="1100" y="180" width="110" height="50" as="geometry" />
         </mxCell>
         <mxCell id="iRMEyDaeMtuCpQb7a-bZ-58" value="FDevice" style="html=1;whiteSpace=wrap;" vertex="1" parent="1">
           <mxGeometry x="1220" y="120" width="110" height="50" as="geometry" />
@@ -152,7 +152,7 @@
           <mxGeometry x="1340" y="120" width="110" height="50" as="geometry" />
         </mxCell>
         <mxCell id="iRMEyDaeMtuCpQb7a-bZ-63" value="FEditorManager" style="html=1;whiteSpace=wrap;" vertex="1" parent="1">
-          <mxGeometry x="1100" y="250" width="110" height="50" as="geometry" />
+          <mxGeometry x="1100" y="240" width="110" height="50" as="geometry" />
         </mxCell>
         <mxCell id="iRMEyDaeMtuCpQb7a-bZ-64" value="FLineBatchMa&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;nager&lt;/span&gt;" style="html=1;whiteSpace=wrap;" vertex="1" parent="1">
           <mxGeometry x="980" y="510" width="110" height="50" as="geometry" />
@@ -195,6 +195,12 @@
         </mxCell>
         <mxCell id="iRMEyDaeMtuCpQb7a-bZ-82" value="+ field: type" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="iRMEyDaeMtuCpQb7a-bZ-79">
           <mxGeometry y="78" width="160" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="iRMEyDaeMtuCpQb7a-bZ-83" value="APlayerInput" style="html=1;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="40" y="200" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="iRMEyDaeMtuCpQb7a-bZ-84" value="APlayerController" style="html=1;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="1220" y="240" width="110" height="50" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

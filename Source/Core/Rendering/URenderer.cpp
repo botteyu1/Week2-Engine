@@ -10,7 +10,7 @@
 #include "Object/Actor/Camera.h"
 #include "Object/Assets/SceneAsset.h"
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
-#include "Static/FEditorManager.h"
+#include "Static/EditorManager.h"
 #include "Static/FUUIDBillBoard.h"
 #include "Static/FLineBatchManager.h"
 #include "Resource/DirectResource/Vertexbuffer.h"
@@ -251,7 +251,7 @@ void URenderer::LoadTexture(const wchar_t* texturePath)
 // {
 //     // if (!ConstantsDepthBuffer) return;
 //     //
-//     // ACamera* Cam = FEditorManager::Get().GetCamera();
+//     // ACamera* Cam = UEditorManager::Get().GetCamera();
 //     //
 //     // D3D11_MAPPED_SUBRESOURCE ConstantBufferMSR;
 //     //

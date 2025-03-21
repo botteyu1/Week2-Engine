@@ -12,7 +12,7 @@
 #include "Object/Actor/Cylinder.h"
 #include "Object/Actor/Sphere.h"
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
-#include "Static/FEditorManager.h"
+#include "Static/EditorManager.h"
 #include "Static/FLineBatchManager.h"
 #include "Static/FUUIDBillBoard.h"
 #include <Core/Math/Ray.h>
@@ -41,7 +41,7 @@ void UWorld::BeginPlay()
 		Actor->BeginPlay();
 	}
 
-	APlayerInput::Get().RegisterMouseDownCallback(EKeyCode::LButton, [this](const FVector& MouseNDCPos)
+	UEngine::Get().GetInput()->RegisterMouseDownCallback(EKeyCode::LButton, [this](const FVector& MouseNDCPos)
 	{
 		RayCasting(MouseNDCPos);
 	}, GetUUID());
@@ -102,11 +102,11 @@ void UWorld::Render()
 		return;
 	}
 
-	ACamera* cam = FEditorManager::Get().GetCamera();
+	ACamera* cam = UEngine::Get().GetEditor()->GetCamera();
 	cam->UpdateCameraMatrix();
 
 
-	//if (APlayerInput::Get().GetKeyDown(EKeyCode::LButton))
+	//if (UInputManager::Get().GetKeyDown(EKeyCode::LButton))
 	//{
 	//	RenderPickingTexture(*Renderer);
 	//}
@@ -115,7 +115,7 @@ void UWorld::Render()
 
 	FLineBatchManager::Get().Render();
 
-	AActor* SelectedActor = FEditorManager::Get().GetSelectedActor();
+	AActor* SelectedActor = UEngine::Get().GetEditor()->GetSelectedActor();
 	if (SelectedActor != nullptr)
 	{
 		const FVector LocalMax = SelectedActor->GetActorLocalBoundsMax();
@@ -391,7 +391,7 @@ void UWorld::RayCasting(const FVector& MouseNDCPos)
 
 	if (SelectedActor)
 	{
-		FEditorManager::Get().SelectActor(SelectedActor);
+		UEngine::Get().GetEditor()->SelectActor(SelectedActor);
 	}
 }
 

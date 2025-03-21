@@ -3,7 +3,7 @@
 #include "Object/Actor/Camera.h"
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 #include "Object/World/World.h"
-#include "Static/FEditorManager.h"
+#include "Static/EditorManager.h"
 
 
 AGizmoHandle::AGizmoHandle()
@@ -63,7 +63,7 @@ void AGizmoHandle::Tick(float DeltaTime)
 
 	if (SelectedAxis != ESelectedAxis::None)
 	{
-		if (AActor* Actor = FEditorManager::Get().GetSelectedActor())
+		if (AActor* Actor = UEngine::Get().GetEditor()->GetSelectedActor())
 		{
 			// 마우스의 커서 위치를 가져오기
 			POINT pt;
@@ -92,7 +92,7 @@ void AGizmoHandle::Tick(float DeltaTime)
 			RayEnd.W = 1;
 			
 			// 마우스 포인터의 월드 위치와 방향
-			FMatrix InvViewMat = FEditorManager::Get().GetCamera()->GetViewMatrix().Inverse();
+			FMatrix InvViewMat = UEngine::Get().GetEditor()->GetCamera()->GetViewMatrix().Inverse();
 			RayOrigin = InvViewMat.TransformVector4(RayOrigin);
 			RayOrigin /= RayOrigin.W = 1;
 			RayEnd = InvViewMat.TransformVector4(RayEnd);
@@ -124,7 +124,7 @@ void AGizmoHandle::SetScaleByDistance()
 	// 액터의 월드 위치
 	FVector actorWorldPos = MyTransform.GetPosition();
 
-	FTransform CameraTransform = FEditorManager::Get().GetCamera()->GetActorTransform();
+	FTransform CameraTransform = UEngine::Get().GetEditor()->GetCamera()->GetActorTransform();
 	
 	// 카메라의 월드 위치
 	FVector cameraWorldPos = CameraTransform.GetPosition();

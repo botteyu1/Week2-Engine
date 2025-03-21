@@ -14,7 +14,7 @@ class AActor : public UObject
 {
 	DECLARE_CLASS(AActor, UObject)
 
-	friend class FEditorManager;
+	friend class UEditorManager;
 public:
 	AActor();
 	virtual ~AActor() override = default;

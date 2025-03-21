@@ -8,7 +8,7 @@
 #include "Resource/Mesh.h"
 #include "Resource/DirectResource/BlendState.h"
 #include "Resource/DirectResource/Vertexbuffer.h"
-#include "Static/FEditorManager.h"
+#include "Static/EditorManager.h"
 
 
 UPrimitiveComponent::UPrimitiveComponent()
@@ -79,7 +79,7 @@ void UPrimitiveComponent::Render()
 	
 	uint32 ID = GetUUID();
 
-	FVector4 UUIDCOlor = FEditorManager::EncodeUUID(ID);
+	FVector4 UUIDCOlor = UEditorManager::EncodeUUID(ID);
 
 	FConstantsComponentData& Data = GetConstantsComponentData();
 

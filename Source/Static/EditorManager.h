@@ -8,7 +8,7 @@ class ACamera;
 class AActor;
 class AGizmoActor;
 
-class FEditorManager : public TSingleton<FEditorManager>
+class UEditorManager
 {
 	friend class URenderer;
 	friend class FDevice;;

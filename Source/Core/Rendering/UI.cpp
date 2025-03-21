@@ -16,7 +16,7 @@
 #include "Object/Actor/SpotLight.h"
 #include "Object/Light/SpotLightComponent.h"
 #include "Object/World/World.h"
-#include "Static/FEditorManager.h"
+#include "Static/EditorManager.h"
 #include "Static/FUUIDBillBoard.h"
 // #include "FDevice.h"
 // #include "FViewMode.h"
@@ -36,7 +36,7 @@
 // #include "Object/Actor/SpotLight.h"
 // #include "Object/Light/SpotLightComponent.h"
 // #include "Object/World/World.h"
-// #include "Static/FEditorManager.h"
+// #include "Static/UEditorManager.h"
 // #include "Static/FUUIDBillBoard.h"
 
 
@@ -250,7 +250,7 @@ void UI::RenderCameraSettings() const
 {
     ImGui::Text("Camera");
 
-    ACamera* Camera = FEditorManager::Get().GetCamera();
+    ACamera* Camera = UEngine::Get().GetEditor()->GetCamera();
 
     bool IsOrthogonal;
     if (Camera->ProjectionMode == ECameraProjectionMode::Orthographic)
@@ -336,9 +336,9 @@ void UI::RenderCameraSettings() const
     ImGui::Text("Camera GetForward(): (%.2f %.2f %.2f)", Forward.X, Forward.Y, Forward.Z);
     ImGui::Text("Camera GetUp(): (%.2f %.2f %.2f)", Up.X, Up.Y, Up.Z);
     ImGui::Text("Camera GetRight(): (%.2f %.2f %.2f)", Right.X, Right.Y, Right.Z);
-	ImGui::Text("MouseLeftDown: %s", APlayerInput::Get().GetKeyDown(EKeyCode::LButton) ? "True" : "False");
-	ImGui::Text("MousePress : %s", APlayerInput::Get().GetKeyPress(EKeyCode::LButton) ? "True" : "False");
-	ImGui::Text("MosueLeftUp: %s", APlayerInput::Get().GetKeyUp(EKeyCode::LButton) ? "True" : "False");
+	ImGui::Text("MouseLeftDown: %s", UEngine::Get().GetInput()->GetKeyDown(EKeyCode::LButton) ? "True" : "False");
+	ImGui::Text("MousePress : %s", UEngine::Get().GetInput()->GetKeyPress(EKeyCode::LButton) ? "True" : "False");
+	ImGui::Text("MosueLeftUp: %s", UEngine::Get().GetInput()->GetKeyUp(EKeyCode::LButton) ? "True" : "False");
 	ImGui::Separator();
 }
 
@@ -355,7 +355,7 @@ void UI::RenderPropertyWindow() const
         ImGui::SetWindowSize(ResizeToScreen(Window->Size));
     }
     
-    AActor* selectedActor = FEditorManager::Get().GetSelectedActor();
+    AActor* selectedActor = UEngine::Get().GetEditor()->GetSelectedActor();
     if (selectedActor != nullptr)
     {
         FTransform selectedTransform = selectedActor->GetActorTransform();
@@ -383,9 +383,9 @@ void UI::RenderPropertyWindow() const
             selectedTransform.SetScale(scale[0], scale[1], scale[2]);
             selectedActor->SetActorTransform(selectedTransform);
         }
-		/*if (FEditorManager::Get().GetGizmoHandle() != nullptr)
+		/*if (UEditorManager::Get().GetGizmoHandle() != nullptr)
 		{
-			AGizmoHandle* Gizmo = FEditorManager::Get().GetGizmoHandle();
+			AGizmoHandle* Gizmo = UEditorManager::Get().GetGizmoHandle();
             if(Gizmo->GetGizmoType() == EGizmoType::Translate)
 			{
 				ImGui::Text("GizmoType: Translate");
@@ -522,7 +522,7 @@ void UI::RenderSceneManager()
 				//if (CurActor != nullptr)
 					//CurActor->IsHighlightValue = false;
 				CurActor = Actor;
-				FEditorManager::Get().SelectActor(CurActor);
+				UEngine::Get().GetEditor()->SelectActor(CurActor);
 				FUUIDBillBoard::Get().SetTarget(CurActor);
 			}
 		}

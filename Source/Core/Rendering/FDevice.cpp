@@ -2,7 +2,7 @@
 
 #include "DirectXTK/SimpleMath.h"
 #include <Debug/DebugConsole.h>
-#include "Static/FEditorManager.h"
+#include "Core/Engine.h"
 #include "Resource/Texture.h"
 
 void FDevice::Init(HWND _hwnd)
@@ -254,7 +254,7 @@ void FDevice::Clear() const
 	FDevice::Get().GetDeviceContext()->ClearDepthStencilView(DepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 	//UUID 텍스쳐 초기화
-	FDevice::Get().GetDeviceContext()->ClearRenderTargetView(FEditorManager::Get().UUIDTexture->GetRTV(), PickingClearColor);
+	FDevice::Get().GetDeviceContext()->ClearRenderTargetView(UEngine::Get().GetEditor()->UUIDTexture->GetRTV(), PickingClearColor);
 
 	//후처리 뎁스텍스쳐 초기화
 	FDevice::Get().GetDeviceContext()->ClearDepthStencilView(PickingDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
@@ -268,7 +268,7 @@ void FDevice::SetRenderTarget() const
 	///////////////////////
 	///일단 임시로 여기서 UUID 픽킹 텍스쳐 바인딩
 
-	ID3D11RenderTargetView* RTV = FEditorManager::Get().UUIDTexture->GetRTV();
+	ID3D11RenderTargetView* RTV = UEngine::Get().GetEditor()->UUIDTexture->GetRTV();
 	// 렌더 타겟 바인딩
 	ID3D11RenderTargetView* RTVs[2] = { FrameBufferRTV, RTV };
 	FDevice::Get().GetDeviceContext()->OMSetRenderTargets(2, RTVs, DepthStencilView);
@@ -279,7 +279,7 @@ void FDevice::SetRenderTarget() const
 void FDevice::PickingPrepare() const
 {
 
-	ID3D11RenderTargetView* RTV = FEditorManager::Get().UUIDTexture->GetRTV();
+	ID3D11RenderTargetView* RTV = UEngine::Get().GetEditor()->UUIDTexture->GetRTV();
 	// 렌더 타겟 바인딩
 	ID3D11RenderTargetView* RTVs[2] = { FrameBufferRTV, RTV };
 

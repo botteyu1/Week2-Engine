@@ -141,9 +141,6 @@
     <ClCompile Include="Source\Object\Actor\Picker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Static\FEditorManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Core\UObject\Object.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -217,9 +214,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\ThirdParty\ImGui\include\ImGui\imgui_widgets.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\FontAtlas.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Core\Math\Rotator.cpp">
@@ -321,9 +315,6 @@
     <ClCompile Include="Source\Resource\DirectResource\Rasterizer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="WorldGrid.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Resource\Material.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -361,6 +352,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Object\Actor\SpotLight.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Core\Rendering\FontAtlas.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Object\Actor\WorldGrid.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Static\EditorManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -484,9 +484,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Core\EngineTypes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Static\FEditorManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Object\Assets\Asset.h">
@@ -687,9 +684,6 @@
     <ClInclude Include="Source\ThirdParty\SimpleJSON\include\SimpleJSON\Json.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\FontAtlas.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Core\Math\Rotator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -736,9 +730,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Resource\DirectResource\Rasterizer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="WorldGrid.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Core\Delegates\Delegate.h">
@@ -789,6 +780,15 @@
     <ClInclude Include="Source\Object\Actor\SpotLight.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Core\Rendering\FontAtlas.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Object\Actor\WorldGrid.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Static\EditorManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
@@ -810,6 +810,6 @@
     <Text Include="Pretendard_Kor.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Natvis Include="t0.natvis" />
+    <Natvis Include="JungleEngine.natvis" />
   </ItemGroup>
 </Project>

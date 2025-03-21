@@ -198,6 +198,7 @@
     <ClCompile Include="Source\Resource\Mesh.cpp" />
     <ClCompile Include="Source\Resource\RenderResourceCollection.cpp" />
     <ClCompile Include="Source\Resource\Texture.cpp" />
+    <ClCompile Include="Source\Static\EditorManager.cpp" />
     <ClCompile Include="Source\Static\FUUIDBillBoard.cpp" />
     <ClCompile Include="Source\Core\Math\Rotator.cpp" />
     <ClCompile Include="Source\Core\Config\ConfigManager.cpp" />
@@ -330,6 +331,7 @@
     <ClInclude Include="Source\Resource\Mesh.h" />
     <ClInclude Include="Source\Resource\RenderResourceCollection.h" />
     <ClInclude Include="Source\Resource\Texture.h" />
+    <ClInclude Include="Source\Static\EditorManager.h" />
     <ClInclude Include="Source\Static\FUUIDBillBoard.h" />
     <ClInclude Include="Source\Core\Math\Rotator.h" />
     <ClInclude Include="Source\Core\Config\ConfigManager.h" />
@@ -396,12 +398,10 @@
     <ClInclude Include="Source\Object\Gizmo\GizmoHandle.h" />
     <ClInclude Include="Source\Core\Container\CString.h" />
     <ClInclude Include="Source\Object\Actor\Picker.h" />
-    <ClCompile Include="Source\Static\FEditorManager.cpp" />
     <ClInclude Include="Source\Object\Actor\Arrow.h" />
     <ClInclude Include="Source\Core\Input\PlayerController.h" />
     <ClInclude Include="Source\Core\Input\PlayerInput.h" />
     <ClInclude Include="Source\Core\EngineTypes.h" />
-    <ClInclude Include="Source\Static\FEditorManager.h" />
     <ClInclude Include="Source\Object\USceneComponent.h" />
     <ClInclude Include="Source\Object\Actor\Sphere.h" />
     <ClInclude Include="Source\ThirdParty\DirectXTK\include\DirectXTK\Audio.h" />
