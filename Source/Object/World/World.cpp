@@ -27,6 +27,8 @@
 
 #include "Debug/DebugDrawManager.h"
 
+#define ABS(x) ((x) < 0 ? -(x) : (x))
+
 
 void UWorld::InitWorld()
 {
@@ -331,77 +333,92 @@ void UWorld::RayCasting(const FVector& MouseNDCPos)
 
 	for (auto& Actor : Actors)
 	{
-		UPrimitiveComponent* PrimitiveComponent = Actor->GetComponentByClass<UPrimitiveComponent>();
-		if (PrimitiveComponent == nullptr)
-		{
-			continue;
-		}
-
-		FMatrix primWorldMat = PrimitiveComponent->GetComponentTransform().GetMatrix();
-		FRay localRay = FRay::TransformRayToLocal(worldRay, primWorldMat.Inverse());
-
-		std::shared_ptr<FMesh> CurMesh = PrimitiveComponent->GetMesh();
-		CurMesh->GetVertexBuffer();
-
 		float outT = 0.0f;
 		bool bHit = false;
 
-		switch (PrimitiveComponent->GetType())
-		{
-		case EPrimitiveType::EPT_Cube:
-		{
-			bHit = FRayCast::IntersectRayAABB(localRay, FVector(-0.5f, -0.5f, -0.5f), FVector(0.5f, 0.5f, 0.5f), outT);
-			if (bHit)
-			{
-				UE_LOG("Cube Hit");
+
+		TSet<UActorComponent*> components = Actor->GetComponents();
+		for (auto component : components) {
+			if (component->IsA<UPrimitiveComponent>()) {
+				auto PrimitiveComponent = dynamic_cast<UPrimitiveComponent*>(component);
+				if (PrimitiveComponent != nullptr) {
+
+					FTransform primTransform = PrimitiveComponent->GetComponentTransform();
+					FMatrix primWorldMat = primTransform.GetMatrix();
+
+
+					std::shared_ptr<FMesh> CurMesh = PrimitiveComponent->GetMesh();
+					FVector vertexMin = CurMesh->GetVertexBuffer().get()->GetMin();
+					FVector vertexMax = CurMesh->GetVertexBuffer().get()->GetMax();
+
+
+					switch (PrimitiveComponent->GetType())
+					{
+					case EPrimitiveType::EPT_Sphere:
+					{
+						if (ABS(primTransform.GetScale().X - primTransform.GetScale().Y)
+							+ ABS(primTransform.GetScale().Y - primTransform.GetScale().Z)
+							+ ABS(primTransform.GetScale().X - primTransform.GetScale().Z)
+							< 0.1f) {
+							bHit = FRayCast::InsertSectRaySphere(worldRay, primTransform.GetPosition(), 1.0f * primTransform.GetScale().X, outT);
+							if (bHit)
+							{
+								UE_LOG("%s : Sphere Hit", *Actor->GetFName().ToString());
+							}
+							break;
+						}
+						else {
+							bHit = FRayCast::IntersectRayAABB(worldRay,
+								primTransform.GetPosition() + primTransform.GetScale() * vertexMin,
+								primTransform.GetPosition() + primTransform.GetScale() * vertexMax,
+								outT);
+
+							if (bHit)
+							{
+								UE_LOG("%s : AABB Hit form Vertex Min Max", *Actor->GetFName().ToString());
+							}
+							break;
+
+							break;
+						}
+
+					}
+
+					default:
+					{
+						bHit = FRayCast::IntersectRayAABB(worldRay,
+							primTransform.GetPosition() + primTransform.GetScale() * vertexMin,
+							primTransform.GetPosition() + primTransform.GetScale() * vertexMax,
+							outT);
+
+						if (bHit)
+						{
+							UE_LOG("%s : AABB Hit form Vertex Min Max", *Actor->GetFName().ToString());
+						}
+						break;
+					}
+
+					}
+				}
 			}
-			break;
 		}
-		case EPrimitiveType::EPT_Sphere:
-		{
-			bHit = FRayCast::InsertSectRaySphere(localRay, PrimitiveComponent->GetActorPosition(), 0.5f, outT);
-			if (bHit)
-			{
-				UE_LOG("Sphere Hit");
-			}
-			break;
-		}
-		case EPrimitiveType::EPT_Cylinder:
-		{
-			bHit = FRayCast::IntersectRayAABB(localRay, FVector(0, -0.5f, 0), FVector(0, 0.5f, 0), outT);
-			if (bHit)
-			{
-				UE_LOG("Cylinder Hit");
-			}
-			break;
-		}
-		case EPrimitiveType::EPT_Cone:
-		{
-			break;
-		}
-		case EPrimitiveType::EPT_Triangle:
-		{
-			break; 
-		}
-		default:
-			break;
-		}
-		// 4. 교차가 발생했다면, 월드 좌표에서의 거리를 비교하여 최소 거리를 가진 액터 선택
-		if (bHit)
+
+		if (bHit) 
 		{
 			float distance = worldRay.GetPoint(outT).Length();
-			if (distance < minDistance)
+			if (distance < minDistance) 
 			{
 				minDistance = distance;
 				SelectedActor = Actor;
-				FUUIDBillBoard::Get().SetTarget(SelectedActor);
 			}
 		}
-	}
 
-	if (SelectedActor)
-	{
-		FEditorManager::Get().SelectActor(SelectedActor);
+
+		if (SelectedActor)
+		{
+			FEditorManager::Get().SelectActor(SelectedActor);
+			FUUIDBillBoard::Get().SetTarget(SelectedActor);
+		}
 	}
 }
 
