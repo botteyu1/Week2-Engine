@@ -147,6 +147,19 @@ void AActor::UnPick()
 	}	
 }
 
+void AActor::SetTickFunctionEnable(bool bInEnabled)
+{
+	if (bInEnabled == true)
+	{
+		TickState = ETickState::Enabled;
+	}
+	else
+	{
+
+		TickState = ETickState::Disabled;
+	}
+}
+
 void AActor::GetActorBounds(bool bOnlyCollidingComponents, FVector& Origin, FVector& BoxExtent, bool bIncludeFromChildActors) const
 {
 	const FBox Bounds = GetComponentsBoundingBox(bOnlyCollidingComponents, bIncludeFromChildActors);

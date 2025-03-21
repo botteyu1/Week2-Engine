@@ -23,11 +23,11 @@ static std::shared_ptr<FIndexBuffer> Create(const FString&  _Name, const TArray<
 		Res->bIsDynamic = _bIsDynamic;
 		if (Res->bIsDynamic == false)
 		{
-			Res->ResCreate(&_Data[0], _Data.Num());
+			Res->ResCreate(_Data.GetData(), _Data.Len());
 		}
 		else
 		{
-			Res->ResCreateDynamic(&_Data[0], _Data.Num());
+			Res->ResCreateDynamic(_Data.GetData(), _Data.Len());
 		}
 		return Res;
 	}

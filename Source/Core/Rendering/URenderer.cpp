@@ -36,6 +36,8 @@ void URenderer::Create(HWND hWindow)
 	FLineBatchManager::Get().Create(); // require device
 	FUUIDBillBoard::Get().Create(); // require device
 
+	FLineBatchManager::Get().Create();
+
 	//LoadTexture(L"font_atlas.png");
 	LoadTexture(L"Pretendard_Kor.png");
 }
