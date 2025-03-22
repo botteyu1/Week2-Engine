@@ -133,83 +133,83 @@ void UAssetManager::ObjParsing(const FString& filePath, TArray<FVertexSimple>& o
 
 	// 파일 로드
 	if (objFile)
-	{
-		std::string line;
-		while (std::getline(objFile, line)) {
-			if (line.empty()) continue;
+		UE_LOG("Failed Parsing %s", filePath.GetData());
 
-			std::istringstream iss(line);
-			std::string type;
-			iss >> type;
+	std::string line;
+	while (std::getline(objFile, line)) {
+		if (line.empty()) continue;
 
-			if (type == "#") continue;
-			else if (type == "v") {
-				float x, y, z;
-				iss >> x >> y >> z;
-				vertex.Add(FVector(x, y, z));
-			}
-			else if (type == "vt") {
-				float u, v;
-				iss >> u >> v;
-				UV.Add({ u, 1.0f - v });
-			}
-			else if (type == "vn") {
-				float nx, ny, nz;
-				iss >> nx >> ny >> nz;
-				normals.Add(FVector(nx, ny, nz));
-			}
-			else if (type == "f") {
-				std::replace(line.begin(), line.end(), '/', ' ');
-				std::istringstream faceStream(line);
-				std::string data;
-				faceStream >> data; // "f" 읽기
+		std::istringstream iss(line);
+		std::string type;
+		iss >> type;
 
-				for (int i = 0; i < 3; i++) {
-					int iv, it, in;
-					faceStream >> iv >> it >> in;
-					faceData.Add(TPair<TPair<int, int>, int>(TPair<int, int>(iv - 1, it - 1), in - 1)); // OBJ 파일 인덱스는 1부터 시작하므로 -1 처리
-				}
+		if (type == "#") continue;
+		else if (type == "v") {
+			float x, y, z;
+			iss >> x >> y >> z;
+			vertex.Add(FVector(x, y, z));
+		}
+		else if (type == "vt") {
+			float u, v;
+			iss >> u >> v;
+			UV.Add({ u, 1.0f - v });
+		}
+		else if (type == "vn") {
+			float nx, ny, nz;
+			iss >> nx >> ny >> nz;
+			normals.Add(FVector(nx, ny, nz));
+		}
+		else if (type == "f") {
+			std::replace(line.begin(), line.end(), '/', ' ');
+			std::istringstream faceStream(line);
+			std::string data;
+			faceStream >> data; // "f" 읽기
+
+			for (int i = 0; i < 3; i++) {
+				int iv, it, in;
+				faceStream >> iv >> it >> in;
+				faceData.Add(TPair<TPair<int, int>, int>(TPair<int, int>(iv - 1, it - 1), in - 1)); // OBJ 파일 인덱스는 1부터 시작하므로 -1 처리
 			}
 		}
-
-		TMap<VertexKey, int> vertexMap; // Key: (vertexIdx * 1000000 + uvIdx * 1000 + normalIdx), Value: New Vertex Index
-		TArray<FVertexSimple> newVertices;
-		TArray<uint32> newIndices;
-
-		for (const auto& face : faceData) {
-			int vIdx = face.Key.Key;
-			int uvIdx = face.Key.Value;
-			int nIdx = face.Value;
-
-			// 키 생성 (단순한 정수 연산으로 유니크한 값 생성)
-			//int key = vIdx * 1000000 + uvIdx * 1000 + nIdx;
-
-			VertexKey vertexKey = { vIdx, uvIdx, nIdx };
-
-			if (!vertexMap.Contains(vertexKey)) {
-				// 새로운 정점 추가
-				int newIndex = newVertices.Num();
-				FVector pos = vertex[vIdx];
-				FVector norm = normals[nIdx];
-				auto [u, v] = UV[uvIdx];
-
-				FVertexSimple simpleVertex(pos.X - 0.5f, pos.Y - 0.5f, pos.Z -0.5f, 1.0f, 0.0f, 0.0f, 1.0f, u, v, norm.X, norm.Y, norm.Z);
-				newVertices.Add(simpleVertex);
-				vertexMap.Add(vertexKey, newIndex);
-			}
-
-			// 인덱스 추가
-			newIndices.Add(vertexMap[vertexKey]);
-		}
-
-		// 최종 결과 저장
-		outVertex = newVertices;
-		outIndex = newIndices;
-
-		for (auto& vertex : outVertex) {
-			UE_LOG("%f, %f, %f, %f, %f", vertex.X, vertex.Y, vertex.Z, vertex.U, vertex.V);
-		}
-
-		UE_LOG("Parsing complete: Total vertices = %d, Total indices = %d", outVertex.Num(), outIndex.Num());
 	}
+
+	TMap<VertexKey, int> vertexMap; // Key: (vertexIdx * 1000000 + uvIdx * 1000 + normalIdx), Value: New Vertex Index
+	TArray<FVertexSimple> newVertices;
+	TArray<uint32> newIndices;
+
+	for (const auto& face : faceData) {
+		int vIdx = face.Key.Key;
+		int uvIdx = face.Key.Value;
+		int nIdx = face.Value;
+
+		// 키 생성 (단순한 정수 연산으로 유니크한 값 생성)
+		//int key = vIdx * 1000000 + uvIdx * 1000 + nIdx;
+
+		VertexKey vertexKey = { vIdx, uvIdx, nIdx };
+
+		if (!vertexMap.Contains(vertexKey)) {
+			// 새로운 정점 추가
+			int newIndex = newVertices.Num();
+			FVector pos = vertex[vIdx];
+			FVector norm = normals[nIdx];
+			auto [u, v] = UV[uvIdx];
+
+			FVertexSimple simpleVertex(pos.X - 0.5f, pos.Y - 0.5f, pos.Z -0.5f, 1.0f, 0.0f, 0.0f, 1.0f, u, v, norm.X, norm.Y, norm.Z);
+			newVertices.Add(simpleVertex);
+			vertexMap.Add(vertexKey, newIndex);
+		}
+
+		// 인덱스 추가
+		newIndices.Add(vertexMap[vertexKey]);
+	}
+
+	// 최종 결과 저장
+	outVertex = newVertices;
+	outIndex = newIndices;
+
+	for (auto& vertex : outVertex) {
+		UE_LOG("%f, %f, %f, %f, %f", vertex.X, vertex.Y, vertex.Z, vertex.U, vertex.V);
+	}
+
+	UE_LOG("Parsing complete: Total vertices = %d, Total indices = %d", outVertex.Num(), outIndex.Num());
 }

@@ -155,11 +155,11 @@ void FDevice::InitResource()
 	
 	{
 		// TextureSRV
-		std::shared_ptr<UTexture> TextureImage = UTexture::Load("font_atlas.dds", "SubUVTexture");
-		TextureImage->CreateShaderResourceView();
+		//std::shared_ptr<UTexture> TextureImage = UTexture::Load("font_atlas.dds", "SubUVTexture");
+		//TextureImage->CreateShaderResourceView();
 
-		std::shared_ptr<UTexture> DiceImage = UTexture::Load("Dice.png", "DiceTexture");
-		DiceImage->CreateShaderResourceView();
+		//std::shared_ptr<UTexture> DiceImage = UTexture::Load("Dice.png", "DiceTexture");
+		//DiceImage->CreateShaderResourceView();
 	}
 
 	{
@@ -437,10 +437,10 @@ void FDevice::InitResource()
 		TArray<FVertexSimple> vertices;
 		TArray<uint32> indices;
 
-		UAssetManager::Get().ObjParsing("cube-tex.obj", vertices, indices);
-		UVertexBuffer::Create(FString(TEXT("Dice")), vertices);
-		UIndexBuffer::Create(FString(TEXT("Dice")), indices);
+		//UAssetManager::Get().ObjParsing("cube-tex.obj", vertices, indices);
+		//UVertexBuffer::Create(FString(TEXT("Dice")), vertices, IL);
+		//UIndexBuffer::Create(FString(TEXT("Dice")), indices);
 
-		UMesh::Create(TEXT("Dice"));
+		//UMesh::Create(TEXT("Dice"));
 	}
 }
