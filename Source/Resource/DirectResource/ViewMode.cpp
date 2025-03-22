@@ -2,6 +2,9 @@
 #include "Core/Engine.h"
 #include "Core/Rendering/URenderer.h"
 #include "Resource/RenderResourceCollection.h"
+#include "Resource/DirectResource/Rasterizer.h"
+#include "Resource/DirectResource/VertexShader.h"
+#include "Resource/DirectResource/PixelShader.h"
 
 void FViewModeManager::Initialize()
 {

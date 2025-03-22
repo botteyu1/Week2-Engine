@@ -2,9 +2,10 @@
 #define _TCHAR_DEFINED
 #include "Core/HAL/PlatformType.h"
 #include "Core/Container/Map.h"
-#include "Resource/DirectResource/Rasterizer.h"
-#include "Resource/DirectResource/VertexShader.h"
-#include "Resource/DirectResource/PixelShader.h"
+
+class URasterizer;
+class UVertexShader;
+class UPixelShader;
 
 enum class EViewModeIndex : uint32
 {

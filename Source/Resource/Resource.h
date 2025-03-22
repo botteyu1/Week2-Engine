@@ -1,14 +1,13 @@
 #pragma once
 #include <mutex>
+#include <memory>
 
 #include "Core/Container/String.h"
 #include "Core/Container/Map.h"
-#include "Core/UObject/Object.h"
-#include "Object/ObjectFactory.h"
-#include <memory>
-#include "Core/UObject/Class.h"
 #include "Core/HAL/PlatformMemory.h"
-
+#include "Core/UObject/Object.h"
+#include "Core/UObject/Class.h"
+#include "Object/ObjectFactory.h"
 
 template <typename ResourcesType>
 class UResource : public UObject

@@ -13,6 +13,7 @@
 #include "Static/FUUIDBillBoard.h"
 #include "Static/FLineBatchManager.h"
 
+#include "Resource/DirectResource/ViewMode.h"
 #include "Resource/DirectResource/Vertexbuffer.h"
 #include "Resource/DirectResource/PixelShader.h"
 #include "Resource/DirectResource/VertexShader.h"
@@ -21,6 +22,7 @@
 #include "Resource/DirectResource/BlendState.h"
 #include "Resource/DirectResource/Rasterizer.h"
 #include "Resource/DirectResource/ShaderResourceBinding.h"
+
 
 void URenderer::Create(HWND hWindow, UWorld* world)
 {

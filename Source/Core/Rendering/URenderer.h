@@ -1,19 +1,16 @@
 #pragma once
-
 #define _TCHAR_DEFINED  // TCHAR 재정의 에러 때문
 #include <d3d11.h>
 
 #include "Core/Math/Vector.h"
-#include "Resource/DirectResource/ViewMode.h"
-#include "Static/FLineBatchManager.h"
-#include "Static/FUUIDBillBoard.h"
-
 
 struct FVertexSimple;
 struct FVector4;
 enum class ERenderFlags;
-class FUUIDBillBoard;
 
+class FViewModeManager;
+class FLineBatchManager;
+class FUUIDBillBoard;
 class ACamera;
 class UWorld;
 

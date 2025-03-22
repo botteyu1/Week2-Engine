@@ -233,7 +233,9 @@
     <ClCompile Include="Source\Core\HAL\PlatformMemory.cpp" />
     <ClCompile Include="Source\Core\Math\Matrix.cpp" />
     <ClCompile Include="Source\Core\Math\Vector.cpp" />
-    <ClCompile Include="Source\Object\ObjectFactory.cpp" />
+    <ClCompile Include="Source\Object\ObjectFactory.cpp">
+      <ShowIncludes Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ShowIncludes>
+    </ClCompile>
     <ClCompile Include="Source\Primitive\UGeometryGenerator.cpp" />
     <ClCompile Include="Source\Resource\DirectResource\BlendState.cpp" />
     <ClCompile Include="Source\Resource\DirectResource\DepthStencilState.cpp" />
