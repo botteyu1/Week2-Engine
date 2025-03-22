@@ -133,7 +133,12 @@ void FLineBatchManager::Create()
 {
 
 	
-	UVertexBuffer::Create("LineVertexBuffer", VertexBuffer , true);
+	UVertexBuffer::Create(
+		"LineVertexBuffer", 
+		VertexBuffer, 
+		UInputLayout::Find("Simple_IL"),
+		true
+	);
 	UIndexBuffer::Create("LineIndexBuffer", IndexBuffer , true);
 	std::shared_ptr<UMesh> Mesh =  UMesh::Create("LineBatchMesh" , "LineVertexBuffer", "LineIndexBuffer", D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
 	
@@ -164,8 +169,9 @@ void FLineBatchManager::Create()
 	RenderResourceCollection = std::make_unique<FRenderResourceCollection>();
 	RenderResourceCollection->SetConstantBufferBinding("LineConstantInfo",&LineConstantInfo, 1,true,false);
 
-	RenderResourceCollection->SetMesh(Mesh);
 	RenderResourceCollection->SetMaterial(Material);
+	RenderResourceCollection->SetMesh(Mesh);
+	
 }
 
 

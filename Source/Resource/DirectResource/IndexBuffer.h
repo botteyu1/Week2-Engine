@@ -43,7 +43,7 @@ static std::shared_ptr<UIndexBuffer> Create(const FString&  _Name, const TArray<
 	{
 		IndexSize = InIndexCount;
 	}
-	
+
 private:
 	
 	void ResCreate(const void* _Data, size_t _IndexCount);

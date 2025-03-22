@@ -2,6 +2,7 @@
 #include "Core/Engine.h"
 #include "Core/Utils/Utils.h"
 #include "Core/Rendering/FDevice.h"
+#include "Resource/DirectResource/InputLayout.h"
 
 
 void UMesh::Setting(ERenderFlags renderFlags)
@@ -12,6 +13,7 @@ void UMesh::Setting(ERenderFlags renderFlags)
 		return;
 	}
 	VertexBuffer->Setting();
+	VertexBuffer->GetLayout()->Setting(renderFlags);
 
 	FDevice::Get().GetDeviceContext()->IASetPrimitiveTopology(Topology);
 

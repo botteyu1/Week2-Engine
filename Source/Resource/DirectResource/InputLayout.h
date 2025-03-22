@@ -9,7 +9,6 @@
 #include "Core/Container/Array.h"
 #include "Resource/RenderResourceCollection.h"
 
-
 class UInputLayout:
 public UResource<UInputLayout> 
 {
@@ -17,20 +16,28 @@ public:
 	UInputLayout() = default;
 	~UInputLayout() override;
 	
-	static D3D11_INPUT_ELEMENT_DESC LayoutDesc[];
+	std::vector<D3D11_INPUT_ELEMENT_DESC> LayoutDesc;
 
 
 	//인풋 레이아웃에는 INPUT_ELEMENT_DESC와 버텍스 쉐이더가 필요하나 일단 인풋 정보는 고정값
-	static std::shared_ptr<UInputLayout> Create(const FString&  _Name, std::shared_ptr<class UVertexShader> _Shader)
+	static std::shared_ptr<UInputLayout> Create(
+		const FString&  _Name, 
+		const std::vector<D3D11_INPUT_ELEMENT_DESC>& InDesc, 
+		std::shared_ptr<class UVertexShader> _Shader)
 	{
 		std::shared_ptr<UInputLayout> Res = UInputLayout::CreateRes(_Name);
-		Res->ResCreate(_Shader);
+		Res->ResCreate(InDesc, _Shader.get());
 		return Res;
 	}
 
 	void ResCreate(
-	std::shared_ptr<UVertexShader> _Shader
-);
+		const std::vector<D3D11_INPUT_ELEMENT_DESC>& InDesc,
+		UVertexShader* InShader
+	);
+	void ResCreate(
+		UVertexBuffer* InBuffer, 
+		UVertexShader* InShader
+	);
 
 	void Setting(ERenderFlags);
 	

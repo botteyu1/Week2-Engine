@@ -22,17 +22,10 @@ void FRenderResourceCollection::SetMaterial(const FString& _Name)
 void FRenderResourceCollection::SetMesh(std::shared_ptr<UMesh> _Mesh)
 {
 	Mesh = _Mesh;
-
-	if (nullptr == Mesh)
+	Layout = _Mesh->GetVertexBuffer()->GetLayout();
+	if (nullptr == Mesh.get())
 	{
 		MsgBoxAssert("존재하지 않는 매쉬를 세팅하려고 했습니다.");
-	}
-
-	if (nullptr == Layout && nullptr != Material)
-	{
-		Layout = std::make_shared<UInputLayout>();
-		
-		Layout->ResCreate(Material->GetVertexShader());
 	}
 }
 
@@ -40,16 +33,9 @@ void FRenderResourceCollection::SetMaterial(std::shared_ptr<UMaterial> _Material
 {
 	Material = _Material;
 
-
 	if (nullptr == Material)
 	{
 		MsgBoxAssert("존재하지 않는 머티리얼을 세팅하려고 했습니다.");
-	}
-
-	if (nullptr == Layout && nullptr != Mesh)
-	{
-		Layout = std::make_shared<UInputLayout>();
-		Layout->ResCreate( Material->GetVertexShader());
 	}
 }
 

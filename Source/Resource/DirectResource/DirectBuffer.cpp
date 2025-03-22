@@ -1,5 +1,10 @@
 #include "DirectBuffer.h"
 
+#include <string>
+#include "Core/Rendering/FDevice.h"
+
+#include "Debug/DebugConsole.h"
+
 FDirectBuffer::FDirectBuffer()
 {
 }

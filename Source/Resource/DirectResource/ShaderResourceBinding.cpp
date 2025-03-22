@@ -12,7 +12,7 @@ void FConstantBufferBinding::Setting()
 	//ShaderType Type = ParentShader->GetShaderType();
 
 	Res->ChangeData(CPUDataPtr, DataSize);
-	
+
 	if (bIsUseVertexShader == true)
 	{
 		Res->VSSetting(BindPoint);

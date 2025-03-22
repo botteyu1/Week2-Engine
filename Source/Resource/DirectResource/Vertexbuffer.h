@@ -9,14 +9,19 @@
 #include "Core/Container/Array.h"
 #include "Core/Math/Vector.h"
 
-
+class UInputLayout;
 class UVertexBuffer :
 	public UResource<UVertexBuffer> , public FDirectBuffer
 {
 public:
 
-	template<typename VertexType>																//동적으로 버텍스버퍼를 업데이트 할지 예 :라인 배치
-	static std::shared_ptr<UVertexBuffer> Create(const FString& _Name, const TArray<VertexType>& _Data, bool _bIsDynamic = false)
+	template<typename VertexType>
+	static std::shared_ptr<UVertexBuffer> Create(
+		const FString& _Name, 
+		const TArray<VertexType>& _Data, 
+		std::shared_ptr<UInputLayout> InLayout,
+		bool _bIsDynamic = false
+	)
 	{
 		std::shared_ptr<UVertexBuffer> Res = UVertexBuffer::CreateRes(_Name);
 	
@@ -26,6 +31,7 @@ public:
 			Res->Max = FVector::Max(Res->Max, FVector(Vertex.X, Vertex.Y, Vertex.Z));
 		}
 
+		Res->InputLayout = InLayout;
 		Res->bIsDynamic = _bIsDynamic;
 		if (Res->bIsDynamic == false)
 		{
@@ -53,12 +59,13 @@ public:
 	
 	void SetVertexCount(uint32 InVertexCount) { VertexCount = InVertexCount; }
 
+	inline std::shared_ptr<UInputLayout> GetLayout() { return InputLayout; }
 private:
 	
 	void ResCreate(const void* _Data, size_t _VertexSize, size_t _VertexCount);
 	void ResCreateDynamic(const void* _Data, size_t _VertexSize, size_t _VertexCount);
 
-
+	std::shared_ptr<UInputLayout> InputLayout;
 	UINT VertexSize = 0;
 	UINT VertexCount = 0;
 	UINT Offset = 0;

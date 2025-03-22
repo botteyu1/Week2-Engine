@@ -39,7 +39,7 @@ void UIndexBuffer::ResCreate(const void* _Data, size_t _IndexCount)
 	IndexCount = static_cast<UINT>(_IndexCount);
 
 	BufferInfo.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	BufferInfo.ByteWidth = static_cast<UINT>(IndexSize * IndexCount);
+	BufferInfo.ByteWidth = (static_cast<UINT>(IndexSize * IndexCount) + 0xf) & 0xfffffff0;
 	BufferInfo.CPUAccessFlags = 0;
 	BufferInfo.Usage = D3D11_USAGE_DEFAULT;
 
@@ -61,7 +61,7 @@ void UIndexBuffer::ResCreateDynamic(const void* _Data, size_t _IndexCount)
 	IndexCount = static_cast<UINT>(_IndexCount);
 
 	BufferInfo.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	BufferInfo.ByteWidth = static_cast<UINT>(IndexSize * IndexCount);
+	BufferInfo.ByteWidth = (static_cast<UINT>(IndexSize * IndexCount) + 0xf) & 0xfffffff0;
 	BufferInfo.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	BufferInfo.Usage = D3D11_USAGE_DYNAMIC;
 

@@ -31,7 +31,12 @@ UDebugDrawManager::~UDebugDrawManager()
 
 void UDebugDrawManager::Initialize()
 {
-	UVertexBuffer::Create(TEXT("DebugVertexBuffer"), VertexBuffer, true);
+	UVertexBuffer::Create(
+		TEXT("DebugVertexBuffer"), 
+		VertexBuffer, 
+		UInputLayout::Find("Simple_IL"), 
+		true
+	);
 	UIndexBuffer::Create(TEXT("DebugIndexBuffer"), IndexBuffer, true);
 	ClearDebug();
 

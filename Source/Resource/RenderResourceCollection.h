@@ -31,7 +31,6 @@ public:
 
 	void SetMesh(const FString& _Name);
 	void SetMaterial(const FString& _Name);
-
 	
 	void SetMesh(std::shared_ptr<class UMesh> _Mesh);
 	void SetMaterial(std::shared_ptr<class UMaterial> _Material);
