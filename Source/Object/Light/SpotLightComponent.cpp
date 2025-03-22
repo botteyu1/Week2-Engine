@@ -82,7 +82,7 @@ void USpotLightComponent::Render()
 		FMatrix ModelMatrix;
 		ModelMatrix = GetWorldTransform().GetMatrix();
 
-		const FMatrix& ViewProjectionMatrix = UEngine::Get().GetWorld()->GetCamera()->GetViewProjectionMatrix();
+		const FMatrix& ViewProjectionMatrix = UEngine::Get().GetWorld()->GetCamera(EViewPortSplitter::TopLeft)->GetViewProjectionMatrix();
 
 		FMatrix MVP = FMatrix::Transpose(
 			ModelMatrix *

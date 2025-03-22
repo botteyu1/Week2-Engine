@@ -14,6 +14,15 @@ class AActor;
 
 class UPrimitiveComponent;
 
+
+enum class EViewPortSplitter
+{
+	TopLeft,
+	TopRight,
+	BottomLeft,
+	BottomRight
+};
+
 class UWorld :public UObject
 {
 	DECLARE_CLASS(UWorld, UObject)
@@ -53,8 +62,8 @@ public:
 	void AddRenderComponent(UPrimitiveComponent* Component) { RenderComponents.Add(Component); }
 	void RemoveRenderComponent(UPrimitiveComponent* Component) { RenderComponents.Remove(Component); }
 
-	inline ACamera* GetCamera() const { return Camera; }
-	void SetCamera(ACamera* NewCamera) { Camera = NewCamera; }
+	inline ACamera* GetCamera(EViewPortSplitter InType) const { return CameraMap[InType]; }
+	void SetCamera(EViewPortSplitter InType, ACamera* NewCamera) { CameraMap[InType] = NewCamera; }
 
 	void RayCasting(const FVector& MouseNDCPos);
 
@@ -69,7 +78,8 @@ public:
 	float GetGridSize() const { return GridSize; }
 private:
 	UWorldInfo GetWorldInfo() const;
-	ACamera* Camera = nullptr;
+	//ACamera* Camera = nullptr;
+	TMap<EViewPortSplitter, ACamera*> CameraMap;
 
 	float GridSize = 100.0f;
 
@@ -87,6 +97,9 @@ protected:
 // Editor Only
 public:
 	//TArray<class ULayer*> Layers;
+
+
+
 
 	TArray<AActor*> ActiveGroupActors;
 // End Editor Only

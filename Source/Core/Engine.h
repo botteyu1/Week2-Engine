@@ -13,6 +13,15 @@
 class UObject;
 class UWorld;
 
+//enum class EViewSplitter
+//{
+//	Left,
+//	Right,
+//	Top,
+//	Bottom
+//};
+
+
 enum class EScreenMode : uint8
 {
     Windowed,    // 창 모드
@@ -105,6 +114,15 @@ private:
 
 private:
     UWorld* World = nullptr;
+
+
+	// 임시로 여기에 UI로 옮겨야 되지 않을까..
+	//std::shared_ptr<class SSplitterH> HorizontalSplitter;
+
+	//std::shared_ptr<class FViewport> LeftViewport;
+	//std::shared_ptr<FViewport> RightViewport;
+
+	//TMap<EViewSplitter, std::shared_ptr<FViewport>> Viewports;
 
 public:
     // TArray<std::shared_ptr<UObject>> GObjects;

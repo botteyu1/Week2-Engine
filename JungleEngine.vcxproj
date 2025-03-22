@@ -180,6 +180,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Core\Rendering\FViewport.cpp" />
+    <ClCompile Include="Source\Core\Math\Rect.cpp" />
     <ClCompile Include="Source\Core\Math\Transform.cpp" />
     <ClCompile Include="Source\Debug\DebugDrawManager.cpp" />
     <ClCompile Include="Source\Object\Actor\Dice.cpp" />
@@ -268,6 +270,7 @@
     <ClCompile Include="Source\Object\Light\LightComponent.cpp" />
     <ClCompile Include="Source\Object\Light\SpotLightComponent.cpp" />
     <ClCompile Include="Source\Object\Actor\SpotLight.cpp" />
+    <ClCompile Include="Source\Core\Rendering\Splitter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\Font_VS.hlsl">
@@ -319,6 +322,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Users\Jungle\Downloads\WavefrontOBJ-main\WavefrontOBJ-main\WavefrontOBJ.h" />
+    <ClInclude Include="Source\Core\Rendering\FViewport.h" />
+    <ClInclude Include="Source\Core\Math\Rect.h" />
     <ClInclude Include="Source\Core\Delegates\Delegate.h" />
     <ClInclude Include="Source\Core\Delegates\DelegateCombination.h" />
     <ClInclude Include="Source\Debug\DebugDrawManager.h" />
@@ -445,6 +450,7 @@
     <ClInclude Include="Source\ThirdParty\SimpleJSON\include\SimpleJSON\Json.hpp" />
     <ClCompile Include="Source\Object\SubUVComponent\UParticleSubUVComponent.cpp" />
     <ClInclude Include="Source\ThirdParty\WavefrontOBJ\WavefrontOBJ.h" />
+    <ClInclude Include="Source\Core\Rendering\Splitter.h" />
     <FxCompile Include="Shaders\SubUV_PS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>

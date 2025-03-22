@@ -105,7 +105,7 @@ void FUUIDBillBoard::Flush()
 
 void FUUIDBillBoard::CalculateModelMatrix(FMatrix& OutMatrix)
 {
-	ACamera* cam = UEngine::Get().GetWorld()->GetCamera();
+	ACamera* cam = UEngine::Get().GetWorld()->GetCamera(EViewPortSplitter::TopLeft);
 
 	FVector cameraPosition = cam->GetActorTransform().GetPosition();
 
@@ -182,7 +182,7 @@ void FUUIDBillBoard::Render()
 
 	Constants.ViewProjectionMatrix = FMatrix::Transpose(
 		ModelMatrix
-		* UEngine::Get().GetWorld()->GetCamera()->GetViewProjectionMatrix()
+		* UEngine::Get().GetWorld()->GetCamera(EViewPortSplitter::TopLeft)->GetViewProjectionMatrix()
 	);
 	UConstantBuffer::Find(ResourceName)->ChangeData(Constants);
 	UConstantBuffer::Find(ResourceName)->VSSetting(0);

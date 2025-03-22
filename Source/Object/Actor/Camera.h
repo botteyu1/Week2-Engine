@@ -2,6 +2,10 @@
 #include "Core/HAL/PlatformType.h"
 #include "Core/Interfaces/GizmoInterface.h"
 #include "Object/Actor/Actor.h"
+#include "Core/Math/Rect.h"
+#include "Core/Rendering/FViewport.h"
+
+
 
 namespace ECameraProjectionMode
 {
@@ -23,6 +27,10 @@ public:
 	virtual bool IsGizmo() override { return true; }
 	//~ End IGizmoInterface
 
+	void UpdateViewport(FRect InRect);
+	void SettingViewport();
+
+
 private:    
     float Near;
     float Far;
@@ -34,6 +42,9 @@ private:
 	FMatrix ProjectionMatrix;
 	FMatrix ViewProjectionMatrix;
 
+
+	FViewport Viewport;
+
 	float ZoomSize = 1000.f;
 public:
     const float MaxYDegree = 89.8f;
@@ -43,7 +54,8 @@ public:
     
     // 투영 타입 - Perspective, Orthographic
     ECameraProjectionMode::Type ProjectionMode;
-    // float AspectRatio;	// 카메라 비율 (이번 프로젝트에서는 사용 안할듯) 
+
+
 
 	virtual void BeginPlay() override;
 

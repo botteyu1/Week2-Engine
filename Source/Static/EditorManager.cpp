@@ -12,8 +12,8 @@
 
 void UEditorManager::Init()
 {
-	const int Width = static_cast<int>(FDevice::Get().GetViewPortInfo().Width); // require FDevice
-	const int Height = static_cast<int>(FDevice::Get().GetViewPortInfo().Height);
+	const int Width = static_cast<int>(FDevice::Get().GetFrameBufferWindowSize().X);
+	const int Height = static_cast<int>(FDevice::Get().GetFrameBufferWindowSize().Y);
 
 	D3D11_TEXTURE2D_DESC textureDesc = {};
 	textureDesc.Width = Width;
@@ -83,10 +83,6 @@ void UEditorManager::SelectActor(AActor* NewActor)
 
 }
 
-void UEditorManager::SetCamera(ACamera* NewCamera)
-{
-    Camera = NewCamera;
-}
 
 void UEditorManager::SetGizmo(AGizmoActor* InGizmo)
 {

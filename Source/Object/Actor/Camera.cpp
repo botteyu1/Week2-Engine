@@ -3,6 +3,9 @@
 #include "Core/Input/PlayerInput.h"
 #include "Core/Config/ConfigManager.h"
 #include "Static/EditorManager.h"
+#include "Core/Rendering/FViewport.h"
+#include "Core/Rendering/FDevice.h"
+
 
 
 ACamera::ACamera()
@@ -20,6 +23,17 @@ ACamera::ACamera()
     StartPos.SetPosition(FVector(-5, 0, 0));
     SetActorTransform(StartPos);
 }
+
+void ACamera::UpdateViewport(FRect InRect)
+{
+	Viewport.UpdateViewport(InRect);
+}
+
+void ACamera::SettingViewport()
+{
+	FDevice::Get().GetDeviceContext()->RSSetViewports(1, &Viewport.GetViewportInfo());
+}
+
 
 void ACamera::BeginPlay()
 {
@@ -88,7 +102,7 @@ void ACamera::UpdateCameraMatrix()
 	ViewMatrix = GetActorTransform().GetViewMatrix();
 	
 	// 프로젝션 매트릭스 업데이트
-	float AspectRatio = UEngine::Get().GetScreenRatio();
+	float AspectRatio = Viewport.GetViewportRatio();
 
 	float FOV = FMath::DegreesToRadians(GetFieldOfView());
 	float Near = GetNear();

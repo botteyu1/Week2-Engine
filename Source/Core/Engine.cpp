@@ -41,8 +41,8 @@ LRESULT UEngine::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		// 마우스 휠 이벤트 처리
 		short zDelta = GET_WHEEL_DELTA_WPARAM(wParam);
-		float curZoomSize = UEngine::Get().GetWorld()->GetCamera()->GetZoomSize();
-		UEngine::Get().GetWorld()->GetCamera()->SetZoomSize(curZoomSize + zDelta);
+		float curZoomSize = UEngine::Get().GetWorld()->GetCamera(EViewPortSplitter::TopLeft)->GetZoomSize();
+		UEngine::Get().GetWorld()->GetCamera(EViewPortSplitter::TopLeft)->SetZoomSize(curZoomSize + zDelta);
 		break;
 
 	}
@@ -256,10 +256,44 @@ void UEngine::InitWorld()
     World = FObjectFactory::ConstructObject<UWorld>();
 	World->InitWorld();
 
-	World->SetCamera(World->SpawnActor<ACamera>());
+	World->SetCamera(EViewPortSplitter::TopLeft, World->SpawnActor<ACamera>());
+	World->SetCamera(EViewPortSplitter::TopRight, World->SpawnActor<ACamera>());
+	World->SetCamera(EViewPortSplitter::BottomLeft, World->SpawnActor<ACamera>());
+	World->SetCamera(EViewPortSplitter::BottomRight, World->SpawnActor<ACamera>());
 
-	UEngine::Get().GetEditor()->SetCamera(World->GetCamera()); // require editor
+	ACamera* LeftCamera = World->GetCamera(EViewPortSplitter::TopLeft);
+	ACamera* RightCamera = World->GetCamera(EViewPortSplitter::TopRight);
+	ACamera* BottomLeftCamera = World->GetCamera(EViewPortSplitter::BottomLeft);
+	ACamera* BottomRightCamera = World->GetCamera(EViewPortSplitter::BottomRight);
 
+
+	DXGI_SWAP_CHAIN_DESC SwapChainDesc;
+
+	FDevice::Get().GetSwapChain()->GetDesc(&SwapChainDesc);
+	FRect ViewportRect = FRect(0, 0, static_cast<float>(SwapChainDesc.BufferDesc.Width), static_cast<float>(SwapChainDesc.BufferDesc.Height));
+
+	LeftCamera->UpdateViewport(FRect(0, 0, static_cast<float>(SwapChainDesc.BufferDesc.Width) * 0.5f, static_cast<float>(SwapChainDesc.BufferDesc.Height * 0.5f)));
+	RightCamera->UpdateViewport(FRect(static_cast<float>(SwapChainDesc.BufferDesc.Width) * 0.5f, 0, SwapChainDesc.BufferDesc.Width, static_cast<float>(SwapChainDesc.BufferDesc.Height * 0.5f)));
+	BottomLeftCamera->UpdateViewport(FRect(0, static_cast<float>(SwapChainDesc.BufferDesc.Height) * 0.5f,
+		static_cast<float>(SwapChainDesc.BufferDesc.Width) * 0.5f, static_cast<float>(SwapChainDesc.BufferDesc.Height)));
+	BottomRightCamera->UpdateViewport(FRect(static_cast<float>(SwapChainDesc.BufferDesc.Width) * 0.5f, static_cast<float>(SwapChainDesc.BufferDesc.Height) * 0.5f,
+		SwapChainDesc.BufferDesc.Width, static_cast<float>(SwapChainDesc.BufferDesc.Height)));
+
+
+	BottomRightCamera->Rotate(FVector(30, 30, 30));
+
+	//스플리터 주석처리
+	
+	//LeftViewport = std::make_shared<FViewport>(ViewportRect);
+	//RightViewport = std::make_shared<FViewport>(ViewportRect);
+
+	//Viewports.Add(EViewSplitter::Left, LeftViewport);
+	//Viewports.Add(EViewSplitter::Right, RightViewport);
+
+	//HorizontalSplitter = std::make_shared<SSplitterH>(LeftViewport, RightViewport);
+	//HorizontalSplitter->Rect = ViewportRect;
+
+	//HorizontalSplitter->OnResize();
 	////Test
 	//FLineBatchManager::Get().AddLine(FVector{ 3.0f,3.0f,0.0f }, { -3.f,-3.f,0.0f });
 	//FLineBatchManager::Get().AddLine(FVector{ 6.0f,6.0f,6.0f }, { -6.f,-6.f,-6.0f });
