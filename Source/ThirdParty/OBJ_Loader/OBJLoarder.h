@@ -557,6 +557,7 @@ namespace objl
 
 					vtex.X = std::stof(stex[0]);
 					vtex.Y = std::stof(stex[1]);
+					vtex.Y = 1 - vtex.Y;
 
 					TCoords.push_back(vtex);
 				}
