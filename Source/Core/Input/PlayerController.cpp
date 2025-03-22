@@ -18,7 +18,7 @@ void APlayerController::HandleCameraMovement(float DeltaTime) const
 		return;
     }
 
-    ACamera* Camera = UEngine::Get().GetWorld()->GetCamera(EViewPortSplitter::Left);
+    ACamera* Camera = UEngine::Get().GetWorld()->GetCamera(EViewPortSplitter::TopLeft);
     
     //전프레임이랑 비교
     //x좌표 받아와서 x만큼 x축회전

@@ -17,10 +17,10 @@ class UPrimitiveComponent;
 
 enum class EViewPortSplitter
 {
-	Left,
-	Right,
-	Top,
-	Bottom
+	TopLeft,
+	TopRight,
+	BottomLeft,
+	BottomRight
 };
 
 class UWorld :public UObject

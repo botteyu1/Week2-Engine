@@ -84,15 +84,15 @@ void AGizmoHandle::Tick(float DeltaTime)
 			FVector4 RayEnd {PosX, PosY, 1.0f, 1.0f};
 			
 			// View 공간으로 변환
-			FMatrix InvProjMat = UEngine::Get().GetWorld()->GetCamera(EViewPortSplitter::Left)->GetProjectionMatrix().Inverse();
+			FMatrix InvProjMat = UEngine::Get().GetWorld()->GetCamera(EViewPortSplitter::TopLeft)->GetProjectionMatrix().Inverse();
 			RayOrigin = InvProjMat.TransformVector4(RayOrigin);
 			RayOrigin.W = 1;
 			RayEnd = InvProjMat.TransformVector4(RayEnd);
-			RayEnd *= UEngine::Get().GetWorld()->GetCamera(EViewPortSplitter::Left)->GetFar();  // 프러스텀의 Far 값이 적용이 안돼서 수동으로 곱함
+			RayEnd *= UEngine::Get().GetWorld()->GetCamera(EViewPortSplitter::TopLeft)->GetFar();  // 프러스텀의 Far 값이 적용이 안돼서 수동으로 곱함
 			RayEnd.W = 1;
 			
 			// 마우스 포인터의 월드 위치와 방향
-			FMatrix InvViewMat = UEngine::Get().GetWorld()->GetCamera(EViewPortSplitter::Left)->GetViewMatrix().Inverse();
+			FMatrix InvViewMat = UEngine::Get().GetWorld()->GetCamera(EViewPortSplitter::TopLeft)->GetViewMatrix().Inverse();
 			RayOrigin = InvViewMat.TransformVector4(RayOrigin);
 			RayOrigin /= RayOrigin.W = 1;
 			RayEnd = InvViewMat.TransformVector4(RayEnd);
@@ -124,7 +124,7 @@ void AGizmoHandle::SetScaleByDistance()
 	// 액터의 월드 위치
 	FVector actorWorldPos = MyTransform.GetPosition();
 
-	FTransform CameraTransform = UEngine::Get().GetWorld()->GetCamera(EViewPortSplitter::Left)->GetActorTransform();
+	FTransform CameraTransform = UEngine::Get().GetWorld()->GetCamera(EViewPortSplitter::TopLeft)->GetActorTransform();
 	
 	// 카메라의 월드 위치
 	FVector cameraWorldPos = CameraTransform.GetPosition();
