@@ -8,6 +8,7 @@
 #include "Object/Actor/Camera.h"
 #include "Object/Assets/AssetManager.h"
 #include "Object/Assets/FontAtlasAsset.h"
+#include "Object/Assets/TextureAsset.h"
 #include "Primitive/PrimitiveHangul.h"
 
 #include "Resource/DirectResource/VertexBuffer.h"
@@ -16,6 +17,10 @@
 #include "Resource/DirectResource/VertexShader.h"
 #include "Resource/DirectResource/PixelShader.h"
 #include "Resource/DirectResource/InputLayout.h"
+#include "Resource/DirectResource/DepthStencilState.h"
+#include "Resource/DirectResource/ShaderResourceBinding.h"
+#include "Resource/DirectResource/BlendState.h"
+#include "Resource/DirectResource/Sampler.h"
 #include "Resource/Mesh.h"
 
 #include <d3dcompiler.h>
@@ -31,7 +36,6 @@ void FUUIDBillBoard::UpdateString(const std::wstring& String)
 
 	if ( FontAtlas == nullptr ) {
 		SetFontAtlas("font_atlas_Pretendard_Kor.fontatlas");
-		return;
 	}
 
 	uint32 StringLen = static_cast<uint32>(String.size());
@@ -95,12 +99,14 @@ void FUUIDBillBoard::UpdateString(const std::wstring& String)
 
 	//UVertexBuffer::Find(ResourceName)->ChangeData<FVertexSimple>(VertexBuffer);
 	//UIndexBuffer::Find(ResourceName)->ChangeData(IndexBuffer);
+	UMesh::Find(ResourceName)->Setting(ERenderFlags::None);
+	UE_LOG("%x %x", VertexBuffer.GetData(), UVertexBuffer::Find(ResourceName).get()->CPUDataPtr);
 }
 
 void FUUIDBillBoard::Flush()
 {
-	VertexBuffer = {};
-	IndexBuffer = {};
+	VertexBuffer.Empty();
+	IndexBuffer.Empty();
 }
 
 void FUUIDBillBoard::CalculateModelMatrix(FMatrix& OutMatrix)
@@ -148,27 +154,13 @@ void FUUIDBillBoard::Render()
 		return;
 
 
-	// 파이프라인 상태 설정
-	//UINT stride = sizeof(FVertexSimple);
-	//UINT offset = 0;
-
-	// 기본 셰이더랑 InputLayout을 설정
-
-	//DeviceContext->IASetVertexBuffers(0, 1, &FontVertexBuffer, &stride, &offset);
-	//DeviceContext->IASetIndexBuffer(FontIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	//DeviceContext->IASetPrimitiveTopology(PrimitiveTopology);
-
-	//DeviceContext->VSSetShader(FontVertexShader, nullptr, 0);
-	//DeviceContext->PSSetShader(FontPixelShader, nullptr, 0);
-	//DeviceContext->IASetInputLayout(FontInputLayout);
-
-	//DeviceContext->RSSetState(RasterizerState);
-	//DeviceContext->OMSetBlendState(BlendState, BlendFactor, 0xffffffff);
-	//DeviceContext->OMSetDepthStencilState(DepthStencilState, 0);
-
-	//UVertexBuffer::Find(ResourceName)->Setting();
-	//UIndexBuffer::Find(ResourceName)->Setting();
 	UMesh::Find(ResourceName)->Setting(ERenderFlags::None);
+	UVertexShader::Find("Font_VS")->Setting();
+	UPixelShader::Find("Font_PS")->Setting();
+	USampler::Find("LinearSamplerState")->PSSetting(0);
+	UBlendState::Find("TextBlendState")->Setting();
+	UDepthStencilState::Find("AlwaysVisibleDepthStencilState")->Setting();
+	FontAtlas->GetTexture()->GetResource()->PSSetting(0);
 	// Billboard
 	FMatrix ModelMatrix;
 	CalculateModelMatrix(ModelMatrix);
@@ -187,15 +179,7 @@ void FUUIDBillBoard::Render()
 	UConstantBuffer::Find(ResourceName)->ChangeData(Constants);
 	UConstantBuffer::Find(ResourceName)->VSSetting(0);
 
-	//// D3D11_MAP_WRITE_DISCARD는 이전 내용을 무시하고 새로운 데이터로 덮어쓰기 위해 사용
-	//DeviceContext->Map(FontConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &ConstantBufferMSR);
-	//{
-	//	memcpy(ConstantBufferMSR.pData, &Constants, sizeof(FFontConstantInfo));
-	//}
-	//DeviceContext->Unmap(FontConstantBuffer, 0);
-
 	UMesh::Find(ResourceName)->Draw();
-	//DeviceContext->DrawIndexed((UINT)IndexBuffer.Num(), 0, 0);
 }
 
 void FUUIDBillBoard::Create()
@@ -204,29 +188,15 @@ void FUUIDBillBoard::Create()
 	ResourceName = FString("UUIDText");
 	VertexBuffer.Reserve(MaxVerticesPerBatch);
 	IndexBuffer.Reserve(MaxIndicesPerBatch);
-	UE_LOG("%x", VertexBuffer.GetData());
-	UVertexBuffer::Create(
+	
+	std::shared_ptr<UVertexBuffer> vb = UVertexBuffer::Create(
 		ResourceName, 
 		VertexBuffer, 
 		UInputLayout::Find("Simple_IL"),  
 		true
 	);
+	UE_LOG("%x %x", VertexBuffer.GetData(), vb.get()->CPUDataPtr);
 	UIndexBuffer::Create(ResourceName, IndexBuffer, true);
 	UConstantBuffer::Create(ResourceName, sizeof(FFontConstantInfo));
 	UMesh::Create(ResourceName, ResourceName, ResourceName);
-
-	// Blend State
-	// Blend
-	D3D11_BLEND_DESC blendDesc = {};
-	blendDesc.AlphaToCoverageEnable = FALSE;
-	blendDesc.IndependentBlendEnable = FALSE;
-	blendDesc.RenderTarget[0].BlendEnable = TRUE;
-	blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
-	blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
-	blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
-	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
-	blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
-	blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-
 }

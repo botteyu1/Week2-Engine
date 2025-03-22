@@ -2,7 +2,7 @@
 #include <cstdint>
 
 //~ Windows.h
-#define _TCHAR_DEFINED  // TCHAR 재정의 에러 때문
+#define _TCHAR_DEFINED  // MYTCHAR 재정의 에러 때문
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 
@@ -49,5 +49,5 @@ typedef wchar_t WIDECHAR;
 #if USE_WIDECHAR
     typedef WIDECHAR TCHAR;
 #else
-    typedef ANSICHAR TCHAR;
+    typedef ANSICHAR MYTCHAR;
 #endif

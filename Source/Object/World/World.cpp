@@ -133,6 +133,8 @@ void UWorld::Render()
 	//ACamera* cam = FEditorManager::Get().GetCamera();
 	//cam->UpdateCameraMatrix();
 
+	// temp
+	UEngine::Get().GetRenderer()->GetUUIDBillBoard()->Render();
 
 	//if (UInputManager::Get().GetKeyDown(EKeyCode::LButton))
 	//{

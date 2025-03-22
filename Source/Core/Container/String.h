@@ -48,7 +48,7 @@ enum Type : uint8
 class FString
 {
 private:
-	using ElementType = TCHAR;
+	using ElementType = MYTCHAR;
     using BaseStringType = std::basic_string<
         ElementType,
         std::char_traits<ElementType>,

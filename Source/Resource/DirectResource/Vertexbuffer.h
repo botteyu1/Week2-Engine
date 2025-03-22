@@ -60,6 +60,8 @@ public:
 	void SetVertexCount(uint32 InVertexCount) { VertexCount = InVertexCount; }
 
 	inline std::shared_ptr<UInputLayout> GetLayout() { return InputLayout; }
+
+	const void* CPUDataPtr = nullptr; //동적 업데이트용 포인터
 private:
 	
 	void ResCreate(const void* _Data, size_t _VertexSize, size_t _VertexCount);
@@ -71,7 +73,7 @@ private:
 	UINT Offset = 0;
 	bool bIsDynamic = false;
 	
-	const void* CPUDataPtr = nullptr; //동적 업데이트용 포인터
+	
 
 	FVector Min = D3D11_FLOAT32_MAX;
 	FVector Max = -D3D11_FLOAT32_MAX;

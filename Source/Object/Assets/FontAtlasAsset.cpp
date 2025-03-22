@@ -3,6 +3,8 @@
 #include <fstream>
 #include <sstream>
 #include "Core/Container/String.h"
+#include "Object/Assets/AssetManager.h"
+#include "Object/Assets/TextureAsset.h"
 #include "Debug/DebugConsole.h"
 
 UFontAtlasAsset::UFontAtlasAsset() {}
@@ -33,7 +35,7 @@ bool UFontAtlasAsset::ReadFontAtlas(std::vector<wchar_t>& glyphChars) {
 	std::ifstream file(GetAssetPath().GetData());
 	if ( !file.is_open() ) {
 		// 파일을 열 수 없는 경우 오류 처리
-		//UE_LOG("Failed to open glyph file: %s", filename.c_str());
+		//UE_LOG("Failed to open glyph file: %s", file.c_str());
 		UE_LOG("Failed to open font data file");
 		return false;
 	}
@@ -109,5 +111,13 @@ bool UFontAtlasAsset::ApplyGlyphs(std::vector<wchar_t>& glyphChars) {
 		}
 	}
 
+	return true;
+}
+
+bool UFontAtlasAsset::LoadTextureAsset() {
+	std::string texName = GetAssetName().GetData();
+	uint32 nameEndIdx = texName.find('.');
+	texName = texName.substr(0, nameEndIdx) + ".png";
+	texture = UAssetManager::Get().FindAsset<UTextureAsset>(texName);
 	return true;
 }

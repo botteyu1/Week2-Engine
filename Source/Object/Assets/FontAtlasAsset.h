@@ -4,6 +4,7 @@
 #include "Core/Container/Map.h"
 #include "Core/AbstractClass/Singleton.h"
 
+class UTextureAsset;
 class UFontAtlasAsset : public UAsset
 {
 public:
@@ -32,11 +33,16 @@ public:
 	bool Load() override;
 	bool Save(FString path) override;
 	bool Unload() override;
-
+	inline UTextureAsset* GetTexture() {
+		if ( texture == nullptr )
+			LoadTextureAsset();
+		return texture;
+	}
 private:
 
 	bool ReadFontAtlas(std::vector<wchar_t>& glyphChars);
 	bool ApplyGlyphs(std::vector<wchar_t>& glyphChars);
+	bool LoadTextureAsset();
 
 	// Default Setting Value
 	int textureWidth = 512;
@@ -45,6 +51,8 @@ private:
 	int cellHeight = 32;
 	int cellsPerRow = 36;
 	int cellsPerColumn = 16;
+
+	UTextureAsset* texture = nullptr;
 
 	TMap<wchar_t, GlyphInfo> glyphs;
 	GlyphInfo defaultGlyph = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };

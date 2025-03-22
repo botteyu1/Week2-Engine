@@ -1,7 +1,7 @@
 #pragma once
 #include "Splitter.h"
 
-#define _TCHAR_DEFINED  // TCHAR 재정의 에러 때문
+#define _TCHAR_DEFINED  // MYTCHAR 재정의 에러 때문
 #include <d3d11.h>
 
 class FViewport : public SWindow
