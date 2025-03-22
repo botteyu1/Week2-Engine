@@ -314,6 +314,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\Users\Jungle\Downloads\WavefrontOBJ-main\WavefrontOBJ-main\WavefrontOBJ.h" />
     <ClInclude Include="Source\Core\Delegates\Delegate.h" />
     <ClInclude Include="Source\Core\Delegates\DelegateCombination.h" />
     <ClInclude Include="Source\Core\Rendering\FontAtlas.h" />
@@ -438,6 +439,7 @@
     <ClInclude Include="Source\ThirdParty\ImGui\include\ImGui\imstb_truetype.h" />
     <ClInclude Include="Source\ThirdParty\SimpleJSON\include\SimpleJSON\Json.hpp" />
     <ClCompile Include="Source\Object\SubUVComponent\UParticleSubUVComponent.cpp" />
+    <ClInclude Include="Source\ThirdParty\WavefrontOBJ\WavefrontOBJ.h" />
     <FxCompile Include="Shaders\SubUV_PS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>

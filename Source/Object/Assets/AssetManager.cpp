@@ -78,6 +78,22 @@ void UAssetManager::LoadAssets()
 	}
 }
 
+struct VertexKey {
+	int v, vt, vn;
+	bool operator==(const VertexKey& o) const {
+		return v == o.v && vt == o.vt && vn == o.vn;
+	}
+};
+
+namespace std {
+	template<> struct hash<VertexKey> {
+		size_t operator()(const VertexKey& k) const {
+			return ((hash<int>()(k.v) ^ (hash<int>()(k.vt) << 1)) >> 1)
+				^ (hash<int>()(k.vn) << 1);
+		}
+	};
+}
+
 void UAssetManager::ObjParsing(const FString& filePath, TArray<FVertexSimple>& outVertex, TArray<uint32>& outIndex)
 {
 	std::ifstream objFile(filePath.ToWideString());
@@ -128,7 +144,7 @@ void UAssetManager::ObjParsing(const FString& filePath, TArray<FVertexSimple>& o
 			}
 		}
 
-		TMap<int, int> vertexMap; // Key: (vertexIdx * 1000000 + uvIdx * 1000 + normalIdx), Value: New Vertex Index
+		TMap<VertexKey, int> vertexMap; // Key: (vertexIdx * 1000000 + uvIdx * 1000 + normalIdx), Value: New Vertex Index
 		TArray<FVertexSimple> newVertices;
 		TArray<uint32> newIndices;
 
@@ -138,9 +154,11 @@ void UAssetManager::ObjParsing(const FString& filePath, TArray<FVertexSimple>& o
 			int nIdx = face.Value;
 
 			// 키 생성 (단순한 정수 연산으로 유니크한 값 생성)
-			int key = vIdx * 1000000 + uvIdx * 1000 + nIdx;
+			//int key = vIdx * 1000000 + uvIdx * 1000 + nIdx;
 
-			if (!vertexMap.Contains(key)) {
+			VertexKey vertexKey = { vIdx, uvIdx, nIdx };
+
+			if (!vertexMap.Contains(vertexKey)) {
 				// 새로운 정점 추가
 				int newIndex = newVertices.Num();
 				FVector pos = vertex[vIdx];
@@ -149,11 +167,11 @@ void UAssetManager::ObjParsing(const FString& filePath, TArray<FVertexSimple>& o
 
 				FVertexSimple simpleVertex(pos.X - 0.5f, pos.Y - 0.5f, pos.Z -0.5f, 1.0f, 0.0f, 0.0f, 1.0f, u, v, norm.X, norm.Y, norm.Z);
 				newVertices.Add(simpleVertex);
-				vertexMap.Add(key, newIndex);
+				vertexMap.Add(vertexKey, newIndex);
 			}
 
 			// 인덱스 추가
-			newIndices.Add(vertexMap[key]);
+			newIndices.Add(vertexMap[vertexKey]);
 		}
 
 		// 최종 결과 저장
