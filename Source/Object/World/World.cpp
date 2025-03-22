@@ -116,7 +116,7 @@ void UWorld::Render()
 		RenderMainTexture(*Renderer);
 
 
-		AActor* SelectedActor = FEditorManager::Get().GetSelectedActor();
+		AActor* SelectedActor = UEngine::Get().GetEditor()->GetSelectedActor();
 		if (SelectedActor != nullptr)
 		{
 			const FVector LocalMax = SelectedActor->GetActorLocalBoundsMax();
@@ -344,7 +344,7 @@ void UWorld::RayCasting(const FVector& MouseNDCPos)
 	FMatrix ProjMatrix = CameraMap[EViewPortSplitter::TopLeft]->GetProjectionMatrix();
 	FRay worldRay = FRay(CameraMap[EViewPortSplitter::TopLeft]->GetViewMatrix(), ProjMatrix, MouseNDCPos.X, MouseNDCPos.Y);
 
-	FLineBatchManager::Get().AddLine(worldRay.GetOrigin(), worldRay.GetOrigin() + worldRay.GetDirection() * CameraMap[EViewPortSplitter::TopLeft]->GetFar(), FVector4::CYAN);
+	UEngine::Get().GetRenderer()->GetBatchManager()->AddLine(worldRay.GetOrigin(), worldRay.GetOrigin() + worldRay.GetDirection() * CameraMap[EViewPortSplitter::TopLeft]->GetFar(), FVector4::CYAN);
 
 	AActor* SelectedActor = nullptr;
 	float minDistance = FLT_MAX;

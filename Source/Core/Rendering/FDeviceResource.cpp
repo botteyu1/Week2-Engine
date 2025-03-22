@@ -472,8 +472,8 @@ void FDevice::InitResource()
 			}
 		}
 
-		UVertexBuffer::Create(FString(TEXT("Dice")), vertices);
-		UIndexBuffer::Create(FString(TEXT("Dice")), indices);
+		//UVertexBuffer::Create(FString(TEXT("Dice")), vertices, IL);
+		//UIndexBuffer::Create(FString(TEXT("Dice")), indices);
 
 		//UMesh::Create(TEXT("Dice"));
 	}

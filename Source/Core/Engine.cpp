@@ -140,7 +140,7 @@ void UEngine::Run()
 
 		if (!ImGui::GetIO().WantCaptureMouse)
 		{		
-			FVector winSize = Renderer->GetFrameBufferWindowSize();
+			FVector winSize = FDevice::Get().GetFrameBufferWindowSize();
 			InputManager->Update(WindowHandle, winSize.X, winSize.Y);
 		}
 
