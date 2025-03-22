@@ -37,9 +37,7 @@ void URenderer::Create(HWND hWindow, UWorld* world)
 	LineBatchManager = std::make_unique<FLineBatchManager>();
 	LineBatchManager->MakeWorldGrid(world->GetGridSize(), world->GetGridSize() / 100.f); // create vertex
 	LineBatchManager->Create(); // require device, vertex
-	
-	UUIDBillBoard = std::make_unique<FUUIDBillBoard>();
-	UUIDBillBoard->Create();
+
 	//FUUIDBillBoard::Get().Create(); // require device
 
 	//LoadTexture(L"font_atlas.png");
@@ -127,6 +125,14 @@ void URenderer::ReleaseConstantBuffer()
 void URenderer::Render(FRenderResourceCollection& InRenderResourceCollection)
 {
 	InRenderResourceCollection.Render(renderFlags);
+}
+
+FUUIDBillBoard* URenderer::GetUUIDBillBoard() {
+	if ( UUIDBillBoard.get() == nullptr ) {
+		UUIDBillBoard = std::make_unique<FUUIDBillBoard>();
+		UUIDBillBoard->Create();
+	}
+	return UUIDBillBoard.get();
 }
 
 //void URenderer::LoadTexture(const wchar_t* texturePath)

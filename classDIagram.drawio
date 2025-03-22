@@ -1,6 +1,6 @@
 <mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36 Edg/134.0.0.0" version="26.1.1" pages="2">
   <diagram name="페이지-1" id="IoLyVRmvSheIOgK2fmha">
-    <mxGraphModel grid="1" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1426" dy="909" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -157,8 +157,11 @@
         <mxCell id="iRMEyDaeMtuCpQb7a-bZ-58" value="FDevice" style="html=1;whiteSpace=wrap;" vertex="1" parent="1">
           <mxGeometry x="1130" y="120" width="110" height="50" as="geometry" />
         </mxCell>
-        <mxCell id="iRMEyDaeMtuCpQb7a-bZ-59" value="FFontAtlas" style="html=1;whiteSpace=wrap;" vertex="1" parent="1">
-          <mxGeometry x="1340" y="680" width="110" height="50" as="geometry" />
+        <mxCell id="G5hkBCRXtCDhx9Gs_Oqb-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;endArrow=block;endFill=0;" edge="1" parent="1" source="iRMEyDaeMtuCpQb7a-bZ-59" target="iRMEyDaeMtuCpQb7a-bZ-72">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="iRMEyDaeMtuCpQb7a-bZ-59" value="FFontAtlas&lt;br&gt;-&amp;gt;UFontAtlasAsset" style="html=1;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="1340" y="690" width="110" height="50" as="geometry" />
         </mxCell>
         <mxCell id="iRMEyDaeMtuCpQb7a-bZ-60" value="FNamePool" style="html=1;whiteSpace=wrap;" vertex="1" parent="1">
           <mxGeometry x="1370" y="120" width="110" height="50" as="geometry" />

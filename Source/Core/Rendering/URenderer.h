@@ -72,7 +72,7 @@ public:
 public:
 	inline FViewModeManager* GetViewMode() { return ViewMode.get(); }
 	inline FLineBatchManager* GetBatchManager() { return LineBatchManager.get(); }
-	inline FUUIDBillBoard* GetUUIDBillBoard() { return UUIDBillBoard.get(); }
+	FUUIDBillBoard* GetUUIDBillBoard();
 
 protected:
     /** 뎁스 스텐실 상태를 생성합니다. */

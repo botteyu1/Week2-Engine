@@ -19,9 +19,16 @@ public:
 
 	template<typename T>
 		requires std::derived_from<T, UAsset>
-	T* FindAsset(FString& name)
+	T* FindAsset(const FString& name)
 	{
-		T* asset = Assets.Find(name);
+		// UAsset이 추상 클래스라 포인터로 받을 수 밖에...
+		UAsset** pAsset = Assets.Find(name);
+		if (pAsset == nullptr)
+		{
+			UE_LOG(TEXT("Can't found Asset: %s"), *name);
+			return nullptr;
+		}
+		UAsset* asset = *pAsset;
 		if (asset == nullptr)
 		{
 			UE_LOG(TEXT("Can't found Asset: %s"), *name);

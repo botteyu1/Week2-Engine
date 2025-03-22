@@ -66,18 +66,32 @@ void UEngine::Initialize(
 	ScreenWidth = InScreenWidth;
 	ScreenHeight = InScreenHeight;
 
+	UE_LOG("Init Window...");
     InitWindow(InScreenWidth, InScreenHeight);
+
+	UE_LOG("Init Input...");
 	InitInput();
+
+	UE_LOG("Init Device...");
 	FDevice::Get().Init(WindowHandle); // require window
+
+	UE_LOG("Init Editor...");
 	InitEditor(); // require FDevice 나중에 멀티쓰레드로?
+
+	UE_LOG("Init World...");
 	InitWorld(); // require Editor
+
+	UE_LOG("Init Renderer...");
 	InitRenderer(); // require FDevice, World
+
 	UDebugDrawManager::Get().Initialize();
 
+	UE_LOG("Init UI...");
 	InitializedScreenWidth = ScreenWidth;
 	InitializedScreenHeight = ScreenHeight;
     ui.Initialize(WindowHandle, FDevice::Get(), ScreenWidth, ScreenHeight);
 
+	UE_LOG("Init Assets...");
 	UAssetManager::Get().RegisterAssetMetaDatas(); // 나중에 멀티쓰레드로?
 	
 	UE_LOG("Engine Initialized!");

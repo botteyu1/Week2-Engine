@@ -1,10 +1,11 @@
 #include "FUUIDBillBoard.h"
 #include "Core/Engine.h"
 #include "Core/Rendering/URenderer.h"
-#include "Core/Rendering/FontAtlas.h"
 #include "Object/World/World.h"
 #include "Object/Actor/Actor.h"
 #include "Object/Actor/Camera.h"
+#include "Object/Assets/AssetManager.h"
+#include "Object/Assets/FontAtlasAsset.h"
 #include <d3dcompiler.h>
 
 struct HangulJamo {
@@ -147,16 +148,16 @@ void FUUIDBillBoard::CreateKoreanQuad(const wchar_t character, float& cursorX, i
 	}
 
 	// 커서 이동 (한 글자 너비만큼)
-	cursorX += 2 * FFontAtlas::Get().GlyphAspectRatio * FFontAtlas::Get().Kerning;
+	cursorX += 2 * fontAtlas->GlyphAspectRatio * fontAtlas->Kerning;
 }
 
 void FUUIDBillBoard::CreateKoreanConsonantVowel(wchar_t jamo, float posX, float offsetX, float offsetY) {
-	const GlyphInfo& glyph = FFontAtlas::Get().GetGlyph(jamo);
+	const GlyphInfo& glyph = fontAtlas->GetGlyph(jamo);
 
 	FVertexSimple vertices[4] = {
 		{ 0.0f, posX + offsetX, 1.0f - offsetY, 0.0f, 0.0f, 0.0f, 0.0f, glyph.u, glyph.v },
-		{ 0.0f, posX + offsetX + FFontAtlas::Get().GlyphAspectRatio, 1.0f - offsetY, 0.0f, 0.0f, 0.0f, 0.0f, glyph.u + glyph.width, glyph.v },
-		{ 0.0f, posX + offsetX + FFontAtlas::Get().GlyphAspectRatio, -1.0f - offsetY, 0.0f, 0.0f, 0.0f, 0.0f, glyph.u + glyph.width, glyph.v + glyph.height },
+		{ 0.0f, posX + offsetX + fontAtlas->GlyphAspectRatio, 1.0f - offsetY, 0.0f, 0.0f, 0.0f, 0.0f, glyph.u + glyph.width, glyph.v },
+		{ 0.0f, posX + offsetX + fontAtlas->GlyphAspectRatio, -1.0f - offsetY, 0.0f, 0.0f, 0.0f, 0.0f, glyph.u + glyph.width, glyph.v + glyph.height },
 		{ 0.0f, posX + offsetX, -1.0f - offsetY, 0.0f, 0.0f, 0.0f, 0.0f, glyph.u, glyph.v + glyph.height }
 	};
 
@@ -174,13 +175,22 @@ void FUUIDBillBoard::CreateKoreanConsonantVowel(wchar_t jamo, float posX, float 
 	IndexBuffer.Add(baseIndex + 3);
 }
 
+void FUUIDBillBoard::SetFontAtlas(const FString& name) {
+	fontAtlas = fontAtlas = UAssetManager::Get().FindAsset<UFontAtlasAsset>(name);
+}
+
 void FUUIDBillBoard::UpdateString(const std::wstring& String)
 {
 	Flush();
 
+	if ( fontAtlas == nullptr ) {
+		SetFontAtlas("font_atlas_Pretendard_Kor.fontatlas");
+		return;
+	}
+
 	uint32 StringLen = static_cast<uint32>(String.size());
-	float AspectRatio = FFontAtlas::Get().GlyphAspectRatio;
-	float Kerning = FFontAtlas::Get().Kerning;
+	float AspectRatio = fontAtlas->GlyphAspectRatio;
+	float Kerning = fontAtlas->Kerning;
 	float cursorX = (StringLen - 1) * -AspectRatio * Kerning;
 
 	for (size_t i = 0; i < StringLen; ++i)
@@ -192,7 +202,7 @@ void FUUIDBillBoard::UpdateString(const std::wstring& String)
 		}
 		else
 		{
-			const GlyphInfo& glyph = FFontAtlas::Get().GetGlyph(c);
+			const GlyphInfo& glyph = fontAtlas->GetGlyph(c);
 
 			FVertexSimple vertices[4] =
 			{
@@ -334,6 +344,8 @@ void FUUIDBillBoard::Render()
 
 void FUUIDBillBoard::Create()
 {
+	fontAtlas = nullptr;
+
 	ID3D11Device* Device = FDevice::Get().GetDevice();
 	ID3D11DeviceContext* DeviceContext = FDevice::Get().GetDeviceContext();
 

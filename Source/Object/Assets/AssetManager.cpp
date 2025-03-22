@@ -4,6 +4,7 @@
 
 #include "SceneAsset.h"
 #include "TextureAsset.h"
+#include "FontAtlasAsset.h"
 
 using namespace std;
 
@@ -22,7 +23,7 @@ void UAssetManager::RegisterAssetMetaDatas()
 					filesystem::path filePath = entry.path();
 
 					// 파일의 확장자, 전체 경로, 파일 크기를 가져옵니다.
-					FString fileName = filePath.stem().string();
+					FString fileName = filePath.stem().string() + filePath.extension().string();
 					FString extension = filePath.extension().string();
 					FString fullPath = filePath.string();
 					uint64 fileSize = filesystem::file_size(filePath);
@@ -85,8 +86,16 @@ void UAssetManager::LoadAssets()
 			//TextureImage->CreateShaderResourceView();
 			break;
 		}
-		case EAssetType::Text:
+		case EAssetType::FontAtlas:
 		{
+			UFontAtlasAsset* fontAtlasAsset = FObjectFactory::ConstructObject<UFontAtlasAsset>();
+			if (fontAtlasAsset != nullptr) {
+				fontAtlasAsset->SetMetaData(asset.Value);
+				fontAtlasAsset->Load();
+				Assets.Add(fontAtlasAsset->GetAssetName(), fontAtlasAsset);
+			} else {
+				cout << "Texture Asset Load Failed: " << asset.Value.GetAssetName().GetData() << endl;
+			}
 			break;
 		}
 

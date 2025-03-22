@@ -12,6 +12,7 @@ struct FFontConstantInfo
 	FMatrix ViewProjectionMatrix;
 };
 
+class UFontAtlasAsset;
 
 class FUUIDBillBoard
 {
@@ -22,6 +23,7 @@ public:
 	void UpdateString(const std::wstring& String);
 	void CreateKoreanQuad(const wchar_t character, float& cursorX, int StringLength);
 	void CreateKoreanConsonantVowel(wchar_t jamo, float posX, float offsetX, float offsetY);
+	void SetFontAtlas(const FString& name);
 private:
 	void CalculateModelMatrix(FMatrix& OutMatrix);
 	void Flush();
@@ -37,6 +39,8 @@ private:
 
 	bool bShowDebugLines = true;
 	bool bShowWorldGrid = true;
+
+	UFontAtlasAsset* fontAtlas;
 
 	// GPU 렌더링을 위한 버퍼
 	ID3D11Buffer* FontVertexBuffer = nullptr;
