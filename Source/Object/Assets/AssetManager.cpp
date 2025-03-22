@@ -1,7 +1,9 @@
 #include "AssetManager.h"
 #include <filesystem>
 #include <iostream>
+
 #include "SceneAsset.h"
+#include "TextureAsset.h"
 
 using namespace std;
 
@@ -70,7 +72,24 @@ void UAssetManager::LoadAssets()
 		{
 			break;
 		}
-		
+		case EAssetType::Texture:
+		{
+			UTextureAsset* textureAsset = FObjectFactory::ConstructObject<UTextureAsset>();
+			if (textureAsset != nullptr) {
+				textureAsset->SetMetaData(asset.Value);
+				textureAsset->Load();
+				Assets.Add(textureAsset->GetAssetName(), textureAsset);
+			} else {
+				cout << "Texture Asset Load Failed: " << asset.Value.GetAssetName().GetData() << endl;
+			}
+			//TextureImage->CreateShaderResourceView();
+			break;
+		}
+		case EAssetType::Text:
+		{
+			break;
+		}
+
 		}
 	}
 }

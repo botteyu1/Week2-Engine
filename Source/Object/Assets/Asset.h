@@ -17,6 +17,7 @@ enum class EAssetType : uint8
 	World,
 	Asset,
 	EditorConfig,
+	Text,
 	None
 };
 
@@ -28,6 +29,7 @@ public:
 	FAssetMetaData(FString InAssetName, FString InAssetPath, uint64 assetSize, const FString& extension)
 		: AssetName(std::move(InAssetName))
 		, AssetPath(std::move(InAssetPath))
+		, AssetExtension(std::move(extension))
 		, AssetSize(assetSize), BIsLoaded(false), BIsDirty(false)
 	{
 		if (extension.Equals(TEXT(".png")) || extension.Equals(TEXT(".jpb")) || extension.Equals(TEXT(".bmp")) || extension.Equals(TEXT(".dds")))
@@ -74,6 +76,10 @@ public:
 		{
 			Type = EAssetType::EditorConfig;
 		}
+		else if (extension.Equals(TEXT(".txt"))) 
+		{
+			Type = EAssetType::Text;
+		}
 		else
 		{
 			Type = EAssetType::None;
@@ -83,6 +89,7 @@ public:
 public:
 	FString GetAssetName() const { return AssetName; }
 	FString GetAssetPath() const { return AssetPath; }
+	FString GetAssetExtension() const { return AssetExtension; }
 	uint64 GetAssetSize() const { return AssetSize; }
 	EAssetType GetAssetType() const { return Type; }
 	bool IsLoaded() const { return BIsLoaded; }
@@ -98,6 +105,7 @@ public:
 private:
 	FString AssetName;
 	FString AssetPath;
+	FString AssetExtension;
 	uint64 AssetSize;
 	EAssetType Type;
 

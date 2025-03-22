@@ -137,8 +137,8 @@ void FDevice::InitResource()
 	
 	{
 		// TextureSRV
-		std::shared_ptr<UTexture> TextureImage = UTexture::Load("font_atlas.dds", "SubUVTexture");
-		TextureImage->CreateShaderResourceView();
+		//std::shared_ptr<UTexture> TextureImage = UTexture::Load("font_atlas.dds", "SubUVTexture");
+		//TextureImage->CreateShaderResourceView();
 	}
 
 	{

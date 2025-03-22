@@ -65,7 +65,7 @@ public:
     /** PrimitiveComponent를 초기화 합니다. */
     // void RenderPrimitiveInternal(UPrimitiveComponent& PrimitiveComp) const;
 
-	void LoadTexture(const wchar_t* texturePath);
+	//void LoadTexture(const wchar_t* texturePath);
 	ID3D11ShaderResourceView* FontTextureSRV = nullptr;
 	ID3D11SamplerState* FontSamplerState = nullptr;
 

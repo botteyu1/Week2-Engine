@@ -360,6 +360,9 @@
     <ClCompile Include="Source\Resource\DirectResource\ViewMode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Object\Assets\TextureAsset.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\ShaderW0.hlsl">
@@ -775,6 +778,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Resource\DirectResource\ViewMode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Object\Assets\TextureAsset.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
