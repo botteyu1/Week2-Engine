@@ -10,6 +10,8 @@
 #include "Resource/RenderResourceCollection.h"
 #include "Resource/DirectResource/IndexBuffer.h"
 #include "Resource/DirectResource/Vertexbuffer.h"
+#include <Resource/Mesh.h>
+#include <Resource/Material.h>
 
 
 class UVertexShader;
@@ -240,5 +242,18 @@ public:
 	virtual EPrimitiveType GetType() override
 	{
 		return EPrimitiveType::EPT_Quad;
+	}
+};
+
+class UDiceComp : public UPrimitiveComponent
+{
+	DECLARE_CLASS(UDiceComp, UPrimitiveComponent)
+
+public:
+	UDiceComp();
+
+	virtual EPrimitiveType GetType() override
+	{
+		return EPrimitiveType::EPT_Cube;
 	}
 };

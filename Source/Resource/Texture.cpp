@@ -8,7 +8,8 @@
 #include "Object/Assets/Asset.h"
 
 #include "Debug/DebugConsole.h"
-
+#include "DirectXTK/DDSTextureLoader.h"
+#include "DirectXTK/WICTextureLoader.h"
 
 UTexture::UTexture()
 {
@@ -181,8 +182,11 @@ void UTexture::ResLoad(const FAssetMetaData& InMetadata)
 	}
 	if (S_OK != hr)
 	{
-		MsgBoxAssert("텍스처 로드에 실패했습니다.");
+		if (S_OK != DirectX::CreateWICTextureFromFile(FDevice::Get().GetDevice(), FDevice::Get().GetDeviceContext(), wstr.c_str(), &Resource, &SRV)) {
+			MsgBoxAssert("텍스처 로드에 실패했습니다.");
+		}
 	}
+
 	Resource->QueryInterface(__uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&Texture2D));
 }
 

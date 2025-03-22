@@ -103,6 +103,8 @@ public:
 			}
 		}
 	}
+	void ObjParsing(const FString& filePath, TArray<FVertexSimple>& outVertex, TArray<uint32>& outIndex);
+	
 private:
 	TMap<FString, FAssetMetaData> AssetMetaDatas;
 	TMap<FString, UAsset*> Assets;

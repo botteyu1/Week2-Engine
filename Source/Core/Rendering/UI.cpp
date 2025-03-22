@@ -18,6 +18,7 @@
 #include "Static/EditorManager.h"
 #include "Static/FUUIDBillBoard.h"
 #include "Resource/DirectResource/ViewMode.h"
+#include "Object/Actor/Dice.h"
 // #include "FDevice.h"
 // #include "FViewModeManager.h"
 // #include "Core/Engine.h"
@@ -179,7 +180,7 @@ void UI::RenderMemoryUsage() const
 
 void UI::RenderPrimitiveSelection()
 {
-    const char* items[] = { "Sphere", "Cube", "Cylinder", "Cone", "SpotLight"};
+    const char* items[] = { "Sphere", "Cube", "Cylinder", "Cone", "SpotLight", "Dice"};
 
     ImGui::Combo("Primitive", &currentItem, items, IM_ARRAYSIZE(items));
 
@@ -207,6 +208,9 @@ void UI::RenderPrimitiveSelection()
 			else if (strcmp(items[currentItem], "SpotLight") == 0)
 			{
 				World->SpawnActor<ASpotLight>();
+			}
+			else if (strcmp(items[currentItem], "Dice") == 0) {
+				World->SpawnActor<ADice>();
 			}
             //else if (strcmp(items[currentItem], "Triangle") == 0)
             //{

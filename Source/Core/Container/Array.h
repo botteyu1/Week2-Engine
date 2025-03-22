@@ -75,6 +75,8 @@ public:
     T* GetData();
     const T* GetData() const;
 
+	T& Last();
+	const T& Last() const;
     /**
      * Array에서 Item을 찾습니다.
      * @param Item 찾으려는 Item
@@ -298,6 +300,19 @@ template <typename Compare>
 void TArray<T, Allocator>::Sort(const Compare& CompFn)
 {
     std::sort(PrivateVector.begin(), PrivateVector.end(), CompFn);
+}
+
+
+template<typename T, typename Allocator>
+inline T& TArray<T, Allocator>::Last()
+{
+	return PrivateVector.end();
+}
+
+template<typename T, typename Allocator>
+inline const T& TArray<T, Allocator>::Last() const
+{
+	return PrivateVector.end();
 }
 
 template <typename T, typename Allocator = FDefaultAllocator<T>> class TArray;
