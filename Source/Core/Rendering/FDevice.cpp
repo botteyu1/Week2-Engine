@@ -4,6 +4,9 @@
 #include <Debug/DebugConsole.h>
 #include "Static/FEditorManager.h"
 #include "Resource/Texture.h"
+#include "Core/Math/Vector.h"
+
+
 
 void FDevice::Init(HWND _hwnd)
 {
@@ -14,6 +17,16 @@ void FDevice::Init(HWND _hwnd)
 	InitResource();
 
 	bIsInit = true;
+}
+
+
+
+FVector FDevice::GetFrameBufferWindowSize() const
+{
+	DXGI_SWAP_CHAIN_DESC SwapChainDesc;
+	SwapChain->GetDesc(&SwapChainDesc);
+
+	return FVector(static_cast<float>(SwapChainDesc.BufferDesc.Width), static_cast<float>(SwapChainDesc.BufferDesc.Height), 0);
 }
 
 void FDevice::Release()
@@ -77,13 +90,12 @@ void FDevice::CreateDeviceAndSwapChain(HWND hWindow)
         &DeviceContext                                                 // 생성된 ID3D11DeviceContext 인터페이스에 대한 포인터
     );
     
-    // 생성된 SwapChain의 정보 가져오기
-    SwapChain->GetDesc(&SwapChainDesc);
-    
+
+
     // 뷰포트 정보 설정
     ViewportInfo = {
         0.0f, 0.0f,
-        static_cast<float>(SwapChainDesc.BufferDesc.Width), static_cast<float>(SwapChainDesc.BufferDesc.Height),
+        static_cast<float>(SwapChainDesc.BufferDesc.Width * 0.5f), static_cast<float>(SwapChainDesc.BufferDesc.Height * 0.5f),
         0.0f, 1.0f
     };
 }
@@ -144,7 +156,7 @@ void FDevice::OnUpdateWindowSize(int Width, int Height)
 		// 뷰포트 정보 갱신
 		ViewportInfo = {
 			0.0f, 0.0f,
-			static_cast<float>(SwapChainDesc.BufferDesc.Width), static_cast<float>(SwapChainDesc.BufferDesc.Height),
+			static_cast<float>(SwapChainDesc.BufferDesc.Width * 0.5f), static_cast<float>(SwapChainDesc.BufferDesc.Height * 0.5f),
 			0.0f, 1.0f
 		};
 	}
@@ -163,9 +175,11 @@ void FDevice::OnResizeComplete()
 
 void FDevice::CreateDepthStencilBuffer()
 {
+
+	FVector WindowSize = GetFrameBufferWindowSize();
 	D3D11_TEXTURE2D_DESC DepthBufferDesc = {};
-	DepthBufferDesc.Width = static_cast<UINT>(ViewportInfo.Width);
-	DepthBufferDesc.Height = static_cast<UINT>(ViewportInfo.Height);
+	DepthBufferDesc.Width = static_cast<UINT>(WindowSize.X);
+	DepthBufferDesc.Height = static_cast<UINT>(WindowSize.Y);
 	DepthBufferDesc.MipLevels = 1;
 	DepthBufferDesc.ArraySize = 1;
 	DepthBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;            // 32비트 중 24비트는 깊이, 8비트는 스텐실
@@ -261,8 +275,10 @@ void FDevice::Clear() const
 
 void FDevice::SetRenderTarget() const
 {
-	// Rasterization할 Viewport를 설정 
-	FDevice::Get().GetDeviceContext()->RSSetViewports(1, &ViewportInfo);  // DepthStencil 뷰 및 스왑버퍼 세팅
+	//// Rasterization할 Viewport를 설정 
+	//const D3D11_VIEWPORT& ViewportInfo = Viewports[EViewSplitter::Right]->GetViewportInfo();
+
+	//FDevice::Get().GetDeviceContext()->RSSetViewports(1, &ViewportInfo);  // DepthStencil 뷰 및 스왑버퍼 세팅
 
 	///////////////////////
 	///일단 임시로 여기서 UUID 픽킹 텍스쳐 바인딩

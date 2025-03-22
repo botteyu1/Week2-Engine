@@ -2,8 +2,13 @@
 #define _TCHAR_DEFINED  // TCHAR 재정의 에러 때문
 #include <d3d11.h>
 #include "Core/AbstractClass/Singleton.h"
+#include "Core/Container/Map.h"
+
+#include "FViewport.h"
 
 //디바이스 스왑 체인 관리, 뷰포트도 일단 가지고 있음
+
+
 
 class FDevice : public TSingleton<FDevice>
 {
@@ -20,6 +25,10 @@ public:
 	inline const D3D11_VIEWPORT& GetViewPortInfo() const { return ViewportInfo; }
 	inline ID3D11DepthStencilView* GetDepthStencilView() const { return DepthStencilView; }
 	inline IDXGISwapChain* GetSwapChain() const { return SwapChain; }
+
+
+public:
+	FVector GetFrameBufferWindowSize() const;
 
 	/** Renderer에 사용된 모든 리소스를 해제합니다. */
 	void Release();
@@ -72,7 +81,10 @@ private:
 
 	FLOAT PickingClearColor[4] = { 0.0f, 0.0f, 0.0f, 0.0f }; //
 	
-    D3D11_VIEWPORT ViewportInfo = {};                       // 렌더링 영역을 정의하는 뷰포트 정보
+    D3D11_VIEWPORT ViewportInfo = {};             
+	// 렌더링 영역을 정의하는 뷰포트 정보
+
+
 
 	// 렌더링에 필요한 리소스 및 상태를 관리하기 위한 변수들
 	ID3D11Texture2D* FrameBuffer = nullptr;                 // 화면 출력용 텍스처

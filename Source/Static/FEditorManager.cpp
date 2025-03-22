@@ -12,8 +12,8 @@
 
 void FEditorManager::Init()
 {
-	const int Width = static_cast<int>(FDevice::Get().GetViewPortInfo().Width);
-	const int Height = static_cast<int>(FDevice::Get().GetViewPortInfo().Height);
+	const int Width = static_cast<int>(FDevice::Get().GetFrameBufferWindowSize().X);
+	const int Height = static_cast<int>(FDevice::Get().GetFrameBufferWindowSize().Y);
 
 	D3D11_TEXTURE2D_DESC textureDesc = {};
 	textureDesc.Width = Width;
@@ -83,10 +83,7 @@ void FEditorManager::SelectActor(AActor* NewActor)
 
 }
 
-void FEditorManager::SetCamera(ACamera* NewCamera)
-{
-    Camera = NewCamera;
-}
+
 
 void FEditorManager::SetGizmo(AGizmoActor* InGizmo)
 {

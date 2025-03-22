@@ -4,6 +4,8 @@
 #include "Core/Math/Quat.h"
 #include "Object/Actor/Camera.h"
 #include "Static/FEditorManager.h"
+#include "Core/Engine.h"
+#include "Object/World/World.h"
 
 
 void APlayerController::HandleCameraMovement(float DeltaTime) const
@@ -16,7 +18,7 @@ void APlayerController::HandleCameraMovement(float DeltaTime) const
 		return;
     }
 
-    ACamera* Camera = FEditorManager::Get().GetCamera();
+    ACamera* Camera = UEngine::Get().GetWorld()->GetCamera(EViewPortSplitter::Left);
     
     //전프레임이랑 비교
     //x좌표 받아와서 x만큼 x축회전

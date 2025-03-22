@@ -303,10 +303,3 @@ void URenderer::LoadTextures()
 //     backBuffer->Release();
 // }
 
-FVector URenderer::GetFrameBufferWindowSize() const
-{
-	DXGI_SWAP_CHAIN_DESC SwapChainDesc;
-	FDevice::Get().GetSwapChain()->GetDesc(&SwapChainDesc);
-
-	return FVector(static_cast<float>(SwapChainDesc.BufferDesc.Width), static_cast<float>(SwapChainDesc.BufferDesc.Height), 0);
-}

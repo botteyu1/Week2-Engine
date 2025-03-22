@@ -128,6 +128,4 @@ public:
 
 	// void RenderPickingTexture();
 
-public:
-	FVector GetFrameBufferWindowSize() const;
 };

@@ -239,7 +239,7 @@ void FUUIDBillBoard::Flush()
 
 void FUUIDBillBoard::CalculateModelMatrix(FMatrix& OutMatrix)
 {
-	ACamera* cam = UEngine::Get().GetWorld()->GetCamera();
+	ACamera* cam = UEngine::Get().GetWorld()->GetCamera(EViewPortSplitter::Left);
 
 	FVector cameraPosition = cam->GetActorTransform().GetPosition();
 
@@ -318,7 +318,7 @@ void FUUIDBillBoard::Render()
 
 		Constants.ViewProjectionMatrix = FMatrix::Transpose(
 			ModelMatrix
-			* UEngine::Get().GetWorld()->GetCamera()->GetViewProjectionMatrix()
+			* UEngine::Get().GetWorld()->GetCamera(EViewPortSplitter::Left)->GetViewProjectionMatrix()
 		);
 
 		// D3D11_MAP_WRITE_DISCARD는 이전 내용을 무시하고 새로운 데이터로 덮어쓰기 위해 사용

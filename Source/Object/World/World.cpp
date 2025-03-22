@@ -31,6 +31,7 @@
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
 
+
 void UWorld::InitWorld()
 {
 	//TODO : 
@@ -108,8 +109,36 @@ void UWorld::Render()
 		return;
 	}
 
-	ACamera* cam = FEditorManager::Get().GetCamera();
-	cam->UpdateCameraMatrix();
+
+	for (auto& cam : CameraMap)
+	{
+		cam.Value->UpdateCameraMatrix();
+		cam.Value->SettingViewport();
+
+		RenderMainTexture(*Renderer);
+
+
+		AActor* SelectedActor = FEditorManager::Get().GetSelectedActor();
+		if (SelectedActor != nullptr)
+		{
+			const FVector LocalMax = SelectedActor->GetActorLocalBoundsMax();
+			const FVector LocalMin = SelectedActor->GetActorLocalBoundsMin();
+
+			[[maybe_unused]] FVector WorldMax = SelectedActor->GetActorWorldBoundsMax();
+			[[maybe_unused]] FVector WorldMin = SelectedActor->GetActorWorldBoundsMin();
+
+			UDebugDrawManager::Get().DrawBoundingBox(LocalMin, LocalMax, SelectedActor->GetActorTransform(), FVector4::RED);
+		}
+		UDebugDrawManager::Get().Render();
+
+
+		FLineBatchManager::Get().Render();
+
+		FUUIDBillBoard::Get().Render();
+	}
+
+	//ACamera* cam = FEditorManager::Get().GetCamera();
+	//cam->UpdateCameraMatrix();
 
 
 	//if (APlayerInput::Get().GetKeyDown(EKeyCode::LButton))
@@ -117,27 +146,9 @@ void UWorld::Render()
 	//	RenderPickingTexture(*Renderer);
 	//}
 
-	RenderMainTexture(*Renderer);
-
-	FLineBatchManager::Get().Render();
-
-	AActor* SelectedActor = FEditorManager::Get().GetSelectedActor();
-	if (SelectedActor != nullptr)
-	{
-		const FVector LocalMax = SelectedActor->GetActorLocalBoundsMax();
-		const FVector LocalMin = SelectedActor->GetActorLocalBoundsMin();
-
-		[[maybe_unused]] FVector WorldMax = SelectedActor->GetActorWorldBoundsMax();
-		[[maybe_unused]] FVector WorldMin = SelectedActor->GetActorWorldBoundsMin();
-
-		UDebugDrawManager::Get().DrawBoundingBox(LocalMin, LocalMax, SelectedActor->GetActorTransform(), FVector4::RED);
-	}
-	UDebugDrawManager::Get().Render();
 
 
-	FLineBatchManager::Get().Render();
 
-	FUUIDBillBoard::Get().Render();
 
 
 	//DisplayPickingTexture(*Renderer);
@@ -337,10 +348,10 @@ void UWorld::LoadWorld(const char* InSceneName)
 
 void UWorld::RayCasting(const FVector& MouseNDCPos)
 {
-	FMatrix ProjMatrix = Camera->GetProjectionMatrix(); 
-	FRay worldRay = FRay(Camera->GetViewMatrix(), ProjMatrix, MouseNDCPos.X, MouseNDCPos.Y);
+	FMatrix ProjMatrix = CameraMap[EViewPortSplitter::Left]->GetProjectionMatrix();
+	FRay worldRay = FRay(CameraMap[EViewPortSplitter::Left]->GetViewMatrix(), ProjMatrix, MouseNDCPos.X, MouseNDCPos.Y);
 
-	FLineBatchManager::Get().AddLine(worldRay.GetOrigin(), worldRay.GetOrigin() + worldRay.GetDirection() * Camera->GetFar(), FVector4::CYAN);
+	FLineBatchManager::Get().AddLine(worldRay.GetOrigin(), worldRay.GetOrigin() + worldRay.GetDirection() * CameraMap[EViewPortSplitter::Left]->GetFar(), FVector4::CYAN);
 
 	AActor* SelectedActor = nullptr;
 	float minDistance = FLT_MAX;

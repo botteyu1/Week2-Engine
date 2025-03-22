@@ -236,7 +236,7 @@ void UDebugDrawManager::Render()
 	//RenderResourceCollection.GetMesh()->GetVertexBuffer()->SetVertexCount(VertexBuffer.Num());
 	//RenderResourceCollection.GetMesh()->GetIndexBuffer()->SetIndexCount(IndexBuffer.Num());
 
-	DebugConstantInfo.ViewProjectionMatrix = FMatrix::Transpose(UEngine::Get().GetWorld()->GetCamera()->GetViewProjectionMatrix());
+	DebugConstantInfo.ViewProjectionMatrix = FMatrix::Transpose(UEngine::Get().GetWorld()->GetCamera(EViewPortSplitter::Left)->GetViewProjectionMatrix());
 	RenderResourceCollection.Render();
 
 	ClearDebug();

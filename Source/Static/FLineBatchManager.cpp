@@ -122,7 +122,7 @@ void FLineBatchManager::Render()
 	if (VertexBuffer.Num() == 0)
 		return;
 
-	LineConstantInfo.ViewProjectionMatrix = FMatrix::Transpose(UEngine::Get().GetWorld()->GetCamera()->GetViewProjectionMatrix());
+	LineConstantInfo.ViewProjectionMatrix = FMatrix::Transpose(UEngine::Get().GetWorld()->GetCamera(EViewPortSplitter::Left)->GetViewProjectionMatrix());
 
 
 	RenderResourceCollection.Render();

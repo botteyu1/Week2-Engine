@@ -4,6 +4,67 @@
 
 struct FQuat;
 
+struct FVector2D
+{
+	float X;
+	float Y;
+
+	FVector2D()
+		: X(0.f), Y(0.f)
+	{
+	}
+
+	FVector2D(float InX, float InY)
+		: X(InX), Y(InY)
+	{
+	}
+
+	// 벡터의 길이 반환
+	float Size() const
+	{
+		return FMath::Sqrt(X * X + Y * Y);
+	}
+
+	// 벡터 정규화
+	FVector2D Normalize(float Tolerance = SMALL_NUMBER) const
+	{
+		const float SquareSum = X * X + Y * Y;
+		if (SquareSum > Tolerance)
+		{
+			const float Scale = FMath::InvSqrt(SquareSum);
+			return FVector2D(X * Scale, Y * Scale);
+		}
+		return FVector2D::ZeroVector;
+	}
+
+	// 벡터 덧셈
+	FVector2D operator+(const FVector2D& V) const
+	{
+		return FVector2D(X + V.X, Y + V.Y);
+	}
+
+	// 벡터 뺄셈
+	FVector2D operator-(const FVector2D& V) const
+	{
+		return FVector2D(X - V.X, Y - V.Y);
+	}
+
+	// 스칼라 곱셈
+	FVector2D operator*(float Scale) const
+	{
+		return FVector2D(X * Scale, Y * Scale);
+	}
+
+	// 내적 계산
+	float DotProduct(const FVector2D& V) const
+	{
+		return X * V.X + Y * V.Y;
+	}
+
+	static const FVector2D ZeroVector;
+	static const FVector2D UnitVector;
+};
+
 struct FVector
 {
     float X, Y, Z;

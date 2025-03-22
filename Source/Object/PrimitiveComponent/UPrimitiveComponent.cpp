@@ -70,7 +70,7 @@ void UPrimitiveComponent::Render()
 	FMatrix ModelMatrix;
 	CalculateModelMatrix(ModelMatrix);
 
-	const FMatrix& ViewProjectionMatrix = UEngine::Get().GetWorld()->GetCamera()->GetViewProjectionMatrix();
+	const FMatrix& ViewProjectionMatrix = UEngine::Get().GetWorld()->GetCamera(EViewPortSplitter::Left)->GetViewProjectionMatrix();
 
 	FMatrix MVP = FMatrix::Transpose(
 		ModelMatrix *
@@ -99,7 +99,7 @@ void UPrimitiveComponent::CalculateModelMatrix(FMatrix& OutMatrix)
 	//빌보드 행렬계산
 	if (bIsBillboard == true)
 	{
-		ACamera* cam = UEngine::Get().GetWorld()->GetCamera();
+		ACamera* cam = UEngine::Get().GetWorld()->GetCamera(EViewPortSplitter::Left);
 
 		FVector cameraPosition = cam->GetActorTransform().GetPosition();
 
