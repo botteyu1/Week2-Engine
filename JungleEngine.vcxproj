@@ -436,6 +436,7 @@
     <ClInclude Include="Source\ThirdParty\ImGui\include\ImGui\imstb_rectpack.h" />
     <ClInclude Include="Source\ThirdParty\ImGui\include\ImGui\imstb_textedit.h" />
     <ClInclude Include="Source\ThirdParty\ImGui\include\ImGui\imstb_truetype.h" />
+    <ClInclude Include="Source\ThirdParty\OBJ_Loader\OBJLoarder.h" />
     <ClInclude Include="Source\ThirdParty\SimpleJSON\include\SimpleJSON\Json.hpp" />
     <ClCompile Include="Source\Object\SubUVComponent\UParticleSubUVComponent.cpp" />
     <FxCompile Include="Shaders\SubUV_PS.hlsl">
