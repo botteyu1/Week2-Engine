@@ -32,15 +32,3 @@ void UTextureComponent::Render() {
 void UTextureComponent::CalculateModelMatrix(FMatrix& OutMatrix) {
 	Super::CalculateModelMatrix(OutMatrix);
 }
-
-UDiceComp::UDiceComp() {
-	SetMesh("Dice.obj");
-	SetMaterial("TextureMaterial");
-	AddTexture("Dice.png");
-}
-
-UMugComp::UMugComp() {
-	SetMesh("Mug.obj");
-	SetMaterial("TextureMaterial");
-	AddTexture("Dice.png");
-}

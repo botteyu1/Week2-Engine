@@ -23,17 +23,3 @@ public:
 protected:
 	TArray<UTextureAsset*> textures;
 };
-
-class UDiceComp : public UTextureComponent {
-	DECLARE_CLASS(UDiceComp, UTextureComponent)
-
-public:
-	UDiceComp();
-};
-
-class UMugComp : public UTextureComponent {
-	DECLARE_CLASS(UMugComp, UTextureComponent)
-
-public:
-	UMugComp();
-};

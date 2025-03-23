@@ -1,5 +1,5 @@
 #include "StaticMesh.h"
-#include "Object/PrimitiveComponent/UPrimitiveComponent.h"
+#include "Object/PrimitiveComponent/TextureComponent.h"
 
 AStaticMesh::AStaticMesh()
 {
@@ -8,9 +8,10 @@ AStaticMesh::AStaticMesh()
 
 void AStaticMesh::SetMesh(FString MeshType)
 {
-	UPrimitiveComponent* component = AddComponent<UPrimitiveComponent>();
+	UTextureComponent* component = AddComponent<UTextureComponent>();
 	component->SetMesh(MeshType);
 	component->SetMaterial("TextureMaterial");
+	component->AddTexture("Dice.png");
 	RootComponent = component;
 	component->SetRelativeTransform(FTransform());
 }
