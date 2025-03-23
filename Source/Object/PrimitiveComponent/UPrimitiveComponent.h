@@ -84,8 +84,8 @@ public:
 	std::shared_ptr<UMesh> GetMesh() const { return RenderResourceCollection.GetMesh(); }
 	std::shared_ptr<UMaterial> GetMaterial() const { return RenderResourceCollection.GetMaterial(); }
 
-	void SetMesh(const FString& InName, bool bUseTextureIndex) { RenderResourceCollection.SetMesh(InName, bUseTextureIndex); }
-	void SetMaterial(const FString& InName, bool bUseTextureArray) { RenderResourceCollection.SetMaterial(InName, bUseTextureArray); }
+	void SetMesh(const FString& InName) { RenderResourceCollection.SetMesh(InName); }
+	void SetMaterial(const FString& InName) { RenderResourceCollection.SetMaterial(InName); }
 	
 	FRenderResourceCollection& GetRenderResourceCollection() { return RenderResourceCollection; }
 public:

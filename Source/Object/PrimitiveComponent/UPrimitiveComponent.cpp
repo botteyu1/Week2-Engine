@@ -247,11 +247,3 @@ UConeComp::UConeComp()
 {
 	SetMesh("Cone");
 }
-
-UDiceComp::UDiceComp()
-{
-	bUseTextureIndex = true;
-	SetMaterial("TextureMaterial", true);
-	SetMesh("Dice", true);
-	GetRenderResourceCollection().SetTextureBinding("DiceTextureArray", 4, true, true);
-}

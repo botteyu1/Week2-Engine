@@ -99,6 +99,7 @@ private:
 	// D3D11_TEXTURE_ADDRESS_MODE Address;
 	
 	void ResLoad(const FAssetMetaData& metaData);
+	void ResLoad(const TArray<FString>& InPaths);
 	void ResCreate(const D3D11_TEXTURE2D_DESC& Desc);
 	void ResCreate(ID3D11Texture2D* InRes);
 

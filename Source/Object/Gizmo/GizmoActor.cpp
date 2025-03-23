@@ -50,7 +50,7 @@ AGizmoActor::AGizmoActor()
 
 	USphereComp* Comp = AddComponent<USphereComp>();
 
-	Comp->SetMaterial(TEXT("AlwaysVisibleMaterial"), false);
+	Comp->SetMaterial(TEXT("AlwaysVisibleMaterial"));
 	//Comp->SetMesh(TEXT("GizmoArrow"));
 	Comp->SetRelativeTransform({
 	FVector(0.0f, 0.0f, 0.0f),

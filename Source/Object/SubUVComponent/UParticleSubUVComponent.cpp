@@ -21,8 +21,8 @@ UParticleSubUVComponent::UParticleSubUVComponent()
 	FrameWidth = 1.0f / NumColumns;
 	FrameHeight = 1.0f / NumRows;
 
-	GetRenderResourceCollection().SetMesh("Quad", false);
-	GetRenderResourceCollection().SetMaterial("SubUVMaterial", false);
+	GetRenderResourceCollection().SetMesh("Quad");
+	GetRenderResourceCollection().SetMaterial("SubUVMaterial");
 	GetRenderResourceCollection().SetConstantBufferBinding("SubUVVertexConstants", &GetVertexConstantsData(), 0, true, false);
 	GetRenderResourceCollection().SetConstantBufferBinding("SubUVPixelConstants", &GetPixelConstantsData(), 0, false, true);
 	GetRenderResourceCollection().SetTextureBinding("SubUVTexture", 1, false, true);

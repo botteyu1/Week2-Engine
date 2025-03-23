@@ -184,7 +184,8 @@ void FDevice::InitResource()
 		textureFiles.Add(FString("Dice.png"));
 		textureFiles.Add(FString("DiceRed.png"));
 
-		std::shared_ptr<UTexture> DiceImageArray = UTexture::Load(textureFiles, "DiceTextureArray");
+		// TODO: FIX
+		//std::shared_ptr<UTexture> DiceImageArray = UTexture::Load(textureFiles, "DiceTextureArray");
 	}
 
 	{
@@ -481,7 +482,7 @@ void FDevice::InitResource()
 
 		/*UAssetManager::Get().ObjParsing("cube-tex.obj", vertices, indices);*/
 		
-		objl::Loader OBJLoader;
+		/*objl::Loader OBJLoader;
 		bool loadout = OBJLoader.LoadFile("cube-tex.obj");
 
 		if (loadout) 
@@ -513,7 +514,7 @@ void FDevice::InitResource()
 				indexStart = curMesh.Vertices.size();
 
 			}
-		}
+		}*/
 
 		//UVertexBuffer::Create(FString(TEXT("Dice")), vertices, IL);
 		//UIndexBuffer::Create(FString(TEXT("Dice")), indices);

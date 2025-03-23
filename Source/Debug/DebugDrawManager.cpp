@@ -60,8 +60,8 @@ void UDebugDrawManager::Initialize()
 
 	RenderResourceCollection.SetConstantBufferBinding(TEXT("DebugConstantInfo"), &DebugConstantInfo, 1, true, false);
 
-	RenderResourceCollection.SetMesh(Mesh, false);
-	RenderResourceCollection.SetMaterial(Material, false);
+	RenderResourceCollection.SetMesh(Mesh);
+	RenderResourceCollection.SetMaterial(Material);
 }
 
 void UDebugDrawManager::DrawBoxBrackets(const FBox InActor, const FTransform& LocalToWorld, const FVector4& Color, float LifeTime)
