@@ -10,7 +10,7 @@ UTextureComponent::~UTextureComponent() {
 
 }
 
-void UTextureComponent::AddTexture(FString textureName) {
+void UTextureComponent::AddTexture(const FString& textureName) {
 	AddTexture(UAssetManager::Get().FindAsset<UTextureAsset>(textureName));
 }
 
