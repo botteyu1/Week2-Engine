@@ -250,12 +250,12 @@ UConeComp::UConeComp()
 
 UDiceComp::UDiceComp()
 {
-	SetMesh("Dice");
+	SetMesh("Dice.obj");
 	SetMaterial("TextureMaterial");
 }
 
 UMugComp::UMugComp()
 {
-	SetMesh("Mug");
+	SetMesh("Mug.obj");
 	SetMaterial("TextureMaterial");
 }

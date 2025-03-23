@@ -180,7 +180,8 @@ FUUIDBillBoard* URenderer::GetUUIDBillBoard() {
 //  //    Width =  FDevice::Get().GetViewPortInfo().Width;
 // 	// Height =  FDevice::Get().GetViewPortInfo().Height;
 //  //
-//  //    D3D11_TEXTURE2D_DESC textureDesc = {};
+//  //    D3D11_TEXTURE2D_DESC 
+// Desc = {};
 //  //    textureDesc.Width = Width;
 //  //    textureDesc.Height = Height;
 //  //    textureDesc.MipLevels = 1;

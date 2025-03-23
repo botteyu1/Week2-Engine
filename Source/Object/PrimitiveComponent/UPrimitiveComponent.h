@@ -6,6 +6,7 @@
 #include "Core/Engine.h"
 #include "Core/Math/Matrix.h"
 #include "Object/USceneComponent.h"
+#include "Object/Assets/TextureAsset.h"
 #include "Primitive/PrimitiveVertices.h"
 #include "Resource/RenderResourceCollection.h"
 #include "Resource/DirectResource/IndexBuffer.h"
@@ -67,6 +68,7 @@ public:
 	}
 	const FVector4& GetCustomColor() const { return CustomColor; }
 
+	//void SetTexture(UTextureAsset* )
 public:
 	virtual void RegisterComponentWithWorld(UWorld* World);
 

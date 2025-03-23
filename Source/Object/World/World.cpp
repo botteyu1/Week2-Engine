@@ -542,7 +542,7 @@ void UWorld::RayCasting(const FVector& MouseNDCPos)
 		UEngine::Get().GetRenderer()->GetUUIDBillBoard()->SetTarget(SelectedActor);
 	}
 	else {
-		FEditorManager::Get().SelectActor(nullptr);
+		UEngine::Get().GetEditor()->SelectActor(nullptr);
 	}
 }
 

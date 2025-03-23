@@ -3,6 +3,7 @@
 #include "Object/Assets/ObjArchive.h"
 #include "Resource/DirectResource/Vertexbuffer.h"
 #include "Resource/DirectResource/IndexBuffer.h"
+#include "Resource/DirectResource/InputLayout.h"
 #include "Resource/Mesh.h"
 
 
@@ -55,7 +56,9 @@ bool UMeshAsset::Load()
 			FObjArchive::ObjToBinary(binaryFile, vertices, indices);
 		}
 	}
-	UVertexBuffer::Create(FString(TEXT(MetaData.GetAssetName())), vertices);
+	UVertexBuffer::Create(FString(TEXT(MetaData.GetAssetName())), vertices,
+		UInputLayout::Find("Simple_IL")
+	);
 	UIndexBuffer::Create(FString(TEXT(MetaData.GetAssetName())), indices);
 
 	UMesh::Create(TEXT(MetaData.GetAssetName()));
