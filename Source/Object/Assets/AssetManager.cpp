@@ -2,6 +2,7 @@
 #include <filesystem>
 #include <iostream>
 #include "SceneAsset.h"
+#include "MeshAsset.h"
 #include <fstream>
 #include <string>
 #include "Primitive/PrimitiveVertices.h"
@@ -73,7 +74,21 @@ void UAssetManager::LoadAssets()
 		{
 			break;
 		}
-		
+		case EAssetType::Mesh:
+		{
+			UMeshAsset* meshAsset = FObjectFactory::ConstructObject<UMeshAsset>();
+			if (meshAsset != nullptr)
+			{
+				meshAsset->SetMetaData(asset.Value);
+				meshAsset->Load();
+				Assets.Add(meshAsset->GetAssetName(), meshAsset);
+			}
+			else
+			{
+				cout << "Mesh Asset Load Failed: " << asset.Value.GetAssetName().GetData() << endl;
+			}
+			break;
+		}
 		}
 	}
 }
