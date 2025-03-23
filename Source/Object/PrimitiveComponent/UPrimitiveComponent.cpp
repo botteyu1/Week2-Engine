@@ -247,15 +247,3 @@ UConeComp::UConeComp()
 {
 	SetMesh("Cone");
 }
-
-UDiceComp::UDiceComp()
-{
-	SetMesh("Dice.obj");
-	SetMaterial("TextureMaterial");
-}
-
-UMugComp::UMugComp()
-{
-	SetMesh("Mug.obj");
-	SetMaterial("TextureMaterial");
-}

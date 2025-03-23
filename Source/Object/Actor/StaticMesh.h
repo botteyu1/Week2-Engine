@@ -1,15 +1,16 @@
 #pragma once
+
 #include "Actor.h"
 
 
-class ADice : public AActor
+class AStaticMesh : public AActor
 {
-	DECLARE_CLASS(ADice, AActor)
+	DECLARE_CLASS(AStaticMesh, AActor)
 
 public:
-	ADice();
+	AStaticMesh();
+	void SetMesh(FString MeshType);
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual const char* GetTypeName() override;
 };
-

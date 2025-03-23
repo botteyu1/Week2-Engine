@@ -246,29 +246,3 @@ public:
 		return EPrimitiveType::EPT_Quad;
 	}
 };
-
-class UDiceComp : public UPrimitiveComponent
-{
-	DECLARE_CLASS(UDiceComp, UPrimitiveComponent)
-
-public:
-	UDiceComp();
-
-	virtual EPrimitiveType GetType() override
-	{
-		return EPrimitiveType::EPT_StaticMesh;
-	}
-};
-
-class UMugComp : public UPrimitiveComponent
-{
-	DECLARE_CLASS(UMugComp, UPrimitiveComponent)
-
-public:
-	UMugComp();
-
-	virtual EPrimitiveType GetType() override
-	{
-		return EPrimitiveType::EPT_StaticMesh;
-	}
-};

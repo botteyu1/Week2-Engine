@@ -18,8 +18,7 @@
 #include "Static/EditorManager.h"
 #include "Static/FUUIDBillBoard.h"
 #include "Resource/DirectResource/ViewMode.h"
-#include "Object/Actor/Dice.h"
-#include "Object/Actor/Mug.h"
+#include "Object/Actor/StaticMesh.h"
 // #include "FDevice.h"
 // #include "FViewModeManager.h"
 // #include "Core/Engine.h"
@@ -211,10 +210,10 @@ void UI::RenderPrimitiveSelection()
 				World->SpawnActor<ASpotLight>();
 			}
 			else if (strcmp(items[currentItem], "Dice") == 0) {
-				World->SpawnActor<ADice>();
+				World->SpawnStaticMeshActor<AStaticMesh>("Dice.obj");
 			}
 			else if (strcmp(items[currentItem], "Mug") == 0) {
-				World->SpawnActor<AMug>();
+				World->SpawnStaticMeshActor<AStaticMesh>("Mug.obj");
 			}
             //else if (strcmp(items[currentItem], "Triangle") == 0)
             //{

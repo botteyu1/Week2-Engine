@@ -42,7 +42,10 @@ public:
 	template <typename T>
 		requires std::derived_from<T, AActor>
 	T* SpawnActor();
-  
+	template <typename T>
+		requires std::derived_from<T, AActor>
+	T* SpawnStaticMeshActor(FString meshType);
+
 	bool DestroyActor(AActor* InActor);
 	
 	void Render();
@@ -144,6 +147,24 @@ T* UWorld::SpawnActor()
 {
 	T* Actor = FObjectFactory::ConstructObject<T>();
 	
+	if (UWorld* World = UEngine::Get().GetWorld())
+	{
+		Actor->SetWorld(World);
+		Actors.Add(Actor);
+		ActorsToSpawn.Add(Actor);
+		return Actor;
+	}
+
+	UE_LOG("Actor Construction Failed. World is nullptr");
+	return nullptr;
+}
+
+template<typename T>
+	requires std::derived_from<T, AActor>
+T* UWorld::SpawnStaticMeshActor(FString meshType)
+{
+	T* Actor = FObjectFactory::ConstructObject<T>();
+	Actor->SetMesh(meshType);
 	if (UWorld* World = UEngine::Get().GetWorld())
 	{
 		Actor->SetWorld(World);
