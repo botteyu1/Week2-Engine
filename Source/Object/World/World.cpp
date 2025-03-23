@@ -48,53 +48,9 @@ void UWorld::InitWorld()
 	ACamera* TopRightCamera = GetCamera(EViewPortSplitter::TopRight);
 	ACamera* BottomLeftCamera = GetCamera(EViewPortSplitter::BottomLeft);
 	ACamera* BottomRightCamera = GetCamera(EViewPortSplitter::BottomRight);
-
-	DXGI_SWAP_CHAIN_DESC SwapChainDesc;
-
-	FDevice::Get().GetSwapChain()->GetDesc(&SwapChainDesc);
-	FRect ViewportRect = FRect(
-		0,
-		0,
-		static_cast<float>(SwapChainDesc.BufferDesc.Width),
-		static_cast<float>(SwapChainDesc.BufferDesc.Height)
-	);
-
-	TopLeftCamera->UpdateViewport(
-		FRect(
-			0,
-			0,
-			static_cast<float>(SwapChainDesc.BufferDesc.Width) * 0.5f,
-			static_cast<float>(SwapChainDesc.BufferDesc.Height) * 0.5f
-		)
-	);
-	TopRightCamera->UpdateViewport(
-		FRect(
-			static_cast<float>(SwapChainDesc.BufferDesc.Width) * 0.5f,
-			0,
-			SwapChainDesc.BufferDesc.Width,
-			static_cast<float>(SwapChainDesc.BufferDesc.Height) * 0.5f
-		)
-	);
-	BottomLeftCamera->UpdateViewport(
-		FRect(
-			0,
-			static_cast<float>(SwapChainDesc.BufferDesc.Height) * 0.5f,
-			static_cast<float>(SwapChainDesc.BufferDesc.Width) * 0.5f,
-			SwapChainDesc.BufferDesc.Height
-		)
-	);
-	BottomRightCamera->UpdateViewport(
-		FRect(
-			static_cast<float>(SwapChainDesc.BufferDesc.Width) * 0.5f,
-			static_cast<float>(SwapChainDesc.BufferDesc.Height) * 0.5f,
-			SwapChainDesc.BufferDesc.Width,
-			SwapChainDesc.BufferDesc.Height
-		)
-	);
-
+	UpdateViewPorts();
 
 	BottomRightCamera->Rotate(FVector(30, 30, 30));
-
 	CameraFocused = TopLeftCamera;
 
 	//스플리터 주석처리
@@ -120,6 +76,47 @@ void UWorld::InitWorld()
 	//// Test
 	//AArrow* Arrow = World->SpawnActor<AArrow>();
 	//World->SpawnActor<ASphere>();
+
+}
+
+void UWorld::UpdateViewPorts() {
+
+	DXGI_SWAP_CHAIN_DESC SwapChainDesc;
+	FDevice::Get().GetSwapChain()->GetDesc(&SwapChainDesc);
+
+	CameraMap[EViewPortSplitter::TopLeft]->UpdateViewport(
+		FRect(
+			0,
+			0,
+			static_cast<float>(SwapChainDesc.BufferDesc.Width) * 0.5f,
+			static_cast<float>(SwapChainDesc.BufferDesc.Height) * 0.5f
+		)
+	);
+	CameraMap[EViewPortSplitter::TopRight]->UpdateViewport(
+		FRect(
+			static_cast<float>(SwapChainDesc.BufferDesc.Width) * 0.5f,
+			0,
+			SwapChainDesc.BufferDesc.Width,
+			static_cast<float>(SwapChainDesc.BufferDesc.Height) * 0.5f
+		)
+	);
+	CameraMap[EViewPortSplitter::BottomLeft]->UpdateViewport(
+		FRect(
+			0,
+			static_cast<float>(SwapChainDesc.BufferDesc.Height) * 0.5f,
+			static_cast<float>(SwapChainDesc.BufferDesc.Width) * 0.5f,
+			SwapChainDesc.BufferDesc.Height
+		)
+	);
+	CameraMap[EViewPortSplitter::BottomRight]->UpdateViewport(
+		FRect(
+			static_cast<float>(SwapChainDesc.BufferDesc.Width) * 0.5f,
+			static_cast<float>(SwapChainDesc.BufferDesc.Height) * 0.5f,
+			SwapChainDesc.BufferDesc.Width,
+			SwapChainDesc.BufferDesc.Height
+		)
+	);
+
 
 }
 

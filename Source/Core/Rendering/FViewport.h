@@ -26,7 +26,7 @@ public:
 
 	inline const D3D11_VIEWPORT& GetViewportInfo() const { return ViewportInfo; }
 	void SetViewportInfo(const D3D11_VIEWPORT& InViewportInfo) { ViewportInfo = InViewportInfo; }
-
+	void Setting();
 private:
 
 

@@ -1,4 +1,5 @@
 #include "FViewport.h"
+#include "Core/Rendering/FDevice.h"
 
 inline FViewport::FViewport(FRect InRect) {
 	Rect = InRect;
@@ -27,4 +28,8 @@ void FViewport::UpdateViewport(FRect InRect) {
 	ViewportInfo.Height = InRect.Height();
 	ViewportInfo.MinDepth = 0.0f;
 	ViewportInfo.MaxDepth = 1.0f;
+}
+
+void FViewport::Setting() {
+	FDevice::Get().GetDeviceContext()->RSSetViewports(1, &ViewportInfo);
 }

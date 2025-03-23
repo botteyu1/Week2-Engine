@@ -41,7 +41,7 @@ LRESULT UEngine::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		// 마우스 휠 이벤트 처리
 		short zDelta = GET_WHEEL_DELTA_WPARAM(wParam);
-		float curZoomSize = UEngine::Get().GetWorld()->GetCamera(EViewPortSplitter::TopLeft)->GetZoomSize();
+		float curZoomSize = UEngine::Get().GetWorld()->GetCameraFocused()->GetZoomSize();
 		UEngine::Get().GetWorld()->GetCameraFocused()->SetZoomSize(curZoomSize + zDelta);
 		break;
 
@@ -284,8 +284,6 @@ void UEngine::UpdateWindowSize(uint32 InScreenWidth, uint32 InScreenHeight)
 
 	UEngine::Get().GetEditor()->OnUpdateWindowSize(ScreenWidth, ScreenHeight);
 
-
-
 	if (ui.bIsInitialized)
 	{
 		ui.OnUpdateWindowSize(ScreenWidth, ScreenHeight);
@@ -294,6 +292,8 @@ void UEngine::UpdateWindowSize(uint32 InScreenWidth, uint32 InScreenHeight)
 	FDevice::Get().OnResizeComplete();
 	
 	UEngine::Get().GetEditor()->OnResizeComplete();
+
+	World->UpdateViewPorts();
 }
 
 UObject* UEngine::GetObjectByUUID(uint32 InUUID) const

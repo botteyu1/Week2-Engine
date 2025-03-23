@@ -33,6 +33,7 @@ public:
 
 public:
 	void InitWorld();
+	void UpdateViewPorts();
 
 	void BeginPlay();
 	void Tick(float DeltaTime);

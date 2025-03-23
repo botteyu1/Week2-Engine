@@ -32,7 +32,7 @@ void ACamera::UpdateViewport(FRect InRect)
 
 void ACamera::SettingViewport()
 {
-	FDevice::Get().GetDeviceContext()->RSSetViewports(1, &Viewport.GetViewportInfo());
+	Viewport.Setting();
 }
 
 
