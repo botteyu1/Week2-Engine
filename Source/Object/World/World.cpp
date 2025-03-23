@@ -48,53 +48,9 @@ void UWorld::InitWorld()
 	ACamera* TopRightCamera = GetCamera(EViewPortSplitter::TopRight);
 	ACamera* BottomLeftCamera = GetCamera(EViewPortSplitter::BottomLeft);
 	ACamera* BottomRightCamera = GetCamera(EViewPortSplitter::BottomRight);
-
-	DXGI_SWAP_CHAIN_DESC SwapChainDesc;
-
-	FDevice::Get().GetSwapChain()->GetDesc(&SwapChainDesc);
-	FRect ViewportRect = FRect(
-		0,
-		0,
-		static_cast<float>(SwapChainDesc.BufferDesc.Width),
-		static_cast<float>(SwapChainDesc.BufferDesc.Height)
-	);
-
-	TopLeftCamera->UpdateViewport(
-		FRect(
-			0,
-			0,
-			static_cast<float>(SwapChainDesc.BufferDesc.Width) * 0.5f,
-			static_cast<float>(SwapChainDesc.BufferDesc.Height) * 0.5f
-		)
-	);
-	TopRightCamera->UpdateViewport(
-		FRect(
-			static_cast<float>(SwapChainDesc.BufferDesc.Width) * 0.5f,
-			0,
-			SwapChainDesc.BufferDesc.Width,
-			static_cast<float>(SwapChainDesc.BufferDesc.Height) * 0.5f
-		)
-	);
-	BottomLeftCamera->UpdateViewport(
-		FRect(
-			0,
-			static_cast<float>(SwapChainDesc.BufferDesc.Height) * 0.5f,
-			static_cast<float>(SwapChainDesc.BufferDesc.Width) * 0.5f,
-			SwapChainDesc.BufferDesc.Height
-		)
-	);
-	BottomRightCamera->UpdateViewport(
-		FRect(
-			static_cast<float>(SwapChainDesc.BufferDesc.Width) * 0.5f,
-			static_cast<float>(SwapChainDesc.BufferDesc.Height) * 0.5f,
-			SwapChainDesc.BufferDesc.Width,
-			SwapChainDesc.BufferDesc.Height
-		)
-	);
-
+	UpdateViewPorts();
 
 	BottomRightCamera->Rotate(FVector(30, 30, 30));
-
 	CameraFocused = TopLeftCamera;
 
 	//스플리터 주석처리
@@ -121,22 +77,46 @@ void UWorld::InitWorld()
 	//AArrow* Arrow = World->SpawnActor<AArrow>();
 	//World->SpawnActor<ASphere>();
 
-	// Test
-	UEngine::Get().GetInput()->RegisterMouseDownCallback(EKeyCode::LButton, [this](const FVector& vec) {
+}
 
-		UInputManager* inputManager = UEngine::Get().GetInput();
-		FVector mousePos = inputManager->GetMousePos();
-		TMap<EViewPortSplitter, FViewport> viewports;
-		FVector mouseNDCPos;
-		EViewPortSplitter viewportIndex;
+void UWorld::UpdateViewPorts() {
 
-		for(auto& pair: this->GetCameraMap()) {
-			ACamera* cam = pair.Value;
-			viewports[pair.Key] = cam->GetViewPort();
-		}
-		UEngine::Get().GetInput()->GetNDCPosWithSplitViewPort(mousePos, viewports, mouseNDCPos, viewportIndex);
-		this->SetFocusCamera(viewportIndex);
-	}, GetUUID());
+	DXGI_SWAP_CHAIN_DESC SwapChainDesc;
+	FDevice::Get().GetSwapChain()->GetDesc(&SwapChainDesc);
+
+	CameraMap[EViewPortSplitter::TopLeft]->UpdateViewport(
+		FRect(
+			0,
+			0,
+			static_cast<float>(SwapChainDesc.BufferDesc.Width) * 0.5f,
+			static_cast<float>(SwapChainDesc.BufferDesc.Height) * 0.5f
+		)
+	);
+	CameraMap[EViewPortSplitter::TopRight]->UpdateViewport(
+		FRect(
+			static_cast<float>(SwapChainDesc.BufferDesc.Width) * 0.5f,
+			0,
+			SwapChainDesc.BufferDesc.Width,
+			static_cast<float>(SwapChainDesc.BufferDesc.Height) * 0.5f
+		)
+	);
+	CameraMap[EViewPortSplitter::BottomLeft]->UpdateViewport(
+		FRect(
+			0,
+			static_cast<float>(SwapChainDesc.BufferDesc.Height) * 0.5f,
+			static_cast<float>(SwapChainDesc.BufferDesc.Width) * 0.5f,
+			SwapChainDesc.BufferDesc.Height
+		)
+	);
+	CameraMap[EViewPortSplitter::BottomRight]->UpdateViewport(
+		FRect(
+			static_cast<float>(SwapChainDesc.BufferDesc.Width) * 0.5f,
+			static_cast<float>(SwapChainDesc.BufferDesc.Height) * 0.5f,
+			SwapChainDesc.BufferDesc.Width,
+			SwapChainDesc.BufferDesc.Height
+		)
+	);
+
 
 }
 
@@ -149,7 +129,20 @@ void UWorld::BeginPlay()
 
 	UEngine::Get().GetInput()->RegisterMouseDownCallback(EKeyCode::LButton, [this](const FVector& MouseNDCPos)
 	{
-		RayCasting(MouseNDCPos);
+		UInputManager* inputManager = UEngine::Get().GetInput();
+		FVector mousePos = inputManager->GetMousePos();
+		TMap<EViewPortSplitter, FViewport> viewports;
+		FVector mousePosInWindowedNDC;
+		EViewPortSplitter viewportIndex;
+
+		for ( auto& pair : this->GetCameraMap() ) {
+			ACamera* cam = pair.Value;
+			viewports[pair.Key] = cam->GetViewPort();
+		}
+		UEngine::Get().GetInput()->GetNDCPosWithSplitViewPort(mousePos, viewports, mousePosInWindowedNDC, viewportIndex);
+		this->SetFocusCamera(viewportIndex);
+
+		RayCasting(mousePosInWindowedNDC);
 	}, GetUUID());
 }
 
@@ -464,6 +457,8 @@ void UWorld::LoadWorld(const char* InSceneName)
 
 void UWorld::RayCasting(const FVector& MouseNDCPos)
 {
+	if ( GetCameraFocused() == nullptr )
+		return;
 	FMatrix ProjMatrix = GetCameraFocused()->GetProjectionMatrix();
 	FRay worldRay = FRay(GetCameraFocused()->GetViewMatrix(), ProjMatrix, MouseNDCPos.X, MouseNDCPos.Y);
 

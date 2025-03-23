@@ -12,26 +12,10 @@
 
 void UEditorManager::Init()
 {
-	const int Width = static_cast<int>(FDevice::Get().GetFrameBufferWindowSize().X);
-	const int Height = static_cast<int>(FDevice::Get().GetFrameBufferWindowSize().Y);
-
-	D3D11_TEXTURE2D_DESC textureDesc = {};
-	textureDesc.Width = Width;
-	textureDesc.Height = Height;
-	textureDesc.MipLevels = 1;
-	textureDesc.ArraySize = 1;
-	textureDesc.Format = DXGI_FORMAT_R32G32B32A32_UINT; // 32비트 UINT로 변경
-	textureDesc.SampleDesc.Count = 1;
-	textureDesc.Usage = D3D11_USAGE_DEFAULT;
-	textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-	
-	UUIDTexture = UTexture::Create("UUIDTexture", textureDesc);
-	UUIDTexture->CreateRenderTargetView();
-
-
+	CreateUUIDTexture();
 	//D3D11_TEXTURE2D_DESC DepthBufferDesc = {};
 	//DepthBufferDesc.Width = Width;
-	//DepthBufferDesc.Height = Height;
+	//DepthBufferDesc.SplitterHeight = SplitterHeight;
 	//DepthBufferDesc.MipLevels = 1;
 	//DepthBufferDesc.ArraySize = 1;
 	//DepthBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;            // 32비트 중 24비트는 깊이, 8비트는 스텐실
@@ -44,6 +28,24 @@ void UEditorManager::Init()
 	//
 	//UUIDTextureDepthStecil = FTexture::Create("UUIDTextureDepthStecil", DepthBufferDesc);
 	//UUIDTextureDepthStecil->CreateDepthStencilView();
+}
+
+void UEditorManager::CreateUUIDTexture() {
+	const int Width = static_cast<int>(FDevice::Get().GetFrameBufferWindowSize().X);
+	const int Height = static_cast<int>(FDevice::Get().GetFrameBufferWindowSize().Y);
+
+	D3D11_TEXTURE2D_DESC textureDesc = {};
+	textureDesc.Width = Width;
+	textureDesc.Height = Height;
+	textureDesc.MipLevels = 1;
+	textureDesc.ArraySize = 1;
+	textureDesc.Format = DXGI_FORMAT_R32G32B32A32_UINT; // 32비트 UINT로 변경
+	textureDesc.SampleDesc.Count = 1;
+	textureDesc.Usage = D3D11_USAGE_DEFAULT;
+	textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+
+	UUIDTexture = UTexture::Create("UUIDTexture", textureDesc);
+	//UUIDTexture->CreateRenderTargetView(); // 이미 create 내에서 실행됨
 }
 
 void UEditorManager::SelectActor(AActor* NewActor)
@@ -125,10 +127,10 @@ void UEditorManager::LateTick([[maybe_unused]] float DeltaTime)
 		ScreenToClient(UEngine::Get().GetWindowHandle(), &pt);
 
 		//float Width = FDevice::Get().GetViewPortInfo().Width;
-		//float Height = FDevice::Get().GetViewPortInfo().Height;
+		//float SplitterHeight = FDevice::Get().GetViewPortInfo().SplitterHeight;
 
 		//      float ratioX = UEngine::Get().GetInitializedScreenWidth() / Width;
-		//      float ratioY = UEngine::Get().GetInitializedScreenHeight() / Height;
+		//      float ratioY = UEngine::Get().GetInitializedScreenHeight() / SplitterHeight;
 		//      pt.x = pt.x * ratioX;
 		//      pt.y = pt.y * ratioY;
 
@@ -222,36 +224,22 @@ void UEditorManager::OnUpdateWindowSize(uint32 Width, uint32 Height)
 		UUIDTexture = nullptr;
 	}
 
-	D3D11_TEXTURE2D_DESC textureDesc = {};
-	textureDesc.Width = Width;
-	textureDesc.Height = Height;
-	textureDesc.MipLevels = 1;
-	textureDesc.ArraySize = 1;
-	textureDesc.Format = DXGI_FORMAT_R32G32B32A32_UINT; // 32비트 UINT로 변경
-	textureDesc.SampleDesc.Count = 1;
-	textureDesc.Usage = D3D11_USAGE_DEFAULT;
-	textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-	UUIDTexture = UTexture::Create("UUIDTexture", textureDesc);
-	UUIDTexture->CreateRenderTargetView();
+	//D3D11_TEXTURE2D_DESC textureDesc = {};
+	//textureDesc.Width = Width;
+	//textureDesc.SplitterHeight = SplitterHeight;
+	//textureDesc.MipLevels = 1;
+	//textureDesc.ArraySize = 1;
+	//textureDesc.Format = DXGI_FORMAT_R32G32B32A32_UINT; // 32비트 UINT로 변경
+	//textureDesc.SampleDesc.Count = 1;
+	//textureDesc.Usage = D3D11_USAGE_DEFAULT;
+	//textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+	//UUIDTexture = UTexture::Create("UUIDTexture", textureDesc);
+	//UUIDTexture->CreateRenderTargetView();
 }
 
 void UEditorManager::OnResizeComplete()
 {
-	const int Width = static_cast<int>(FDevice::Get().GetViewPortInfo().Width);
-	const int Height = static_cast<int>(FDevice::Get().GetViewPortInfo().Height);
-
-	D3D11_TEXTURE2D_DESC textureDesc = {};
-	textureDesc.Width = Width;
-	textureDesc.Height = Height;
-	textureDesc.MipLevels = 1;
-	textureDesc.ArraySize = 1;
-	textureDesc.Format = DXGI_FORMAT_R32G32B32A32_UINT; // 32비트 UINT로 변경
-	textureDesc.SampleDesc.Count = 1;
-	textureDesc.Usage = D3D11_USAGE_DEFAULT;
-	textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-
-	UUIDTexture = UTexture::Create("UUIDTexture", textureDesc);
-	UUIDTexture->CreateRenderTargetView();
+	CreateUUIDTexture();
 }
 
 FVector4 UEditorManager::GetPixel(FVector MPos) const

@@ -157,7 +157,8 @@ void FDevice::OnUpdateWindowSize(int Width, int Height)
 		// 뷰포트 정보 갱신
 		ViewportInfo = {
 			0.0f, 0.0f,
-			static_cast<float>(SwapChainDesc.BufferDesc.Width * 0.5f), static_cast<float>(SwapChainDesc.BufferDesc.Height * 0.5f),
+			static_cast<float>(SwapChainDesc.BufferDesc.Width) * 0.5f,
+			static_cast<float>(SwapChainDesc.BufferDesc.Height) * 0.5f,
 			0.0f, 1.0f
 		};
 	}

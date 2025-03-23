@@ -175,15 +175,15 @@ FUUIDBillBoard* URenderer::GetUUIDBillBoard() {
 // void URenderer::CreatePickingTexture(HWND hWnd)
 // {
 //  //    RECT Rect;
-//  //    int Width , Height;
+//  //    int Width , SplitterHeight;
 //  //
 //  //    Width =  FDevice::Get().GetViewPortInfo().Width;
-// 	// Height =  FDevice::Get().GetViewPortInfo().Height;
+// 	// SplitterHeight =  FDevice::Get().GetViewPortInfo().SplitterHeight;
 //  //
 //  //    D3D11_TEXTURE2D_DESC 
 // Desc = {};
 //  //    textureDesc.Width = Width;
-//  //    textureDesc.Height = Height;
+//  //    textureDesc.SplitterHeight = SplitterHeight;
 //  //    textureDesc.MipLevels = 1;
 //  //    textureDesc.ArraySize = 1;
 //  //    textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -263,7 +263,7 @@ FUUIDBillBoard* URenderer::GetUUIDBillBoard() {
 
 
 
-//void URenderer::OnUpdateWindowSize(uint32 Width, uint32 Height)
+//void URenderer::OnUpdateWindowSize(uint32 Width, uint32 SplitterHeight)
 //{
 //	
 //	//ReleasePickingFrameBuffer();
