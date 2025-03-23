@@ -1,5 +1,5 @@
 #include "Dice.h"
-#include "Object/PrimitiveComponent/UPrimitiveComponent.h"
+#include "Object/PrimitiveComponent/TextureComponent.h"
 
 ADice::ADice()
 {

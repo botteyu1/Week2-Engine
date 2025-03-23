@@ -67,8 +67,6 @@ public:
 		bUseVertexColor = bUse;
 	}
 	const FVector4& GetCustomColor() const { return CustomColor; }
-
-	//void SetTexture(UTextureAsset* )
 public:
 	virtual void RegisterComponentWithWorld(UWorld* World);
 
@@ -244,31 +242,5 @@ public:
 	virtual EPrimitiveType GetType() override
 	{
 		return EPrimitiveType::EPT_Quad;
-	}
-};
-
-class UDiceComp : public UPrimitiveComponent
-{
-	DECLARE_CLASS(UDiceComp, UPrimitiveComponent)
-
-public:
-	UDiceComp();
-
-	virtual EPrimitiveType GetType() override
-	{
-		return EPrimitiveType::EPT_StaticMesh;
-	}
-};
-
-class UMugComp : public UPrimitiveComponent
-{
-	DECLARE_CLASS(UMugComp, UPrimitiveComponent)
-
-public:
-	UMugComp();
-
-	virtual EPrimitiveType GetType() override
-	{
-		return EPrimitiveType::EPT_StaticMesh;
 	}
 };

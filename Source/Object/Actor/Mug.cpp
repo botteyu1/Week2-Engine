@@ -1,5 +1,5 @@
 #include "Mug.h"
-#include "Object/PrimitiveComponent/UPrimitiveComponent.h"
+#include "Object/PrimitiveComponent/TextureComponent.h"
 
 AMug::AMug()
 {

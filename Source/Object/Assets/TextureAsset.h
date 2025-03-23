@@ -2,6 +2,7 @@
 #include "Asset.h"
 
 class UTexture;
+class USampler;
 
 class UTextureAsset: public UAsset {
 	DECLARE_CLASS(UTextureAsset, UAsset)
@@ -13,7 +14,9 @@ public:
 	bool Load() override;
 	bool Save(FString path = "") override;
 	bool Unload() override;
-	inline std::shared_ptr<UTexture> GetResource() { return Resource; }
+	inline std::shared_ptr<UTexture> GetResource() { return Texture; }
+	void PSSetting(UINT);
 private:
-	std::shared_ptr<UTexture> Resource;
+	std::shared_ptr<UTexture> Texture;
+	std::shared_ptr<USampler> Sampler;
 };
