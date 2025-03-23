@@ -221,6 +221,10 @@ void UInputManager::GetNDCPosWithSplitViewPort(
 			(viewport.TopLeftY < InMousePos.Y && InMousePos.Y < viewport.TopLeftY + viewport.Height)
 		) {
 			OutSelectedViewPortIndex = pair.Key;
+			OutMouseNDCPos.X = 2.0f * (InMousePos.X - viewport.TopLeftX) / viewport.Width - 1.0f;
+			OutMouseNDCPos.Y = - 2.0f * (InMousePos.Y - viewport.TopLeftY) / viewport.Height + 1.0f;
+			OutMouseNDCPos.Z = 0.f;
+			UE_LOG("MousePos In NDC : %f, %f", OutMouseNDCPos.X, OutMouseNDCPos.Y);
 		}
 	}
 }

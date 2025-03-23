@@ -121,23 +121,6 @@ void UWorld::InitWorld()
 	//AArrow* Arrow = World->SpawnActor<AArrow>();
 	//World->SpawnActor<ASphere>();
 
-	// Test
-	UEngine::Get().GetInput()->RegisterMouseDownCallback(EKeyCode::LButton, [this](const FVector& vec) {
-
-		UInputManager* inputManager = UEngine::Get().GetInput();
-		FVector mousePos = inputManager->GetMousePos();
-		TMap<EViewPortSplitter, FViewport> viewports;
-		FVector mouseNDCPos;
-		EViewPortSplitter viewportIndex;
-
-		for(auto& pair: this->GetCameraMap()) {
-			ACamera* cam = pair.Value;
-			viewports[pair.Key] = cam->GetViewPort();
-		}
-		UEngine::Get().GetInput()->GetNDCPosWithSplitViewPort(mousePos, viewports, mouseNDCPos, viewportIndex);
-		this->SetFocusCamera(viewportIndex);
-	}, GetUUID());
-
 }
 
 void UWorld::BeginPlay()
@@ -149,7 +132,20 @@ void UWorld::BeginPlay()
 
 	UEngine::Get().GetInput()->RegisterMouseDownCallback(EKeyCode::LButton, [this](const FVector& MouseNDCPos)
 	{
-		RayCasting(MouseNDCPos);
+		UInputManager* inputManager = UEngine::Get().GetInput();
+		FVector mousePos = inputManager->GetMousePos();
+		TMap<EViewPortSplitter, FViewport> viewports;
+		FVector mousePosInWindowedNDC;
+		EViewPortSplitter viewportIndex;
+
+		for ( auto& pair : this->GetCameraMap() ) {
+			ACamera* cam = pair.Value;
+			viewports[pair.Key] = cam->GetViewPort();
+		}
+		UEngine::Get().GetInput()->GetNDCPosWithSplitViewPort(mousePos, viewports, mousePosInWindowedNDC, viewportIndex);
+		this->SetFocusCamera(viewportIndex);
+
+		RayCasting(mousePosInWindowedNDC);
 	}, GetUUID());
 }
 

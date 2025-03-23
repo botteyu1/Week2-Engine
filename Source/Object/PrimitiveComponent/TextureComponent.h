@@ -10,7 +10,7 @@ public:
 public:
 	inline TArray<UTextureAsset*> GetTextures() const { return textures; }
 	inline void AddTexture(UTextureAsset* texture) { textures.Add(texture); }
-	inline void AddTexture(FString textureName);
+	void AddTexture(FString textureName);
 
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
