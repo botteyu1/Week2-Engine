@@ -66,6 +66,7 @@ public:
     float GetFieldOfView() const;
     float GetNear() const;
     float GetFar() const;
+	inline const FViewport GetViewPort() const { return Viewport; }
 
 	void SetZoomSize(float InZoomSize) { ZoomSize = FMath::Clamp(InZoomSize, 100.f, 1000.f); }
 	float GetZoomSize() const { return ZoomSize; }

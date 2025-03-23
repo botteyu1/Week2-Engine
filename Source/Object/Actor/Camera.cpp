@@ -5,6 +5,7 @@
 #include "Static/EditorManager.h"
 #include "Core/Rendering/FViewport.h"
 #include "Core/Rendering/FDevice.h"
+#include "Object/World/World.h"
 
 
 
@@ -125,6 +126,8 @@ void ACamera::UpdateCameraMatrix()
 
 void ACamera::MoveForward()
 {
+	if ( UEngine::Get().GetWorld()->GetCameraFocused() != this )
+		return;
 	FTransform tr = GetActorTransform();
 	tr.SetPosition(tr.GetPosition() + (GetForward() * CameraSpeed * UEngine::GetDeltaTime()));
 	SetActorTransform(tr);
@@ -132,6 +135,8 @@ void ACamera::MoveForward()
 
 void ACamera::MoveBackward()
 {
+	if ( UEngine::Get().GetWorld()->GetCameraFocused() != this )
+		return;
 	FTransform tr = GetActorTransform();
 	tr.SetPosition(tr.GetPosition() - (GetForward() * CameraSpeed * UEngine::GetDeltaTime()));
 	SetActorTransform(tr);
@@ -139,6 +144,8 @@ void ACamera::MoveBackward()
 
 void ACamera::MoveLeft()
 {
+	if ( UEngine::Get().GetWorld()->GetCameraFocused() != this )
+		return;
 	FTransform tr = GetActorTransform();
 	tr.SetPosition(tr.GetPosition() - (GetRight() * CameraSpeed * UEngine::GetDeltaTime()));
 	SetActorTransform(tr);
@@ -146,6 +153,8 @@ void ACamera::MoveLeft()
 
 void ACamera::MoveRight()
 {
+	if ( UEngine::Get().GetWorld()->GetCameraFocused() != this )
+		return;
 	FTransform tr = GetActorTransform();
 	tr.SetPosition(tr.GetPosition() + (GetRight() * CameraSpeed * UEngine::GetDeltaTime()));
 	SetActorTransform(tr);
@@ -153,6 +162,8 @@ void ACamera::MoveRight()
 
 void ACamera::MoveUp()
 {
+	if ( UEngine::Get().GetWorld()->GetCameraFocused() != this )
+		return;
 	FTransform tr = GetActorTransform();
 	tr.SetPosition(tr.GetPosition() + (FVector::UpVector * CameraSpeed * UEngine::GetDeltaTime()));
 	SetActorTransform(tr);
@@ -160,6 +171,8 @@ void ACamera::MoveUp()
 
 void ACamera::MoveDown()
 {
+	if ( UEngine::Get().GetWorld()->GetCameraFocused() != this )
+		return;
 	FTransform tr = GetActorTransform();
 	tr.SetPosition(tr.GetPosition() - (FVector::UpVector * CameraSpeed * UEngine::GetDeltaTime()));
 	SetActorTransform(tr);
@@ -167,6 +180,8 @@ void ACamera::MoveDown()
 
 void ACamera::Rotate(const FVector& mouseDelta)
 {
+	if ( UEngine::Get().GetWorld()->GetCameraFocused() != this )
+		return;
 	FTransform tr = GetActorTransform();
 	FVector TargetRotation = tr.GetRotation().GetEuler();
 	TargetRotation.Y -= FMath::Clamp(Sensitivity * mouseDelta.Y, -MaxYDegree, MaxYDegree);

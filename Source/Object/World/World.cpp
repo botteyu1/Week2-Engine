@@ -37,6 +37,107 @@ void UWorld::InitWorld()
 {
 	//TODO : 
 	GridSize = FString::ToFloat(UConfigManager::Get().GetValue(TEXT("World"), TEXT("GridSize")));
+
+
+	SetCamera(EViewPortSplitter::TopLeft, SpawnActor<ACamera>());
+	SetCamera(EViewPortSplitter::TopRight, SpawnActor<ACamera>());
+	SetCamera(EViewPortSplitter::BottomLeft, SpawnActor<ACamera>());
+	SetCamera(EViewPortSplitter::BottomRight, SpawnActor<ACamera>());
+
+	ACamera* TopLeftCamera = GetCamera(EViewPortSplitter::TopLeft);
+	ACamera* TopRightCamera = GetCamera(EViewPortSplitter::TopRight);
+	ACamera* BottomLeftCamera = GetCamera(EViewPortSplitter::BottomLeft);
+	ACamera* BottomRightCamera = GetCamera(EViewPortSplitter::BottomRight);
+
+	DXGI_SWAP_CHAIN_DESC SwapChainDesc;
+
+	FDevice::Get().GetSwapChain()->GetDesc(&SwapChainDesc);
+	FRect ViewportRect = FRect(
+		0,
+		0,
+		static_cast<float>(SwapChainDesc.BufferDesc.Width),
+		static_cast<float>(SwapChainDesc.BufferDesc.Height)
+	);
+
+	TopLeftCamera->UpdateViewport(
+		FRect(
+			0,
+			0,
+			static_cast<float>(SwapChainDesc.BufferDesc.Width) * 0.5f,
+			static_cast<float>(SwapChainDesc.BufferDesc.Height) * 0.5f
+		)
+	);
+	TopRightCamera->UpdateViewport(
+		FRect(
+			static_cast<float>(SwapChainDesc.BufferDesc.Width) * 0.5f,
+			0,
+			SwapChainDesc.BufferDesc.Width,
+			static_cast<float>(SwapChainDesc.BufferDesc.Height) * 0.5f
+		)
+	);
+	BottomLeftCamera->UpdateViewport(
+		FRect(
+			0,
+			static_cast<float>(SwapChainDesc.BufferDesc.Height) * 0.5f,
+			static_cast<float>(SwapChainDesc.BufferDesc.Width) * 0.5f,
+			SwapChainDesc.BufferDesc.Height
+		)
+	);
+	BottomRightCamera->UpdateViewport(
+		FRect(
+			static_cast<float>(SwapChainDesc.BufferDesc.Width) * 0.5f,
+			static_cast<float>(SwapChainDesc.BufferDesc.Height) * 0.5f,
+			SwapChainDesc.BufferDesc.Width,
+			SwapChainDesc.BufferDesc.Height
+		)
+	);
+
+
+	BottomRightCamera->Rotate(FVector(30, 30, 30));
+
+	CameraFocused = TopLeftCamera;
+
+	//스플리터 주석처리
+
+	//LeftViewport = std::make_shared<FViewport>(ViewportRect);
+	//RightViewport = std::make_shared<FViewport>(ViewportRect);
+
+	//Viewports.Add(EViewSplitter::Left, LeftViewport);
+	//Viewports.Add(EViewSplitter::Right, RightViewport);
+
+	//HorizontalSplitter = std::make_shared<SSplitterH>(LeftViewport, RightViewport);
+	//HorizontalSplitter->Rect = ViewportRect;
+
+	//HorizontalSplitter->OnResize();
+	////Test
+	//FLineBatchManager::Get().AddLine(FVector{ 3.0f,3.0f,0.0f }, { -3.f,-3.f,0.0f });
+	//FLineBatchManager::Get().AddLine(FVector{ 6.0f,6.0f,6.0f }, { -6.f,-6.f,-6.0f });
+	//FLineBatchManager::Get().AddLine(FVector{ 6.0f,6.0f,7.0f }, { -6.f,-6.f,-7.0f });
+	//FLineBatchManager::Get().AddLine(FVector{ 6.0f,6.0f,8.0f }, { -6.f,-6.f,-8.0f });
+
+	// FLineBatchManager::Get().MakeWorldGrid(World->GetGridSize(), World->GetGridSize() / 100.f);
+
+	//// Test
+	//AArrow* Arrow = World->SpawnActor<AArrow>();
+	//World->SpawnActor<ASphere>();
+
+	// Test
+	UEngine::Get().GetInput()->RegisterMouseDownCallback(EKeyCode::LButton, [this](const FVector& vec) {
+
+		UInputManager* inputManager = UEngine::Get().GetInput();
+		FVector mousePos = inputManager->GetMousePos();
+		TMap<EViewPortSplitter, FViewport> viewports;
+		FVector mouseNDCPos;
+		EViewPortSplitter viewportIndex;
+
+		for(auto& pair: this->GetCameraMap()) {
+			ACamera* cam = pair.Value;
+			viewports[pair.Key] = cam->GetViewPort();
+		}
+		UEngine::Get().GetInput()->GetNDCPosWithSplitViewPort(mousePos, viewports, mouseNDCPos, viewportIndex);
+		this->SetFocusCamera(viewportIndex);
+	}, GetUUID());
+
 }
 
 void UWorld::BeginPlay()
@@ -343,10 +444,10 @@ void UWorld::LoadWorld(const char* InSceneName)
 
 void UWorld::RayCasting(const FVector& MouseNDCPos)
 {
-	FMatrix ProjMatrix = CameraMap[EViewPortSplitter::TopLeft]->GetProjectionMatrix();
-	FRay worldRay = FRay(CameraMap[EViewPortSplitter::TopLeft]->GetViewMatrix(), ProjMatrix, MouseNDCPos.X, MouseNDCPos.Y);
+	FMatrix ProjMatrix = GetCameraFocused()->GetProjectionMatrix();
+	FRay worldRay = FRay(GetCameraFocused()->GetViewMatrix(), ProjMatrix, MouseNDCPos.X, MouseNDCPos.Y);
 
-	UEngine::Get().GetRenderer()->GetBatchManager()->AddLine(worldRay.GetOrigin(), worldRay.GetOrigin() + worldRay.GetDirection() * CameraMap[EViewPortSplitter::TopLeft]->GetFar(), FVector4::CYAN);
+	UEngine::Get().GetRenderer()->GetBatchManager()->AddLine(worldRay.GetOrigin(), worldRay.GetOrigin() + worldRay.GetDirection() * GetCameraFocused()->GetFar(), FVector4::CYAN);
 
 	AActor* SelectedActor = nullptr;
 	float minDistance = FLT_MAX;

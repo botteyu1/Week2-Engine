@@ -1,4 +1,6 @@
 #include "PlayerInput.h"
+#include "Core/Rendering/FViewport.h"
+#include "Object/World/World.h"
 
 [[maybe_unused]]
 static FVector GetWindowSize(HWND hWnd)
@@ -201,4 +203,24 @@ void UInputManager::Update(HWND hWnd, uint32 FramaeBufferWidth, uint32 FramaeBuf
 FVector UInputManager::CalNDCPos(FVector InMousePos, FVector WindowSize) const
 {
     return { (2.0f * InMousePos.X) / WindowSize.X - 1.0f,  (-2.0f * InMousePos.Y) / WindowSize.Y + 1.0f, 0};
+}
+
+void UInputManager::GetNDCPosWithSplitViewPort(
+	const FVector InMousePos, 
+	const TMap<EViewPortSplitter, FViewport> InViewPorts,
+	FVector& OutMouseNDCPos,
+	EViewPortSplitter& OutSelectedViewPortIndex
+	) const {
+
+	float screenPosX = InMousePos.X;
+	float screenPosY = InMousePos.Y;
+	for ( const auto& pair: InViewPorts ) {
+		D3D11_VIEWPORT viewport = pair.Value.GetViewportInfo();
+		if (
+			(viewport.TopLeftX < InMousePos.X && InMousePos.X < viewport.TopLeftX + viewport.Width) &&
+			(viewport.TopLeftY < InMousePos.Y && InMousePos.Y < viewport.TopLeftY + viewport.Height)
+		) {
+			OutSelectedViewPortIndex = pair.Key;
+		}
+	}
 }

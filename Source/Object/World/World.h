@@ -63,9 +63,12 @@ public:
 	void RemoveRenderComponent(UPrimitiveComponent* Component) { RenderComponents.Remove(Component); }
 
 	inline ACamera* GetCamera(EViewPortSplitter InType) const { return CameraMap[InType]; }
-	// 현재 렌더되는 카메라의 getter, 렌더 루프 바깥에서 쓰지 말 것
+	// 현재 렌더되는 카메라의 getter, 렌더 루프 바깥에서 쓰면 nullptr 반환
 	inline ACamera* GetCameraRenderFocused() const { return CameraRenderFocused; }
+	inline ACamera* GetCameraFocused() const { return CameraFocused; }
+	
 	void SetCamera(EViewPortSplitter InType, ACamera* NewCamera) { CameraMap[InType] = NewCamera; }
+	void SetFocusCamera(EViewPortSplitter InType) { CameraFocused = CameraMap[InType]; }
 
 	void RayCasting(const FVector& MouseNDCPos);
 
@@ -78,12 +81,14 @@ public:
 	void OnChangedGridSize();
 
 	float GetGridSize() const { return GridSize; }
+
+	inline const TMap<EViewPortSplitter, ACamera*> GetCameraMap() const { return CameraMap; }
 private:
 	UWorldInfo GetWorldInfo() const;
 	//ACamera* Camera = nullptr;
 	TMap<EViewPortSplitter, ACamera*> CameraMap;
-	ACamera* CameraRenderFocused;
-
+	ACamera* CameraRenderFocused = nullptr;
+	ACamera* CameraFocused = nullptr;
 	float GridSize = 100.0f;
 
 public:
