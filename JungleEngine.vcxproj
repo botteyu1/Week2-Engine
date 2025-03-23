@@ -187,6 +187,7 @@
     <ClCompile Include="Source\Object\Actor\SubUVParticle.cpp" />
     <ClCompile Include="Source\Object\Actor\WorldGrid.cpp" />
     <ClCompile Include="Source\Object\Assets\MeshAsset.cpp" />
+    <ClCompile Include="Source\Object\Assets\ObjArchive.cpp" />
     <ClCompile Include="Source\Object\PrimitiveComponent\GizmoComponent.cpp" />
     <ClCompile Include="Source\Core\Rendering\FViewMode.cpp" />
     <ClCompile Include="Source\Debug\EngineShowFlags.cpp" />
@@ -321,6 +322,7 @@
     <ClInclude Include="Source\Debug\DebugDrawManager.h" />
     <ClInclude Include="Source\Object\Actor\Dice.h" />
     <ClInclude Include="Source\Object\Actor\WorldGrid.h" />
+    <ClInclude Include="Source\Object\Assets\ObjArchive.h" />
     <ClInclude Include="Source\Object\PrimitiveComponent\GizmoComponent.h" />
     <ClInclude Include="Source\Core\Rendering\FViewMode.h" />
     <ClInclude Include="Source\Debug\EngineShowFlags.h" />

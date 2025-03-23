@@ -434,6 +434,9 @@ void UWorld::RayCasting(const FVector& MouseNDCPos)
 		FEditorManager::Get().SelectActor(SelectedActor);
 		FUUIDBillBoard::Get().SetTarget(SelectedActor);
 	}
+	else {
+		FEditorManager::Get().SelectActor(nullptr);
+	}
 }
 
 void UWorld::PickByPixel(const FVector& MousePos)

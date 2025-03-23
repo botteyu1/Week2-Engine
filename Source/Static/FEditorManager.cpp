@@ -164,7 +164,7 @@ void FEditorManager::LateTick([[maybe_unused]] float DeltaTime)
 		}
 		else
 		{
-			SelectActor(nullptr);
+			//SelectActor(nullptr);
 		}
 	}
 
