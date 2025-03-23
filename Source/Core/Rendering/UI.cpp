@@ -210,10 +210,10 @@ void UI::RenderPrimitiveSelection()
 				World->SpawnActor<ASpotLight>();
 			}
 			else if (strcmp(items[currentItem], "Dice") == 0) {
-				World->SpawnStaticMeshActor<AStaticMesh>("Dice.obj");
+				World->SpawnStaticMeshActor("Dice.obj");
 			}
 			else if (strcmp(items[currentItem], "Mug") == 0) {
-				World->SpawnStaticMeshActor<AStaticMesh>("Mug.obj");
+				World->SpawnStaticMeshActor("Mug.obj");
 			}
             //else if (strcmp(items[currentItem], "Triangle") == 0)
             //{
