@@ -8,7 +8,7 @@ class ACamera;
 class AActor;
 class AGizmoActor;
 
-class FEditorManager : public TSingleton<FEditorManager>
+class UEditorManager
 {
 	friend class URenderer;
 	friend class FDevice;;
@@ -19,9 +19,7 @@ public:
     
     void SelectActor(AActor* NewActor);
 
-    inline ACamera* GetCamera() const {return Camera;}
 
-    void SetCamera(ACamera* NewCamera);
 
 	AGizmoActor* GetGizmo() const {return Gizmo;}
 	void SetGizmo(AGizmoActor* InGizmo);
@@ -41,6 +39,8 @@ private:
     ACamera* Camera = nullptr;
     AActor* SelectedActor = nullptr;
 	AGizmoActor* Gizmo = nullptr;
+
+
 
 	
 

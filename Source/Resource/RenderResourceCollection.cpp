@@ -5,79 +5,53 @@
 #include "Mesh.h"
 #include "Material.h"
 
-void FRenderResourceCollection::SetMesh(const FString& _Name, bool bUseTextureArray)
+void FRenderResourceCollection::SetMesh(const FString& _Name)
 {
 	Mesh = UMesh::Find(_Name);
 
-	SetMesh(Mesh, bUseTextureArray);
+	SetMesh(Mesh);
 }
 
-void FRenderResourceCollection::SetMaterial(const FString& _Name, bool bUseTextureArray)
+void FRenderResourceCollection::SetMaterial(const FString& _Name)
 {
 	Material = UMaterial::Find(_Name);
 
-	SetMaterial(Material, bUseTextureArray);
+	SetMaterial(Material);
 }
 
-void FRenderResourceCollection::SetMesh(std::shared_ptr<UMesh> _Mesh, bool bUseTextureArray)
+void FRenderResourceCollection::SetMesh(std::shared_ptr<UMesh> _Mesh)
 {
 	Mesh = _Mesh;
-
-	if (nullptr == Mesh)
+	if (nullptr == Mesh.get())
 	{
 		MsgBoxAssert("존재하지 않는 매쉬를 세팅하려고 했습니다.");
 	}
-
-	if (nullptr == Layout && nullptr != Material)
-	{
-		Layout = std::make_shared<UInputLayout>();
-		if (!bUseTextureArray)
-		{
-			Layout->ResCreate(Material->GetVertexShader());
-		}
-		else
-		{
-			Layout->ResCreateForTextuerArray(Material->GetVertexShader());
-		}
-	}
+	Layout = _Mesh->GetVertexBuffer()->GetLayout();
 }
 
-void FRenderResourceCollection::SetMaterial(std::shared_ptr<UMaterial> _Material, bool bUseTextureArray)
+void FRenderResourceCollection::SetMaterial(std::shared_ptr<UMaterial> _Material)
 {
 	Material = _Material;
-
 
 	if (nullptr == Material)
 	{
 		MsgBoxAssert("존재하지 않는 머티리얼을 세팅하려고 했습니다.");
 	}
-
-	if (nullptr == Layout && nullptr != Mesh)
-	{
-		Layout = std::make_shared<UInputLayout>();
-		if (!bUseTextureArray) 
-		{
-			Layout->ResCreate(Material->GetVertexShader());
-		}
-		else
-		{
-			Layout->ResCreateForTextuerArray(Material->GetVertexShader());
-		}
-	}
 }
 
-void FRenderResourceCollection::Render(bool bUseTextureIndex)
+void FRenderResourceCollection::Render(ERenderFlags mainFlags)
 {
-	Mesh->Setting();
-	Layout->Setting(bUseTextureIndex);
-	Material->Setting(); 
+	ERenderFlags flag = (mainFlags == ERenderFlags::None) ? CollectionFlag : mainFlags;
+	Mesh->Setting(flag);
+	Layout->Setting(flag);
+	Material->Setting(flag);
 
 	for (auto& Binding : ConstantBufferBindings)
 	{
 		Binding.Value->Setting();
 	}
   
-  for (auto& Binding : TextureBindings)
+	for ( auto& Binding : TextureBindings )
 	{
 		Binding.Value->Setting();
 	}
@@ -98,8 +72,12 @@ void FRenderResourceCollection::Reset()
 	}
 }
 
-std::shared_ptr<FTextureBinding> FRenderResourceCollection::SetTextureBinding(const FString& _Name, int _BindPoint,
-                                                                              bool bIsUseVertexShader, bool bIsUsePixelShader)
+std::shared_ptr<FTextureBinding> FRenderResourceCollection::SetTextureBinding(
+	const FString& _Name, 
+	int _BindPoint,
+	bool bIsUseVertexShader, 
+	bool bIsUsePixelShader
+)
 {
 	std::shared_ptr<UTexture> Res = UTexture::Find(_Name);
 
@@ -122,8 +100,12 @@ std::shared_ptr<FTextureBinding> FRenderResourceCollection::SetTextureBinding(co
 	return Binding;
 }
 
-std::shared_ptr<FSamplerBinding> FRenderResourceCollection::SetSamplerBinding(const FString& _Name, int _BindPoint,
-                                                                              bool bIsUseVertexShader, bool bIsUsePixelShader)
+std::shared_ptr<FSamplerBinding> FRenderResourceCollection::SetSamplerBinding(
+	const FString& _Name, 
+	int _BindPoint,
+	bool bIsUseVertexShader, 
+	bool bIsUsePixelShader
+)
 {
 	std::shared_ptr< USampler> Res = USampler::Find(_Name);
 
@@ -146,8 +128,14 @@ std::shared_ptr<FSamplerBinding> FRenderResourceCollection::SetSamplerBinding(co
 	return Binding;
 }
 
-std::shared_ptr<FConstantBufferBinding> FRenderResourceCollection::SetConstantBufferBinding(const FString& _Name,
-                                                                                            const void* _CPUDataPtr, int _DataSize, int _BindPoint, bool bIsUseVertexShader, bool bIsUsePixelShader)
+std::shared_ptr<FConstantBufferBinding> FRenderResourceCollection::SetConstantBufferBinding(
+	const FString& _Name,
+	const void* _CPUDataPtr, 
+	int _DataSize, 
+	int _BindPoint, 
+	bool bIsUseVertexShader, 
+	bool bIsUsePixelShader
+)
 {
 
 	/*std::shared_ptr<class FConstantBufferBinding>* Binding = ConstantBufferBindings.Find(_Name);

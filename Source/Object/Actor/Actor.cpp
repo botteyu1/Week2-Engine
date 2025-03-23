@@ -2,7 +2,7 @@
 
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 #include "Object/World/World.h"
-#include "Static/FEditorManager.h"
+#include "Static/EditorManager.h"
 
 AActor::AActor() : Depth{ 0 }
 {
@@ -61,9 +61,9 @@ void AActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 			
 			GetWorld()->RemoveRenderComponent(PrimitiveComp);
 		}
-		if (FEditorManager::Get().GetSelectedActor() == this)
+		if (UEngine::Get().GetEditor()->GetSelectedActor() == this)
 		{
-			FEditorManager::Get().SelectActor(nullptr);
+			UEngine::Get().GetEditor()->SelectActor(nullptr);
 		}
 		UEngine::Get().GObjects.Remove(Component->GetUUID());
 	}
@@ -473,8 +473,7 @@ const char* AActor::GetTypeName()
 
 bool AActor::Destroy()
 {
-	UWorld* World = GetWorld();
-	if (World)
+	if (UWorld* World = GetWorld())
 	{
 		World->DestroyActor(this);
 	}

@@ -1,18 +1,19 @@
 #include "World.h"
 #include <cassert>
-#include "Core/Utils/JsonSavehelper.h"
 
+#include "Core/Utils/JsonSavehelper.h"
 #include "Core/Container/Map.h"
+#include "Core/Rendering/FDevice.h"
 #include "Core/Input/PlayerInput.h"
 #include "Object/Actor/Camera.h"
-#include <Object/Gizmo/GizmoHandle.h>
+#include "Object/Gizmo/GizmoHandle.h"
 
 #include "Object/Actor/Cone.h"
 #include "Object/Actor/Cube.h"
 #include "Object/Actor/Cylinder.h"
 #include "Object/Actor/Sphere.h"
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
-#include "Static/FEditorManager.h"
+#include "Static/EditorManager.h"
 #include "Static/FLineBatchManager.h"
 #include "Static/FUUIDBillBoard.h"
 #include <Core/Math/Ray.h>
@@ -31,10 +32,112 @@
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
 
+
 void UWorld::InitWorld()
 {
 	//TODO : 
 	GridSize = FString::ToFloat(UConfigManager::Get().GetValue(TEXT("World"), TEXT("GridSize")));
+
+
+	SetCamera(EViewPortSplitter::TopLeft, SpawnActor<ACamera>());
+	SetCamera(EViewPortSplitter::TopRight, SpawnActor<ACamera>());
+	SetCamera(EViewPortSplitter::BottomLeft, SpawnActor<ACamera>());
+	SetCamera(EViewPortSplitter::BottomRight, SpawnActor<ACamera>());
+
+	ACamera* TopLeftCamera = GetCamera(EViewPortSplitter::TopLeft);
+	ACamera* TopRightCamera = GetCamera(EViewPortSplitter::TopRight);
+	ACamera* BottomLeftCamera = GetCamera(EViewPortSplitter::BottomLeft);
+	ACamera* BottomRightCamera = GetCamera(EViewPortSplitter::BottomRight);
+
+	DXGI_SWAP_CHAIN_DESC SwapChainDesc;
+
+	FDevice::Get().GetSwapChain()->GetDesc(&SwapChainDesc);
+	FRect ViewportRect = FRect(
+		0,
+		0,
+		static_cast<float>(SwapChainDesc.BufferDesc.Width),
+		static_cast<float>(SwapChainDesc.BufferDesc.Height)
+	);
+
+	TopLeftCamera->UpdateViewport(
+		FRect(
+			0,
+			0,
+			static_cast<float>(SwapChainDesc.BufferDesc.Width) * 0.5f,
+			static_cast<float>(SwapChainDesc.BufferDesc.Height) * 0.5f
+		)
+	);
+	TopRightCamera->UpdateViewport(
+		FRect(
+			static_cast<float>(SwapChainDesc.BufferDesc.Width) * 0.5f,
+			0,
+			SwapChainDesc.BufferDesc.Width,
+			static_cast<float>(SwapChainDesc.BufferDesc.Height) * 0.5f
+		)
+	);
+	BottomLeftCamera->UpdateViewport(
+		FRect(
+			0,
+			static_cast<float>(SwapChainDesc.BufferDesc.Height) * 0.5f,
+			static_cast<float>(SwapChainDesc.BufferDesc.Width) * 0.5f,
+			SwapChainDesc.BufferDesc.Height
+		)
+	);
+	BottomRightCamera->UpdateViewport(
+		FRect(
+			static_cast<float>(SwapChainDesc.BufferDesc.Width) * 0.5f,
+			static_cast<float>(SwapChainDesc.BufferDesc.Height) * 0.5f,
+			SwapChainDesc.BufferDesc.Width,
+			SwapChainDesc.BufferDesc.Height
+		)
+	);
+
+
+	BottomRightCamera->Rotate(FVector(30, 30, 30));
+
+	CameraFocused = TopLeftCamera;
+
+	//스플리터 주석처리
+
+	//LeftViewport = std::make_shared<FViewport>(ViewportRect);
+	//RightViewport = std::make_shared<FViewport>(ViewportRect);
+
+	//Viewports.Add(EViewSplitter::Left, LeftViewport);
+	//Viewports.Add(EViewSplitter::Right, RightViewport);
+
+	//HorizontalSplitter = std::make_shared<SSplitterH>(LeftViewport, RightViewport);
+	//HorizontalSplitter->Rect = ViewportRect;
+
+	//HorizontalSplitter->OnResize();
+	////Test
+	//FLineBatchManager::Get().AddLine(FVector{ 3.0f,3.0f,0.0f }, { -3.f,-3.f,0.0f });
+	//FLineBatchManager::Get().AddLine(FVector{ 6.0f,6.0f,6.0f }, { -6.f,-6.f,-6.0f });
+	//FLineBatchManager::Get().AddLine(FVector{ 6.0f,6.0f,7.0f }, { -6.f,-6.f,-7.0f });
+	//FLineBatchManager::Get().AddLine(FVector{ 6.0f,6.0f,8.0f }, { -6.f,-6.f,-8.0f });
+
+	// FLineBatchManager::Get().MakeWorldGrid(World->GetGridSize(), World->GetGridSize() / 100.f);
+
+	//// Test
+	//AArrow* Arrow = World->SpawnActor<AArrow>();
+	//World->SpawnActor<ASphere>();
+
+	// Test
+	UEngine::Get().GetInput()->RegisterMouseDownCallback(EKeyCode::LButton, [this](const FVector& vec) {
+
+		UInputManager* inputManager = UEngine::Get().GetInput();
+		FVector mousePos = inputManager->GetMousePos();
+		TMap<EViewPortSplitter, FViewport> viewports;
+		FVector mouseNDCPos;
+		EViewPortSplitter viewportIndex;
+
+		for(auto& pair: this->GetCameraMap()) {
+			ACamera* cam = pair.Value;
+			viewports[pair.Key] = cam->GetViewPort();
+		}
+		UEngine::Get().GetInput()->GetNDCPosWithSplitViewPort(mousePos, viewports, mouseNDCPos, viewportIndex);
+		this->SetFocusCamera(viewportIndex);
+	}, GetUUID());
+
 }
 
 void UWorld::BeginPlay()
@@ -44,10 +147,7 @@ void UWorld::BeginPlay()
 		Actor->BeginPlay();
 	}
 
-
-	TMap<FName, AActor*> Actors;
-
-	APlayerInput::Get().RegisterMouseDownCallback(EKeyCode::LButton, [this](const FVector& MouseNDCPos)
+	UEngine::Get().GetInput()->RegisterMouseDownCallback(EKeyCode::LButton, [this](const FVector& MouseNDCPos)
 	{
 		RayCasting(MouseNDCPos);
 	}, GetUUID());
@@ -99,45 +199,52 @@ void UWorld::Render()
 {
 	URenderer* Renderer = UEngine::Get().GetRenderer();
 
-	//라인 렌더링 임시
-
-
-
 	if (Renderer == nullptr)
 	{
 		return;
 	}
 
-	ACamera* cam = FEditorManager::Get().GetCamera();
-	cam->UpdateCameraMatrix();
+
+	for (auto& cam : CameraMap)
+	{
+		CameraRenderFocused = cam.Value;
+		cam.Value->UpdateCameraMatrix();
+		cam.Value->SettingViewport();
+
+		RenderMainTexture(*Renderer);
 
 
-	//if (APlayerInput::Get().GetKeyDown(EKeyCode::LButton))
+		AActor* SelectedActor = UEngine::Get().GetEditor()->GetSelectedActor();
+		if (SelectedActor != nullptr)
+		{
+			const FVector LocalMax = SelectedActor->GetActorLocalBoundsMax();
+			const FVector LocalMin = SelectedActor->GetActorLocalBoundsMin();
+
+			[[maybe_unused]] FVector WorldMax = SelectedActor->GetActorWorldBoundsMax();
+			[[maybe_unused]] FVector WorldMin = SelectedActor->GetActorWorldBoundsMin();
+
+			UDebugDrawManager::Get().DrawBoundingBox(LocalMin, LocalMax, SelectedActor->GetActorTransform(), FVector4::RED);
+			UEngine::Get().GetRenderer()->GetUUIDBillBoard()->Render();
+			
+		}
+		UEngine::Get().GetRenderer()->GetBatchManager()->Render();
+		UDebugDrawManager::Get().Render();
+
+	}
+	CameraRenderFocused = nullptr;
+	//ACamera* cam = FEditorManager::Get().GetCamera();
+	//cam->UpdateCameraMatrix();
+
+	// temp
+
+	//if (UInputManager::Get().GetKeyDown(EKeyCode::LButton))
 	//{
 	//	RenderPickingTexture(*Renderer);
 	//}
 
-	RenderMainTexture(*Renderer);
-
-	FLineBatchManager::Get().Render();
-
-	AActor* SelectedActor = FEditorManager::Get().GetSelectedActor();
-	if (SelectedActor != nullptr)
-	{
-		const FVector LocalMax = SelectedActor->GetActorLocalBoundsMax();
-		const FVector LocalMin = SelectedActor->GetActorLocalBoundsMin();
-
-		[[maybe_unused]] FVector WorldMax = SelectedActor->GetActorWorldBoundsMax();
-		[[maybe_unused]] FVector WorldMin = SelectedActor->GetActorWorldBoundsMin();
-
-		UDebugDrawManager::Get().DrawBoundingBox(LocalMin, LocalMax, SelectedActor->GetActorTransform(), FVector4::RED);
-	}
-	UDebugDrawManager::Get().Render();
 
 
-	FLineBatchManager::Get().Render();
 
-	FUUIDBillBoard::Get().Render();
 
 
 	//DisplayPickingTexture(*Renderer);
@@ -237,8 +344,8 @@ void UWorld::ClearWorld()
 		
 		DestroyActor(Actor);
 	}
-	FEditorManager::Get().SetGizmo(nullptr);
-	FUUIDBillBoard::Get().UpdateString(L"");
+	UEngine::Get().GetEditor()->SetGizmo(nullptr);
+	UEngine::Get().GetRenderer()->GetUUIDBillBoard()->UpdateString(L"");
 
 	UE_LOG("Clear World");
 }
@@ -337,10 +444,10 @@ void UWorld::LoadWorld(const char* InSceneName)
 
 void UWorld::RayCasting(const FVector& MouseNDCPos)
 {
-	FMatrix ProjMatrix = Camera->GetProjectionMatrix(); 
-	FRay worldRay = FRay(Camera->GetViewMatrix(), ProjMatrix, MouseNDCPos.X, MouseNDCPos.Y);
+	FMatrix ProjMatrix = GetCameraFocused()->GetProjectionMatrix();
+	FRay worldRay = FRay(GetCameraFocused()->GetViewMatrix(), ProjMatrix, MouseNDCPos.X, MouseNDCPos.Y);
 
-	FLineBatchManager::Get().AddLine(worldRay.GetOrigin(), worldRay.GetOrigin() + worldRay.GetDirection() * Camera->GetFar(), FVector4::CYAN);
+	UEngine::Get().GetRenderer()->GetBatchManager()->AddLine(worldRay.GetOrigin(), worldRay.GetOrigin() + worldRay.GetDirection() * GetCameraFocused()->GetFar(), FVector4::CYAN);
 
 	AActor* SelectedActor = nullptr;
 	float minDistance = FLT_MAX;
@@ -431,8 +538,8 @@ void UWorld::RayCasting(const FVector& MouseNDCPos)
 
 	if (SelectedActor)
 	{
-		FEditorManager::Get().SelectActor(SelectedActor);
-		FUUIDBillBoard::Get().SetTarget(SelectedActor);
+		UEngine::Get().GetEditor()->SelectActor(SelectedActor);
+		UEngine::Get().GetRenderer()->GetUUIDBillBoard()->SetTarget(SelectedActor);
 	}
 }
 
@@ -444,7 +551,7 @@ void UWorld::PickByPixel(const FVector& MousePos)
 void UWorld::OnChangedGridSize()
 {
 	UConfigManager::Get().SetValue(TEXT("World"), TEXT("GridSize"), FString::SanitizeFloat(GridSize));
-	FLineBatchManager::Get().DrawWorldGrid(GridSize, GridSize);
+	UEngine::Get().GetRenderer()->GetBatchManager()->MakeWorldGrid(GridSize, GridSize/100.f);
 }
 
 UWorldInfo UWorld::GetWorldInfo() const

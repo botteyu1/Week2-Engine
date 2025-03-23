@@ -1,7 +1,6 @@
 #pragma once
 #include <functional>
 
-#include "Core/AbstractClass/Singleton.h"
 #include "Core/Math/Vector.h"
 #include "Core/Container/Map.h"
 #include "Core/Container/Array.h"
@@ -169,7 +168,10 @@ private:
 	uint32 ID;
 };
 
-class APlayerInput : public TSingleton<APlayerInput>
+
+class FViewport;
+enum class EViewPortSplitter;
+class UInputManager
 {
 public:
 	struct FKey
@@ -178,7 +180,7 @@ public:
 		EKeyState KeyState;
 		bool bPressed;
 	};
-    APlayerInput();
+    UInputManager();
 
 	inline bool GetKeyDown(EKeyCode key) const { return Keys[static_cast<uint8>(key)].KeyState == EKeyState::Down; }
 
@@ -208,6 +210,12 @@ public:
 	template <typename Fn>
 	void RegisterMouseUpCallback(EKeyCode Button, const Fn& Callback, uint32 uuid);
 
+	void GetNDCPosWithSplitViewPort(
+		const FVector InMousePos,
+		const TMap<EViewPortSplitter, FViewport> InViewPorts,
+		FVector& OutMouseNDCPos,
+		EViewPortSplitter& OutSelectedViewPortIndex
+	) const;
 private:
 	void CreateKeys();
 	void ClearKeys();
@@ -245,7 +253,7 @@ private:
 };
 
 template <typename Fn>
-void APlayerInput::RegisterKeyDownCallback(EKeyCode KeyCode, const Fn& Callback, uint32 uuid)
+void UInputManager::RegisterKeyDownCallback(EKeyCode KeyCode, const Fn& Callback, uint32 uuid)
 {
 	if (KeyDownCallbacks.Contains(KeyCode))
 	{
@@ -262,7 +270,7 @@ void APlayerInput::RegisterKeyDownCallback(EKeyCode KeyCode, const Fn& Callback,
 }
 
 template <typename Fn>
-void APlayerInput::RegisterKeyPressCallback(EKeyCode KeyCode, const Fn& Callback, uint32 uuid)
+void UInputManager::RegisterKeyPressCallback(EKeyCode KeyCode, const Fn& Callback, uint32 uuid)
 {
 	if (KeyPressCallbacks.Contains(KeyCode))
 	{
@@ -279,7 +287,7 @@ void APlayerInput::RegisterKeyPressCallback(EKeyCode KeyCode, const Fn& Callback
 }
 
 template <typename Fn>
-void APlayerInput::RegisterKeyUpCallback(EKeyCode KeyCode, const Fn& Callback, uint32 uuid)
+void UInputManager::RegisterKeyUpCallback(EKeyCode KeyCode, const Fn& Callback, uint32 uuid)
 {
 	if (KeyUpCallbacks.Contains(KeyCode))
 	{
@@ -296,7 +304,7 @@ void APlayerInput::RegisterKeyUpCallback(EKeyCode KeyCode, const Fn& Callback, u
 }
 
 template <typename Fn>
-void APlayerInput::RegisterMouseDownCallback(EKeyCode Button, const Fn& Callback, uint32 uuid)
+void UInputManager::RegisterMouseDownCallback(EKeyCode Button, const Fn& Callback, uint32 uuid)
 {
 	//if (Button != EKeyCode::LButton || Button != EKeyCode::MButton || Button != EKeyCode::RButton)
 	//{
@@ -318,7 +326,7 @@ void APlayerInput::RegisterMouseDownCallback(EKeyCode Button, const Fn& Callback
 }
 
 template <typename Fn>
-void APlayerInput::RegisterMousePressCallback(EKeyCode Button, const Fn& Callback, uint32 uuid)
+void UInputManager::RegisterMousePressCallback(EKeyCode Button, const Fn& Callback, uint32 uuid)
 {
 	//if (Button != EKeyCode::LButton || Button != EKeyCode::MButton || Button != EKeyCode::RButton)
 	//{
@@ -340,7 +348,7 @@ void APlayerInput::RegisterMousePressCallback(EKeyCode Button, const Fn& Callbac
 }
 
 template <typename Fn>
-void APlayerInput::RegisterMouseUpCallback(EKeyCode Button, const Fn& Callback, uint32 uuid)
+void UInputManager::RegisterMouseUpCallback(EKeyCode Button, const Fn& Callback, uint32 uuid)
 {
 	//if (Button != EKeyCode::LButton || Button != EKeyCode::MButton || Button != EKeyCode::RButton)
 	//{

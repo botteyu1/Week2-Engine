@@ -5,7 +5,7 @@
 // #include "Core/Input/PlayerInput.h"
 // #include "Object/Gizmo/GizmoHandle.h"
 // #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
-// #include "Static/FEditorManager.h"
+// #include "Static/UEditorManager.h"
 //
 // APicker::APicker()
 // {    
@@ -45,7 +45,7 @@
 // {
 //     AActor::LateTick(DeltaTime);
 //
-//     if(APlayerInput::Get().GetKeyDown(EKeyCode::LButton))
+//     if(UInputManager::Get().GetKeyDown(EKeyCode::LButton))
 //     {
 //         POINT pt;
 //         GetCursorPos(&pt);
@@ -70,20 +70,20 @@
 //             if (PickedActor == nullptr) return;
 //             if (PickedComponent->GetOwner()->IsGizmoActor() == false)
 //             {
-//                 if (PickedActor == FEditorManager::Get().GetSelectedActor())
+//                 if (PickedActor == UEditorManager::Get().GetSelectedActor())
 //                 {
-//                     FEditorManager::Get().SelectActor(nullptr);   
+//                     UEditorManager::Get().SelectActor(nullptr);   
 //                 }
 //                 else
 //                 {
-//                     FEditorManager::Get().SelectActor(PickedActor);
+//                     UEditorManager::Get().SelectActor(PickedActor);
 //                 }
 //             }
 //         }
 //         UE_LOG("Pick - UUID: %d", UUID);
 //     }
 //
-//     if (APlayerInput::Get().GetKeyPress(EKeyCode::LButton))
+//     if (UInputManager::Get().GetKeyPress(EKeyCode::LButton))
 //     {
 //         POINT pt;
 //         GetCursorPos(&pt);
@@ -116,7 +116,7 @@
 //     }
 //     else
 //     {
-//         // if (AGizmoHandle* Handle = FEditorManager::Get().GetGizmoHandle())
+//         // if (AGizmoHandle* Handle = UEditorManager::Get().GetGizmoHandle())
 //         // {
 //         //     Handle->SetSelectedAxis(ESelectedAxis::None);
 //         // }

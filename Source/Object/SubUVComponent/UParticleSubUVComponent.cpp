@@ -85,7 +85,7 @@ void UParticleSubUVComponent::Tick(float DeltaTime)
 
 void UParticleSubUVComponent::CalculateModelMatrix(FMatrix& OutMatrix)
 {
-	ACamera* cam = UEngine::Get().GetWorld()->GetCamera();
+	ACamera* cam = UEngine::Get().GetWorld()->GetCameraRenderFocused();
 
 	FVector cameraPosition = cam->GetActorTransform().GetPosition();
 
@@ -123,7 +123,7 @@ void UParticleSubUVComponent::Render()
 	FMatrix ModelMatrix;
 	CalculateModelMatrix(ModelMatrix);
 
-	const FMatrix& ViewProjectionMatrix = UEngine::Get().GetWorld()->GetCamera()->GetViewProjectionMatrix();
+	const FMatrix& ViewProjectionMatrix = UEngine::Get().GetWorld()->GetCameraRenderFocused()->GetViewProjectionMatrix();
 
 	FMatrix MVP = FMatrix::Transpose(
 		ModelMatrix *
@@ -132,7 +132,7 @@ void UParticleSubUVComponent::Render()
 
 	VertexConstants.MVP = MVP;
 
-	GetRenderResourceCollection().Render(false);
+	GetRenderResourceCollection().Render(ERenderFlags::None);
 }
 
 void UParticleSubUVComponent::Play()

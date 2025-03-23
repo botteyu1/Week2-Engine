@@ -14,6 +14,15 @@ class AActor;
 
 class UPrimitiveComponent;
 
+
+enum class EViewPortSplitter
+{
+	TopLeft,
+	TopRight,
+	BottomLeft,
+	BottomRight,
+};
+
 class UWorld :public UObject
 {
 	DECLARE_CLASS(UWorld, UObject)
@@ -53,8 +62,13 @@ public:
 	void AddRenderComponent(UPrimitiveComponent* Component) { RenderComponents.Add(Component); }
 	void RemoveRenderComponent(UPrimitiveComponent* Component) { RenderComponents.Remove(Component); }
 
-	inline ACamera* GetCamera() const { return Camera; }
-	void SetCamera(ACamera* NewCamera) { Camera = NewCamera; }
+	inline ACamera* GetCamera(EViewPortSplitter InType) const { return CameraMap[InType]; }
+	// 현재 렌더되는 카메라의 getter, 렌더 루프 바깥에서 쓰면 nullptr 반환
+	inline ACamera* GetCameraRenderFocused() const { return CameraRenderFocused; }
+	inline ACamera* GetCameraFocused() const { return CameraFocused; }
+	
+	void SetCamera(EViewPortSplitter InType, ACamera* NewCamera) { CameraMap[InType] = NewCamera; }
+	void SetFocusCamera(EViewPortSplitter InType) { CameraFocused = CameraMap[InType]; }
 
 	void RayCasting(const FVector& MouseNDCPos);
 
@@ -67,10 +81,14 @@ public:
 	void OnChangedGridSize();
 
 	float GetGridSize() const { return GridSize; }
+
+	inline const TMap<EViewPortSplitter, ACamera*> GetCameraMap() const { return CameraMap; }
 private:
 	UWorldInfo GetWorldInfo() const;
-	ACamera* Camera = nullptr;
-
+	//ACamera* Camera = nullptr;
+	TMap<EViewPortSplitter, ACamera*> CameraMap;
+	ACamera* CameraRenderFocused = nullptr;
+	ACamera* CameraFocused = nullptr;
 	float GridSize = 100.0f;
 
 public:
@@ -87,6 +105,9 @@ protected:
 // Editor Only
 public:
 	//TArray<class ULayer*> Layers;
+
+
+
 
 	TArray<AActor*> ActiveGroupActors;
 // End Editor Only

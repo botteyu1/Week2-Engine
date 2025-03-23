@@ -4,12 +4,12 @@
 #include "Debug/DebugConsole.h"
 
 
-D3D11_INPUT_ELEMENT_DESC UInputLayout:: LayoutDesc[] = {
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
-	};
+//D3D11_INPUT_ELEMENT_DESC UInputLayout:: LayoutDesc[] = {
+//		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+//		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+//		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+//		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+//	};
 
 D3D11_INPUT_ELEMENT_DESC UInputLayout::LayoutTextureArrayDesc[] = {
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
@@ -26,67 +26,55 @@ UInputLayout::~UInputLayout()
 		LayOut->Release();
 		LayOut = nullptr;
 	}
-
-	if (nullptr != LayOutTextureArray) 
-	{
-		LayOutTextureArray->Release();
-		LayOutTextureArray = nullptr;
-	}
 }
 
-void UInputLayout::ResCreate(std::shared_ptr<UVertexShader> _Shader)
+void UInputLayout::ResCreate(
+	const std::vector<D3D11_INPUT_ELEMENT_DESC>& InDesc,
+	UVertexShader* InShader
+)
 {
-	
 	//const std::vector<D3D11_INPUT_ELEMENT_DESC>& Infos = _Buffer->VertexInfoPtr->Infos;
-	FDevice::Get().GetDevice()->CreateInputLayout(
-		&LayoutDesc[0],
-		ARRAYSIZE(LayoutDesc),
-		_Shader->BinaryCode->GetBufferPointer(),
-		_Shader->BinaryCode->GetBufferSize(),
+	LayoutDesc = InDesc;
+	OutputDebugString(std::to_wstring(sizeof(D3D11_INPUT_ELEMENT_DESC) * LayoutDesc.size()).c_str());
+	HRESULT hr = FDevice::Get().GetDevice()->CreateInputLayout(
+		LayoutDesc.data(),
+		LayoutDesc.size(),
+		InShader->BinaryCode->GetBufferPointer(),
+		InShader->BinaryCode->GetBufferSize(),
 		&LayOut);
 
+	if (hr != S_OK || nullptr == LayOut)
+	{
+		MsgBoxAssert("Error: FInputLayout Create Failed") ;
+	}
+}
+
+void UInputLayout::ResCreate(
+	UVertexBuffer* InBuffer,
+	UVertexShader* InShader
+) {
+	//const std::vector<D3D11_INPUT_ELEMENT_DESC>& Infos = _Buffer->VertexInfoPtr->Infos;
+	LayoutDesc = InBuffer->GetLayout()->LayoutDesc;
+	OutputDebugString(std::to_wstring(sizeof(D3D11_INPUT_ELEMENT_DESC) * LayoutDesc.size()).c_str());
+	HRESULT hr = FDevice::Get().GetDevice()->CreateInputLayout(
+		LayoutDesc.data(),
+		LayoutDesc.size(),
+		InShader->BinaryCode->GetBufferPointer(),
+		InShader->BinaryCode->GetBufferSize(),
+		&LayOut);
+
+	if ( hr != S_OK || nullptr == LayOut ) {
+		MsgBoxAssert("Error: FInputLayout Create Failed");
+	}
+}
+
+void UInputLayout::Setting(ERenderFlags)
+{
 	if (nullptr == LayOut)
 	{
-		MsgBoxAssert("Error: FInputLayout Create Failed in LayOut") ;
+		MsgBoxAssert("Error: FInputLayout Create Failed") ;
 	}
 
-}
-
-void UInputLayout::ResCreateForTextuerArray(std::shared_ptr<UVertexShader> _Shader)
-{
-	FDevice::Get().GetDevice()->CreateInputLayout(
-		&LayoutTextureArrayDesc[0],
-		ARRAYSIZE(LayoutTextureArrayDesc),
-		_Shader->BinaryCode->GetBufferPointer(),
-		_Shader->BinaryCode->GetBufferSize(),
-		&LayOutTextureArray);
-
-	if (nullptr == LayOutTextureArray)
-	{
-		MsgBoxAssert("Error: FinputLayout Create Failed in LayOutTextureArray");
-	}
-}
-
-void UInputLayout::Setting(bool bUseTextureIndex)
-{
-	if (!bUseTextureIndex) {
-		if (nullptr == LayOut)
-		{
-			MsgBoxAssert("Error: FInputLayout Create Failed in LayOut Setting");
-		}
-
-		// 버텍스버퍼를 여러개 넣어줄수 있다.
-		FDevice::Get().GetDeviceContext()->IASetInputLayout(LayOut);
-		return;
-	}
-	else {
-		if (nullptr == LayOutTextureArray) 
-		{
-			MsgBoxAssert("Error: FInputLayout Create Failed in LayOutTextureArray Setting");
-		}
-
-		FDevice::Get().GetDeviceContext()->IASetInputLayout(LayOutTextureArray);
-		return;
-	}
-	
+	// 버텍스버퍼를 여러개 넣어줄수 있다.
+	FDevice::Get().GetDeviceContext()->IASetInputLayout(LayOut);
 }

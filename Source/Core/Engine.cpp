@@ -1,14 +1,13 @@
 #include "Engine.h"
 
 #include "Debug/DebugDrawManager.h"
-#include "Input/PlayerController.h"
 #include "Input/PlayerInput.h"
 #include "Math/Vector.h"
 #include "Object/Actor/Camera.h"
 #include "Object/Assets/AssetManager.h"
 #include "Object/World/World.h"
 #include "Rendering/FDevice.h"
-#include "Static/FEditorManager.h"
+#include "Static/EditorManager.h"
 #include "Static/FLineBatchManager.h"
 
 
@@ -42,8 +41,8 @@ LRESULT UEngine::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		// 마우스 휠 이벤트 처리
 		short zDelta = GET_WHEEL_DELTA_WPARAM(wParam);
-		float curZoomSize = UEngine::Get().GetWorld()->GetCamera()->GetZoomSize();
-		UEngine::Get().GetWorld()->GetCamera()->SetZoomSize(curZoomSize + zDelta);
+		float curZoomSize = UEngine::Get().GetWorld()->GetCamera(EViewPortSplitter::TopLeft)->GetZoomSize();
+		UEngine::Get().GetWorld()->GetCameraFocused()->SetZoomSize(curZoomSize + zDelta);
 		break;
 
 	}
@@ -67,19 +66,34 @@ void UEngine::Initialize(
 	ScreenWidth = InScreenWidth;
 	ScreenHeight = InScreenHeight;
 
+	UE_LOG("Init Window...");
     InitWindow(InScreenWidth, InScreenHeight);
 
-	InitWorld();
-	FDevice::Get().Init(WindowHandle);
-    InitRenderer();
+	UE_LOG("Init Input...");
+	InitInput();
+
+	UE_LOG("Init Device...");
+	FDevice::Get().Init(WindowHandle); // require window
+
+	UE_LOG("Init Editor...");
+	InitEditor(); // require FDevice 나중에 멀티쓰레드로?
+
+	UE_LOG("Init World...");
+	InitWorld(); // require Editor
+
+	UE_LOG("Init Renderer...");
+	InitRenderer(); // require FDevice, World
+
 	UDebugDrawManager::Get().Initialize();
 
+	UE_LOG("Init UI...");
 	InitializedScreenWidth = ScreenWidth;
 	InitializedScreenHeight = ScreenHeight;
     ui.Initialize(WindowHandle, FDevice::Get(), ScreenWidth, ScreenHeight);
 
+	UE_LOG("Init Assets...");
 	UAssetManager::Get().RegisterAssetMetaDatas(); // 나중에 멀티쓰레드로?
-	FEditorManager::Get().Init(); // 나중에 멀티쓰레드로?
+	
 	UE_LOG("Engine Initialized!");
 }
 
@@ -126,9 +140,8 @@ void UEngine::Run()
 
 		if (!ImGui::GetIO().WantCaptureMouse)
 		{		
-			FVector winSize = Renderer->GetFrameBufferWindowSize();
-			APlayerInput::Get().Update(WindowHandle, winSize.X, winSize.Y);
-			APlayerController::Get().ProcessPlayerInput(EngineDeltaTime);
+			FVector winSize = FDevice::Get().GetFrameBufferWindowSize();
+			InputManager->Update(WindowHandle, winSize.X, winSize.Y);
 		}
 
 
@@ -143,7 +156,7 @@ void UEngine::Run()
 			World->Tick(EngineDeltaTime);
 			World->Render();
 
-			FEditorManager::Get().LateTick(EngineDeltaTime);
+			UEngine::Get().GetEditor()->LateTick(EngineDeltaTime);
 		    World->LateTick(EngineDeltaTime);
 		}
 
@@ -223,33 +236,25 @@ void UEngine::InitRenderer()
 {
 	// 렌더러 초기화
 	Renderer = std::make_unique<URenderer>();
-	Renderer->Create(WindowHandle);
+	Renderer->Create(WindowHandle, World);
+
 	//Renderer->CreateShader();
 	//Renderer->CreateConstantBuffer();
+}
+
+void UEngine::InitInput() {
+	InputManager = std::make_unique<UInputManager>();
+}
+
+void UEngine::InitEditor() {
+	EditorManager = std::make_unique<UEditorManager>();
+	EditorManager->Init();
 }
 
 void UEngine::InitWorld()
 {
     World = FObjectFactory::ConstructObject<UWorld>();
 	World->InitWorld();
-
-	World->SetCamera(World->SpawnActor<ACamera>());
-
-    FEditorManager::Get().SetCamera(World->GetCamera());
-
-	////Test
-	//FLineBatchManager::Get().AddLine(FVector{ 3.0f,3.0f,0.0f }, { -3.f,-3.f,0.0f });
-	//FLineBatchManager::Get().AddLine(FVector{ 6.0f,6.0f,6.0f }, { -6.f,-6.f,-6.0f });
-	//FLineBatchManager::Get().AddLine(FVector{ 6.0f,6.0f,7.0f }, { -6.f,-6.f,-7.0f });
-	//FLineBatchManager::Get().AddLine(FVector{ 6.0f,6.0f,8.0f }, { -6.f,-6.f,-8.0f });
-
-	FLineBatchManager::Get().DrawWorldGrid(World->GetGridSize(), World->GetGridSize() / 100.f);
-	//FLineBatchManager::Get().DrawWorldGrid(10, 1 );
-
-    //// Test
-    //AArrow* Arrow = World->SpawnActor<AArrow>();
-    //World->SpawnActor<ASphere>();
-
 	World->BeginPlay();
 }
 
@@ -277,7 +282,7 @@ void UEngine::UpdateWindowSize(uint32 InScreenWidth, uint32 InScreenHeight)
 	
 	FDevice::Get().OnUpdateWindowSize(ScreenWidth, ScreenHeight);
 
-	FEditorManager::Get().OnUpdateWindowSize(ScreenWidth, ScreenHeight);
+	UEngine::Get().GetEditor()->OnUpdateWindowSize(ScreenWidth, ScreenHeight);
 
 
 
@@ -288,7 +293,7 @@ void UEngine::UpdateWindowSize(uint32 InScreenWidth, uint32 InScreenHeight)
 	
 	FDevice::Get().OnResizeComplete();
 	
-	FEditorManager::Get().OnResizeComplete();
+	UEngine::Get().GetEditor()->OnResizeComplete();
 }
 
 UObject* UEngine::GetObjectByUUID(uint32 InUUID) const

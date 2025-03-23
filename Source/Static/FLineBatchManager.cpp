@@ -54,7 +54,7 @@ void FLineBatchManager::Flush()
 {
 }
 
-void FLineBatchManager::DrawWorldGrid(float GridSize, float GridSpacing, const FVector4& GridColor, bool bCenterGrid)
+void FLineBatchManager::MakeWorldGrid(float GridSize, float GridSpacing, const FVector4& GridColor, bool bCenterGrid)
 {
 
 	VertexBuffer.Empty();
@@ -122,10 +122,10 @@ void FLineBatchManager::Render()
 	if (VertexBuffer.Num() == 0)
 		return;
 
-	LineConstantInfo.ViewProjectionMatrix = FMatrix::Transpose(UEngine::Get().GetWorld()->GetCamera()->GetViewProjectionMatrix());
+	LineConstantInfo.ViewProjectionMatrix = FMatrix::Transpose(UEngine::Get().GetWorld()->GetCameraRenderFocused()->GetViewProjectionMatrix());
 
 
-	RenderResourceCollection.Render(false);
+	RenderResourceCollection->Render(ERenderFlags::None);
 
 }
 
@@ -133,7 +133,12 @@ void FLineBatchManager::Create()
 {
 
 	
-	UVertexBuffer::Create("LineVertexBuffer", VertexBuffer , true);
+	UVertexBuffer::Create(
+		"LineVertexBuffer", 
+		VertexBuffer, 
+		UInputLayout::Find("Simple_IL"),
+		true
+	);
 	UIndexBuffer::Create("LineIndexBuffer", IndexBuffer , true);
 	std::shared_ptr<UMesh> Mesh =  UMesh::Create("LineBatchMesh" , "LineVertexBuffer", "LineIndexBuffer", D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
 	
@@ -161,11 +166,12 @@ void FLineBatchManager::Create()
 	Material->SetPixelShader("ShaderLine_PS");
 	Material->SetRasterizer("LineRasterizerState");
 	
+	RenderResourceCollection = std::make_unique<FRenderResourceCollection>();
+	RenderResourceCollection->SetConstantBufferBinding("LineConstantInfo",&LineConstantInfo, 1,true,false);
 
-	RenderResourceCollection.SetConstantBufferBinding("LineConstantInfo",&LineConstantInfo, 1,true,false);
-
-	RenderResourceCollection.SetMesh(Mesh, false);
-	RenderResourceCollection.SetMaterial(Material, false);
+	RenderResourceCollection->SetMaterial(Material);
+	RenderResourceCollection->SetMesh(Mesh);
+	
 }
 
 

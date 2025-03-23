@@ -1,5 +1,5 @@
 #pragma once
-#define _TCHAR_DEFINED  // TCHAR 재정의 에러 때문
+#define _TCHAR_DEFINED  // MYTCHAR 재정의 에러 때문
 #include <d3dcommon.h>
 #include "Core/Container/String.h"
 

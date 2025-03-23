@@ -2,7 +2,6 @@
 #include <d3dcompiler.h>
 #include "DirectXTK/WICTextureLoader.h"
 #include "FDevice.h"
-#include "FViewMode.h"
 #include "Debug/DebugConsole.h"
 #include "Core/Math/Transform.h"
 #include "DirectXTK/DDSTextureLoader.h"
@@ -10,9 +9,11 @@
 #include "Object/Actor/Camera.h"
 #include "Object/Assets/SceneAsset.h"
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
-#include "Static/FEditorManager.h"
+#include "Static/EditorManager.h"
 #include "Static/FUUIDBillBoard.h"
 #include "Static/FLineBatchManager.h"
+
+#include "Resource/DirectResource/ViewMode.h"
 #include "Resource/DirectResource/Vertexbuffer.h"
 #include "Resource/DirectResource/PixelShader.h"
 #include "Resource/DirectResource/VertexShader.h"
@@ -22,20 +23,25 @@
 #include "Resource/DirectResource/Rasterizer.h"
 #include "Resource/DirectResource/ShaderResourceBinding.h"
 
-void URenderer::Create(HWND hWindow)
+
+void URenderer::Create(HWND hWindow, UWorld* world)
 {
     //CreateDeviceAndSwapChain(hWindow);
     //CreateFrameBuffer();
     //CreatePickingTexture(hWindow);
 
-	FViewMode::Get().Initialize(FDevice::Get().GetDevice());
-	FUUIDBillBoard::Get().Create();
+	renderFlags = ERenderFlags::None;
 
-	FLineBatchManager::Get().Create();
+	ViewMode = std::make_unique<FViewModeManager>();
+	ViewMode->Initialize(); // require resource
+	LineBatchManager = std::make_unique<FLineBatchManager>();
+	LineBatchManager->MakeWorldGrid(world->GetGridSize(), world->GetGridSize() / 100.f); // create vertex
+	LineBatchManager->Create(); // require device, vertex
+
+	//FUUIDBillBoard::Get().Create(); // require device
 
 	//LoadTexture(L"font_atlas.png");
-	LoadTexture(L"Pretendard_Kor.png");
-	LoadTextures();
+	//LoadTexture(L"Pretendard_Kor.png");
 }
 
 void URenderer::Release()
@@ -116,44 +122,18 @@ void URenderer::ReleaseConstantBuffer()
 //     }
 // }
 
-void URenderer::Render(FRenderResourceCollection& InRenderResourceCollection, bool bUseTextureIndex)
+void URenderer::Render(FRenderResourceCollection& InRenderResourceCollection)
 {
-	InRenderResourceCollection.Render(bUseTextureIndex);
+	InRenderResourceCollection.Render(renderFlags);
 }
 
-
-void URenderer::LoadTexture(const wchar_t* texturePath)
-{
-	DirectX::CreateWICTextureFromFile(FDevice::Get().GetDevice(), FDevice::Get().GetDeviceContext(), texturePath, nullptr, &FontTextureSRV);
-
-	
-	D3D11_SAMPLER_DESC samplerDesc = {};
-	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDesc.MipLODBias = 0.0f;
-	samplerDesc.MaxAnisotropy = 1;
-	samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
-	samplerDesc.BorderColor[0] = 0;
-	samplerDesc.BorderColor[1] = 0;
-	samplerDesc.BorderColor[2] = 0;
-	samplerDesc.BorderColor[3] = 0;
-	samplerDesc.MinLOD = 0;
-	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
-
-	FDevice::Get().GetDevice()->CreateSamplerState(&samplerDesc, &FontSamplerState);
-	FDevice::Get().GetDeviceContext()->PSSetShaderResources(0, 1, &FontTextureSRV);
-	FDevice::Get().GetDeviceContext()->PSSetSamplers(0, 1, &FontSamplerState);
+FUUIDBillBoard* URenderer::GetUUIDBillBoard() {
+	if ( UUIDBillBoard.get() == nullptr ) {
+		UUIDBillBoard = std::make_unique<FUUIDBillBoard>();
+		UUIDBillBoard->Create();
+	}
+	return UUIDBillBoard.get();
 }
-
-void URenderer::LoadTextures()
-{
-	DirectX::CreateWICTextureFromFile(FDevice::Get().GetDevice(), FDevice::Get().GetDeviceContext(), L"Dice.png", nullptr, &FontTextureSRV);
-	FDevice::Get().GetDeviceContext()->PSSetShaderResources(2, 1, &FontTextureSRV);
-}
-
-
 
 
 // void URenderer::CreateDepthStencilState()
@@ -259,7 +239,7 @@ void URenderer::LoadTextures()
 // {
 //     // if (!ConstantsDepthBuffer) return;
 //     //
-//     // ACamera* Cam = FEditorManager::Get().GetCamera();
+//     // ACamera* Cam = UEditorManager::Get().GetCamera();
 //     //
 //     // D3D11_MAPPED_SUBRESOURCE ConstantBufferMSR;
 //     //
@@ -303,10 +283,3 @@ void URenderer::LoadTextures()
 //     backBuffer->Release();
 // }
 
-FVector URenderer::GetFrameBufferWindowSize() const
-{
-	DXGI_SWAP_CHAIN_DESC SwapChainDesc;
-	FDevice::Get().GetSwapChain()->GetDesc(&SwapChainDesc);
-
-	return FVector(static_cast<float>(SwapChainDesc.BufferDesc.Width), static_cast<float>(SwapChainDesc.BufferDesc.Height), 0);
-}

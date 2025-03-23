@@ -1,4 +1,4 @@
-#include "FEditorManager.h"
+#include "EditorManager.h"
 #include "Core/Engine.h"
 #include "Object/World/World.h"
 #include "Core/Math/Vector.h"
@@ -10,10 +10,10 @@
 #include "Resource/Texture.h"
 #include "Core/Rendering/FDevice.h"
 
-void FEditorManager::Init()
+void UEditorManager::Init()
 {
-	const int Width = static_cast<int>(FDevice::Get().GetViewPortInfo().Width);
-	const int Height = static_cast<int>(FDevice::Get().GetViewPortInfo().Height);
+	const int Width = static_cast<int>(FDevice::Get().GetFrameBufferWindowSize().X);
+	const int Height = static_cast<int>(FDevice::Get().GetFrameBufferWindowSize().Y);
 
 	D3D11_TEXTURE2D_DESC textureDesc = {};
 	textureDesc.Width = Width;
@@ -46,7 +46,7 @@ void FEditorManager::Init()
 	//UUIDTextureDepthStecil->CreateDepthStencilView();
 }
 
-void FEditorManager::SelectActor(AActor* NewActor)
+void UEditorManager::SelectActor(AActor* NewActor)
 {
     if (Gizmo == nullptr)
     {
@@ -83,17 +83,13 @@ void FEditorManager::SelectActor(AActor* NewActor)
 
 }
 
-void FEditorManager::SetCamera(ACamera* NewCamera)
-{
-    Camera = NewCamera;
-}
 
-void FEditorManager::SetGizmo(AGizmoActor* InGizmo)
+void UEditorManager::SetGizmo(AGizmoActor* InGizmo)
 {
 	Gizmo = InGizmo;
 }
 
-FVector4 FEditorManager::EncodeUUID(uint32 UUID)
+FVector4 UEditorManager::EncodeUUID(uint32 UUID)
 {
 	const uint32 a = (UUID >> 24) & 0xff;
 	const uint32 b = (UUID >> 16) & 0xff;
@@ -110,7 +106,7 @@ FVector4 FEditorManager::EncodeUUID(uint32 UUID)
 	return color;
 }
 
-uint32 FEditorManager::DecodeUUID(FVector4 color)
+uint32 UEditorManager::DecodeUUID(FVector4 color)
 {
 	return (
 		static_cast<uint32>(color.W) << 24
@@ -120,9 +116,9 @@ uint32 FEditorManager::DecodeUUID(FVector4 color)
 	);
 }
 
-void FEditorManager::LateTick([[maybe_unused]] float DeltaTime)
+void UEditorManager::LateTick([[maybe_unused]] float DeltaTime)
 {
-	if (APlayerInput::Get().GetKeyDown(EKeyCode::LButton))
+	if (UEngine::Get().GetInput()->GetKeyDown(EKeyCode::LButton))
 	{
 		POINT pt;
 		GetCursorPos(&pt);
@@ -168,7 +164,7 @@ void FEditorManager::LateTick([[maybe_unused]] float DeltaTime)
 		}
 	}
 
-	//if (APlayerInput::Get().GetKeyPress(EKeyCode::LButton))
+	//if (UInputManager::Get().GetKeyPress(EKeyCode::LButton))
 	//{
 	//	if (SelectedActor != nullptr)
 	//	{
@@ -177,7 +173,7 @@ void FEditorManager::LateTick([[maybe_unused]] float DeltaTime)
 	//			//Gizmo->SetSelectedAxis(ESelectedAxis::Y);
 
 
-	//			//FVector MousePos = APlayerInput::Get().GetMouseScreenDeltaPos();
+	//			//FVector MousePos = UInputManager::Get().GetMouseScreenDeltaPos();
 
 	//			//FVector Dir = FVector{ 0.0f, MousePos.X, MousePos.Y } *0.1f;
 
@@ -205,7 +201,7 @@ void FEditorManager::LateTick([[maybe_unused]] float DeltaTime)
 	//}
 	//else
 	//{
-	//	// if (AGizmoHandle* Handle = FEditorManager::Get().GetGizmoHandle())
+	//	// if (AGizmoHandle* Handle = UEditorManager::Get().GetGizmoHandle())
 	//	// {
 	//	//     Handle->SetSelectedAxis(ESelectedAxis::None);
 	//	// }
@@ -213,7 +209,7 @@ void FEditorManager::LateTick([[maybe_unused]] float DeltaTime)
 		 
 }
 
-void FEditorManager::OnUpdateWindowSize(uint32 Width, uint32 Height)
+void UEditorManager::OnUpdateWindowSize(uint32 Width, uint32 Height)
 {
 	if (Width == 0 || Height == 0)
 	{
@@ -239,7 +235,7 @@ void FEditorManager::OnUpdateWindowSize(uint32 Width, uint32 Height)
 	UUIDTexture->CreateRenderTargetView();
 }
 
-void FEditorManager::OnResizeComplete()
+void UEditorManager::OnResizeComplete()
 {
 	const int Width = static_cast<int>(FDevice::Get().GetViewPortInfo().Width);
 	const int Height = static_cast<int>(FDevice::Get().GetViewPortInfo().Height);
@@ -258,7 +254,7 @@ void FEditorManager::OnResizeComplete()
 	UUIDTexture->CreateRenderTargetView();
 }
 
-FVector4 FEditorManager::GetPixel(FVector MPos) const
+FVector4 UEditorManager::GetPixel(FVector MPos) const
 {
 
 	const float Width = FDevice::Get().GetViewPortInfo().Width;

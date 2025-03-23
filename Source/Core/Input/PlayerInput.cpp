@@ -1,4 +1,6 @@
 #include "PlayerInput.h"
+#include "Core/Rendering/FViewport.h"
+#include "Object/World/World.h"
 
 [[maybe_unused]]
 static FVector GetWindowSize(HWND hWnd)
@@ -15,7 +17,7 @@ static FVector GetWindowSize(HWND hWnd)
 }
 
 
-APlayerInput::APlayerInput()
+UInputManager::UInputManager()
 {
 	CreateKeys();
 
@@ -26,7 +28,7 @@ APlayerInput::APlayerInput()
 	MouseNDCPos = FVector(0.0f, 0.0f, 0.0f);
 }
 
-void APlayerInput::UpdateKey(FKey& key)
+void UInputManager::UpdateKey(FKey& key)
 {
 	if (GetFocus())
 	{
@@ -45,7 +47,7 @@ void APlayerInput::UpdateKey(FKey& key)
 	}
 }
 
-void APlayerInput::UpdateKeyDown(FKey& key) const
+void UInputManager::UpdateKeyDown(FKey& key) const
 {
 	if (key.bPressed == true)
 	{
@@ -59,7 +61,7 @@ void APlayerInput::UpdateKeyDown(FKey& key) const
 	key.bPressed = true;
 }
 
-void APlayerInput::UpdateKeyUp(FKey& key) const
+void UInputManager::UpdateKeyUp(FKey& key) const
 {
 	if (key.bPressed == true)
 	{
@@ -73,7 +75,7 @@ void APlayerInput::UpdateKeyUp(FKey& key) const
 	key.bPressed = false;
 }
 
-void APlayerInput::CreateKeys()
+void UInputManager::CreateKeys()
 {
 	for (int vk = 0; vk <= 0xFF; ++vk)
 	{
@@ -85,7 +87,7 @@ void APlayerInput::CreateKeys()
 	}
 }
 
-void APlayerInput::ClearKeys()
+void UInputManager::ClearKeys()
 {
 	for (FKey& Key : Keys)
 	{
@@ -103,12 +105,12 @@ void APlayerInput::ClearKeys()
 	}
 }
 
-bool APlayerInput::IsKeyDown(EKeyCode code) const
+bool UInputManager::IsKeyDown(EKeyCode code) const
 {
 	return GetAsyncKeyState(static_cast<int>(code)) & 0x8000;
 }
 
-void APlayerInput::SetMousePos(HWND hWnd, uint32 FrameBufferWidth, uint32 FrameBufferHeight)
+void UInputManager::SetMousePos(HWND hWnd, uint32 FrameBufferWidth, uint32 FrameBufferHeight)
 {
 	MousePreNDCPos = MouseNDCPos;
 	MousePrePos = MousePos;
@@ -121,7 +123,7 @@ void APlayerInput::SetMousePos(HWND hWnd, uint32 FrameBufferWidth, uint32 FrameB
 	MouseNDCPos = CalNDCPos(MousePos, FVector(FrameBufferWidth, FrameBufferHeight, 0));
 }
 
-void APlayerInput::Update(HWND hWnd, uint32 FramaeBufferWidth, uint32 FramaeBufferHeight)
+void UInputManager::Update(HWND hWnd, uint32 FramaeBufferWidth, uint32 FramaeBufferHeight)
 {
 	for (FKey& key : Keys)
 	{
@@ -198,7 +200,27 @@ void APlayerInput::Update(HWND hWnd, uint32 FramaeBufferWidth, uint32 FramaeBuff
 
 }
 
-FVector APlayerInput::CalNDCPos(FVector InMousePos, FVector WindowSize) const
+FVector UInputManager::CalNDCPos(FVector InMousePos, FVector WindowSize) const
 {
     return { (2.0f * InMousePos.X) / WindowSize.X - 1.0f,  (-2.0f * InMousePos.Y) / WindowSize.Y + 1.0f, 0};
+}
+
+void UInputManager::GetNDCPosWithSplitViewPort(
+	const FVector InMousePos, 
+	const TMap<EViewPortSplitter, FViewport> InViewPorts,
+	FVector& OutMouseNDCPos,
+	EViewPortSplitter& OutSelectedViewPortIndex
+	) const {
+
+	float screenPosX = InMousePos.X;
+	float screenPosY = InMousePos.Y;
+	for ( const auto& pair: InViewPorts ) {
+		D3D11_VIEWPORT viewport = pair.Value.GetViewportInfo();
+		if (
+			(viewport.TopLeftX < InMousePos.X && InMousePos.X < viewport.TopLeftX + viewport.Width) &&
+			(viewport.TopLeftY < InMousePos.Y && InMousePos.Y < viewport.TopLeftY + viewport.Height)
+		) {
+			OutSelectedViewPortIndex = pair.Key;
+		}
+	}
 }

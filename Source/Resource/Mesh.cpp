@@ -1,9 +1,11 @@
 #include "Mesh.h"
 #include "Core/Engine.h"
+#include "Core/Utils/Utils.h"
 #include "Core/Rendering/FDevice.h"
+#include "Resource/DirectResource/InputLayout.h"
 
 
-void UMesh::Setting()
+void UMesh::Setting(ERenderFlags renderFlags)
 {
 	if (nullptr == VertexBuffer)
 	{
@@ -11,6 +13,7 @@ void UMesh::Setting()
 		return;
 	}
 	VertexBuffer->Setting();
+	VertexBuffer->GetLayout()->Setting(renderFlags);
 
 	FDevice::Get().GetDeviceContext()->IASetPrimitiveTopology(Topology);
 

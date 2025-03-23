@@ -26,7 +26,7 @@ public:
 	}
 
 	template<typename DataType>
-void ChangeData(const DataType& _Data)
+	void ChangeData(const DataType& _Data)
 	{
 		ChangeData(&_Data, sizeof(DataType));
 	}

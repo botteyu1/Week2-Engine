@@ -180,25 +180,30 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Core\Rendering\FViewport.cpp" />
+    <ClCompile Include="Source\Core\Math\Rect.cpp" />
     <ClCompile Include="Source\Core\Math\Transform.cpp" />
-    <ClCompile Include="Source\Core\Rendering\FontAtlas.cpp" />
     <ClCompile Include="Source\Debug\DebugDrawManager.cpp" />
     <ClCompile Include="Source\Object\Actor\Dice.cpp" />
     <ClCompile Include="Source\Object\Actor\SubUVParticle.cpp" />
     <ClCompile Include="Source\Object\Actor\WorldGrid.cpp" />
+    <ClCompile Include="Source\Object\Assets\FontAtlasAsset.cpp" />
     <ClCompile Include="Source\Object\Assets\MeshAsset.cpp" />
+    <ClCompile Include="Source\Object\Assets\TextureAsset.cpp" />
     <ClCompile Include="Source\Object\PrimitiveComponent\GizmoComponent.cpp" />
-    <ClCompile Include="Source\Core\Rendering\FViewMode.cpp" />
     <ClCompile Include="Source\Debug\EngineShowFlags.cpp" />
     <ClCompile Include="Source\Core\Math\BoxSphereBounds.cpp" />
     <ClCompile Include="Source\Object\Gizmo\GizmoActor.cpp" />
+    <ClCompile Include="Source\Primitive\PrimitiveHangul.cpp" />
     <ClCompile Include="Source\Resource\DirectResource\ConstantBuffer.cpp" />
     <ClCompile Include="Source\Resource\DirectResource\Sampler.cpp" />
     <ClCompile Include="Source\Resource\DirectResource\ShaderResourceBinding.cpp" />
+    <ClCompile Include="Source\Resource\DirectResource\ViewMode.cpp" />
     <ClCompile Include="Source\Resource\Material.cpp" />
     <ClCompile Include="Source\Resource\Mesh.cpp" />
     <ClCompile Include="Source\Resource\RenderResourceCollection.cpp" />
     <ClCompile Include="Source\Resource\Texture.cpp" />
+    <ClCompile Include="Source\Static\EditorManager.cpp" />
     <ClCompile Include="Source\Static\FUUIDBillBoard.cpp" />
     <ClCompile Include="Source\Core\Math\Rotator.cpp" />
     <ClCompile Include="Source\Core\Config\ConfigManager.cpp" />
@@ -220,7 +225,6 @@
     <ClCompile Include="Source\Object\Actor\Quad.cpp" />
     <ClCompile Include="Source\Object\Gizmo\GizmoHandle.cpp" />
     <ClCompile Include="Source\Object\Actor\Arrow.cpp" />
-    <ClCompile Include="Source\Core\Input\PlayerController.cpp" />
     <ClCompile Include="Source\Core\Input\PlayerInput.cpp" />
     <ClCompile Include="Source\Object\Actor\Cube.cpp" />
     <ClCompile Include="Source\Object\Gizmo\Axis.cpp" />
@@ -234,7 +238,9 @@
     <ClCompile Include="Source\Core\HAL\PlatformMemory.cpp" />
     <ClCompile Include="Source\Core\Math\Matrix.cpp" />
     <ClCompile Include="Source\Core\Math\Vector.cpp" />
-    <ClCompile Include="Source\Object\ObjectFactory.cpp" />
+    <ClCompile Include="Source\Object\ObjectFactory.cpp">
+      <ShowIncludes Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ShowIncludes>
+    </ClCompile>
     <ClCompile Include="Source\Primitive\UGeometryGenerator.cpp" />
     <ClCompile Include="Source\Resource\DirectResource\BlendState.cpp" />
     <ClCompile Include="Source\Resource\DirectResource\DepthStencilState.cpp" />
@@ -264,6 +270,7 @@
     <ClCompile Include="Source\Object\Light\LightComponent.cpp" />
     <ClCompile Include="Source\Object\Light\SpotLightComponent.cpp" />
     <ClCompile Include="Source\Object\Actor\SpotLight.cpp" />
+    <ClCompile Include="Source\Core\Rendering\Splitter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\Font_VS.hlsl">
@@ -315,24 +322,29 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Users\Jungle\Downloads\WavefrontOBJ-main\WavefrontOBJ-main\WavefrontOBJ.h" />
+    <ClInclude Include="Source\Core\Rendering\FViewport.h" />
+    <ClInclude Include="Source\Core\Math\Rect.h" />
     <ClInclude Include="Source\Core\Delegates\Delegate.h" />
     <ClInclude Include="Source\Core\Delegates\DelegateCombination.h" />
-    <ClInclude Include="Source\Core\Rendering\FontAtlas.h" />
     <ClInclude Include="Source\Debug\DebugDrawManager.h" />
     <ClInclude Include="Source\Object\Actor\Dice.h" />
     <ClInclude Include="Source\Object\Actor\WorldGrid.h" />
+    <ClInclude Include="Source\Object\Assets\FontAtlasAsset.h" />
+    <ClInclude Include="Source\Object\Assets\TextureAsset.h" />
     <ClInclude Include="Source\Object\PrimitiveComponent\GizmoComponent.h" />
-    <ClInclude Include="Source\Core\Rendering\FViewMode.h" />
     <ClInclude Include="Source\Debug\EngineShowFlags.h" />
     <ClInclude Include="Source\Core\Math\BoxSphereBounds.h" />
     <ClInclude Include="Source\Object\Gizmo\GizmoActor.h" />
+    <ClInclude Include="Source\Primitive\PrimitiveHangul.h" />
     <ClInclude Include="Source\Resource\DirectResource\ConstantBuffer.h" />
     <ClInclude Include="Source\Resource\DirectResource\Sampler.h" />
     <ClInclude Include="Source\Resource\DirectResource\ShaderResourceBinding.h" />
+    <ClInclude Include="Source\Resource\DirectResource\ViewMode.h" />
     <ClInclude Include="Source\Resource\Material.h" />
     <ClInclude Include="Source\Resource\Mesh.h" />
     <ClInclude Include="Source\Resource\RenderResourceCollection.h" />
     <ClInclude Include="Source\Resource\Texture.h" />
+    <ClInclude Include="Source\Static\EditorManager.h" />
     <ClInclude Include="Source\Static\FUUIDBillBoard.h" />
     <ClInclude Include="Source\Core\Math\Rotator.h" />
     <ClInclude Include="Source\Core\Config\ConfigManager.h" />
@@ -399,12 +411,9 @@
     <ClInclude Include="Source\Object\Gizmo\GizmoHandle.h" />
     <ClInclude Include="Source\Core\Container\CString.h" />
     <ClInclude Include="Source\Object\Actor\Picker.h" />
-    <ClCompile Include="Source\Static\FEditorManager.cpp" />
     <ClInclude Include="Source\Object\Actor\Arrow.h" />
-    <ClInclude Include="Source\Core\Input\PlayerController.h" />
     <ClInclude Include="Source\Core\Input\PlayerInput.h" />
     <ClInclude Include="Source\Core\EngineTypes.h" />
-    <ClInclude Include="Source\Static\FEditorManager.h" />
     <ClInclude Include="Source\Object\USceneComponent.h" />
     <ClInclude Include="Source\Object\Actor\Sphere.h" />
     <ClInclude Include="Source\ThirdParty\DirectXTK\include\DirectXTK\Audio.h" />
@@ -441,6 +450,7 @@
     <ClInclude Include="Source\ThirdParty\SimpleJSON\include\SimpleJSON\Json.hpp" />
     <ClCompile Include="Source\Object\SubUVComponent\UParticleSubUVComponent.cpp" />
     <ClInclude Include="Source\ThirdParty\WavefrontOBJ\WavefrontOBJ.h" />
+    <ClInclude Include="Source\Core\Rendering\Splitter.h" />
     <FxCompile Include="Shaders\SubUV_PS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
