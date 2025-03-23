@@ -9,41 +9,22 @@ class FViewport : public SWindow
 
 
 public:
-	FViewport()
-	{
-	}
+	FViewport() {}
 
-	FViewport(FRect InRect)
-	{
-		Rect = InRect;
-		ViewportInfo.TopLeftX = InRect.Left;
-		ViewportInfo.TopLeftY = InRect.Top;
-		ViewportInfo.Width = InRect.Width();
-		ViewportInfo.Height = InRect.Height();
-		ViewportInfo.MinDepth = 0.0f;
-		ViewportInfo.MaxDepth = 1.0f;
-	}
+	FViewport(FRect InRect);
 
 
 	void OnResizeUpdate();
 
-	float GetViewportRatio()
+	inline const float GetViewportRatio() const
 	{
 		return static_cast<float>(ViewportInfo.Width) / static_cast<float>(ViewportInfo.Height);
 	}
 
-	void UpdateViewport(FRect InRect)
-	{
-		ViewportInfo.TopLeftX = InRect.Left;
-		ViewportInfo.TopLeftY = InRect.Top;
-		ViewportInfo.Width = InRect.Width();
-		ViewportInfo.Height = InRect.Height();
-		ViewportInfo.MinDepth = 0.0f;
-		ViewportInfo.MaxDepth = 1.0f;
-	}
+	void UpdateViewport(FRect InRect);
 	
 
-	const D3D11_VIEWPORT& GetViewportInfo() const { return ViewportInfo; }
+	inline const D3D11_VIEWPORT& GetViewportInfo() const { return ViewportInfo; }
 	void SetViewportInfo(const D3D11_VIEWPORT& InViewportInfo) { ViewportInfo = InViewportInfo; }
 
 private:

@@ -69,7 +69,8 @@ public:
 		int _DataSize, 
 		int _BindPoint, 
 		bool bIsUseVertexShader, 
-		bool bIsUsePixelShader);
+		bool bIsUsePixelShader
+	);
 	
 	
 	std::shared_ptr<class FTextureBinding> SetTextureBinding(

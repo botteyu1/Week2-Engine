@@ -100,7 +100,7 @@ void FUUIDBillBoard::UpdateString(const std::wstring& String)
 	//UVertexBuffer::Find(ResourceName)->ChangeData<FVertexSimple>(VertexBuffer);
 	//UIndexBuffer::Find(ResourceName)->ChangeData(IndexBuffer);
 	UMesh::Find(ResourceName)->Setting(ERenderFlags::None);
-	UE_LOG("%x %x", VertexBuffer.GetData(), UVertexBuffer::Find(ResourceName).get()->CPUDataPtr);
+	//UE_LOG("%x %x", VertexBuffer.GetData(), UVertexBuffer::Find(ResourceName).get()->CPUDataPtr);
 }
 
 void FUUIDBillBoard::Flush()
@@ -111,7 +111,7 @@ void FUUIDBillBoard::Flush()
 
 void FUUIDBillBoard::CalculateModelMatrix(FMatrix& OutMatrix)
 {
-	ACamera* cam = UEngine::Get().GetWorld()->GetCamera(EViewPortSplitter::TopLeft);
+	ACamera* cam = UEngine::Get().GetWorld()->GetCameraRenderFocused();
 
 	FVector cameraPosition = cam->GetActorTransform().GetPosition();
 
@@ -174,7 +174,7 @@ void FUUIDBillBoard::Render()
 
 	Constants.ViewProjectionMatrix = FMatrix::Transpose(
 		ModelMatrix
-		* UEngine::Get().GetWorld()->GetCamera(EViewPortSplitter::TopLeft)->GetViewProjectionMatrix()
+		* UEngine::Get().GetWorld()->GetCameraRenderFocused()->GetViewProjectionMatrix()
 	);
 	UConstantBuffer::Find(ResourceName)->ChangeData(Constants);
 	UConstantBuffer::Find(ResourceName)->VSSetting(0);
@@ -195,7 +195,6 @@ void FUUIDBillBoard::Create()
 		UInputLayout::Find("Simple_IL"),  
 		true
 	);
-	UE_LOG("%x %x", VertexBuffer.GetData(), vb.get()->CPUDataPtr);
 	UIndexBuffer::Create(ResourceName, IndexBuffer, true);
 	UConstantBuffer::Create(ResourceName, sizeof(FFontConstantInfo));
 	UMesh::Create(ResourceName, ResourceName, ResourceName);

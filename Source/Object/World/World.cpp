@@ -98,10 +98,6 @@ void UWorld::Render()
 {
 	URenderer* Renderer = UEngine::Get().GetRenderer();
 
-	//라인 렌더링 임시
-
-
-
 	if (Renderer == nullptr)
 	{
 		return;
@@ -110,6 +106,7 @@ void UWorld::Render()
 
 	for (auto& cam : CameraMap)
 	{
+		CameraRenderFocused = cam.Value;
 		cam.Value->UpdateCameraMatrix();
 		cam.Value->SettingViewport();
 
@@ -126,15 +123,18 @@ void UWorld::Render()
 			[[maybe_unused]] FVector WorldMin = SelectedActor->GetActorWorldBoundsMin();
 
 			UDebugDrawManager::Get().DrawBoundingBox(LocalMin, LocalMax, SelectedActor->GetActorTransform(), FVector4::RED);
+			UEngine::Get().GetRenderer()->GetUUIDBillBoard()->Render();
+			
 		}
+		UEngine::Get().GetRenderer()->GetBatchManager()->Render();
 		UDebugDrawManager::Get().Render();
-	}
 
+	}
+	CameraRenderFocused = nullptr;
 	//ACamera* cam = FEditorManager::Get().GetCamera();
 	//cam->UpdateCameraMatrix();
 
 	// temp
-	UEngine::Get().GetRenderer()->GetUUIDBillBoard()->Render();
 
 	//if (UInputManager::Get().GetKeyDown(EKeyCode::LButton))
 	//{

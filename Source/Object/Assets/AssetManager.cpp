@@ -101,7 +101,10 @@ void UAssetManager::LoadAssets()
 			}
 			break;
 		}
-
+		case EAssetType::Mesh:
+		{
+			break;
+		}
 		}
 	}
 }

@@ -45,31 +45,7 @@ private:
 	bool bShowWorldGrid = true;
 
 	UFontAtlasAsset* FontAtlas;
-
 	FString ResourceName;
 
-	// GPU 렌더링을 위한 버퍼
-	//ID3D11Buffer* FontVertexBuffer = nullptr;
-	//ID3D11Buffer* FontIndexBuffer = nullptr;
-	//ID3D11Buffer* FontConstantBuffer = nullptr;
-
-	// 라인 렌더링 전용 쉐이더 리소스
-	//ID3D11VertexShader* FontVertexShader = nullptr;
-	//ID3D11PixelShader* FontPixelShader = nullptr;
-	//ID3D11InputLayout* FontInputLayout = nullptr;
-
-
-	// 라인 렌더링 전용 상태
-	D3D11_PRIMITIVE_TOPOLOGY PrimitiveTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-
-	// 렌더링을 위한 특수 상태
-	//ID3D11RasterizerState* RasterizerState = nullptr;
-	//ID3D11DepthStencilState* DepthStencilState = nullptr;
-	std::shared_ptr<URasterizer> RasterizerState = nullptr;
-	std::shared_ptr<UDepthStencilState> DepthStencilState = nullptr;
-
-	// Blend state
-	//ID3D11BlendState* BlendState = nullptr;
-	UBlendState* BlendState;
 	float BlendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 };

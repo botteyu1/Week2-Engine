@@ -20,7 +20,7 @@ enum class EViewPortSplitter
 	TopLeft,
 	TopRight,
 	BottomLeft,
-	BottomRight
+	BottomRight,
 };
 
 class UWorld :public UObject
@@ -63,6 +63,8 @@ public:
 	void RemoveRenderComponent(UPrimitiveComponent* Component) { RenderComponents.Remove(Component); }
 
 	inline ACamera* GetCamera(EViewPortSplitter InType) const { return CameraMap[InType]; }
+	// 현재 렌더되는 카메라의 getter, 렌더 루프 바깥에서 쓰지 말 것
+	inline ACamera* GetCameraRenderFocused() const { return CameraRenderFocused; }
 	void SetCamera(EViewPortSplitter InType, ACamera* NewCamera) { CameraMap[InType] = NewCamera; }
 
 	void RayCasting(const FVector& MouseNDCPos);
@@ -80,6 +82,7 @@ private:
 	UWorldInfo GetWorldInfo() const;
 	//ACamera* Camera = nullptr;
 	TMap<EViewPortSplitter, ACamera*> CameraMap;
+	ACamera* CameraRenderFocused;
 
 	float GridSize = 100.0f;
 
