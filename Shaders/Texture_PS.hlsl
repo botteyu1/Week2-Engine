@@ -1,4 +1,4 @@
-Texture2D image : register(t2);
+Texture2D image : register(t0);
 SamplerState samLinear : register(s0);
 
 struct VS_OUTPUT

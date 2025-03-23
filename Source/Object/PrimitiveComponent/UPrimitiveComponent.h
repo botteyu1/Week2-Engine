@@ -67,8 +67,6 @@ public:
 		bUseVertexColor = bUse;
 	}
 	const FVector4& GetCustomColor() const { return CustomColor; }
-
-	//void SetTexture(UTextureAsset* )
 public:
 	virtual void RegisterComponentWithWorld(UWorld* World);
 
