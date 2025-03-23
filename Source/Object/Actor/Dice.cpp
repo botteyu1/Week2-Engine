@@ -22,5 +22,5 @@ void ADice::Tick(float DeltaTime)
 
 const char* ADice::GetTypeName()
 {
-	return nullptr;
+	return "StaticMesh";
 }

@@ -160,7 +160,7 @@ void UEditorManager::LateTick([[maybe_unused]] float DeltaTime)
 		}
 		else
 		{
-			SelectActor(nullptr);
+			//SelectActor(nullptr);
 		}
 	}
 

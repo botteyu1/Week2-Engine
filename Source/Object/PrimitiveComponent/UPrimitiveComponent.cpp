@@ -253,3 +253,9 @@ UDiceComp::UDiceComp()
 	SetMesh("Dice");
 	SetMaterial("TextureMaterial");
 }
+
+UMugComp::UMugComp()
+{
+	SetMesh("Mug");
+	SetMaterial("TextureMaterial");
+}

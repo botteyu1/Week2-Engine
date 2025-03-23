@@ -254,6 +254,19 @@ public:
 
 	virtual EPrimitiveType GetType() override
 	{
-		return EPrimitiveType::EPT_Cube;
+		return EPrimitiveType::EPT_StaticMesh;
+	}
+};
+
+class UMugComp : public UPrimitiveComponent
+{
+	DECLARE_CLASS(UMugComp, UPrimitiveComponent)
+
+public:
+	UMugComp();
+
+	virtual EPrimitiveType GetType() override
+	{
+		return EPrimitiveType::EPT_StaticMesh;
 	}
 };
