@@ -5,7 +5,7 @@
 UGizmoComponent::UGizmoComponent()
 {
 	//SetMaterial(TEXT("AlwaysVisibleMaterial"));
-	SetMesh(TEXT("GizmoArrow"));
+	SetMesh(TEXT("GizmoArrow"), false);
 	bCanBeRendered = true;
 }
 
@@ -34,13 +34,13 @@ void UGizmoComponent::OnChangedGizmoType(EGizmoType Gizmo)
 	switch (Gizmo)
 	{
 	case EGizmoType::Translate:
-		SetMesh(TEXT("GizmoArrow"));
+		SetMesh(TEXT("GizmoArrow"), false);
 		break;
 	case EGizmoType::Rotate:
-		SetMesh(TEXT("GizmoRotation"));
+		SetMesh(TEXT("GizmoRotation"), false);
 		break;
 	case EGizmoType::Scale:
-		SetMesh(TEXT("GizmoScale"));
+		SetMesh(TEXT("GizmoScale"), false);
 		break;
 	case EGizmoType::Max:
 		break;

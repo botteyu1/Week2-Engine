@@ -18,7 +18,7 @@ UPrimitiveComponent::UPrimitiveComponent()
 
 	// 기본으로 바인딩되는 데이타
 	GetRenderResourceCollection().SetConstantBufferBinding("FConstantsComponentData", &ConstantsComponentData, 0, true, true);
-	SetMaterial("DefaultMaterial");
+	SetMaterial("DefaultMaterial", false);
 }
 
 UPrimitiveComponent::~UPrimitiveComponent()
@@ -91,7 +91,7 @@ void UPrimitiveComponent::Render()
 	};
 	
 
-	Renderer->Render(GetRenderResourceCollection());
+	Renderer->Render(GetRenderResourceCollection(), bUseTextureIndex);
 }
 
 void UPrimitiveComponent::CalculateModelMatrix(FMatrix& OutMatrix)
@@ -168,7 +168,7 @@ FBoxSphereBounds UPrimitiveComponent::CalcBounds(const FTransform& LocalToWorld)
 
 UCubeComp::UCubeComp()
 {
-	SetMesh("Cube");
+	SetMesh("Cube", false);
 	bCanBeRendered = true;
 	Max = GetMesh()->GetVertexBuffer()->GetMax();
 	Min = GetMesh()->GetVertexBuffer()->GetMin();
@@ -179,7 +179,7 @@ UCubeComp::UCubeComp()
 
 USphereComp::USphereComp()
 {
-	SetMesh("Sphere");
+	SetMesh("Sphere", false);
 	bCanBeRendered = true;
 	Max = GetMesh()->GetVertexBuffer()->GetMax();
 	Min = GetMesh()->GetVertexBuffer()->GetMin();
@@ -224,32 +224,34 @@ float USphereComp::GetShapeScale() const
 
 UTriangleComp::UTriangleComp()
 {
-	SetMesh("Triangle");
+	SetMesh("Triangle", false);
 	bCanBeRendered = true;
 }
 
 UQuadComp::UQuadComp()
 {
-	SetMesh("Quad");
+	SetMesh("Quad", false);
 }
 
 ULineComp::ULineComp()
 {
-	SetMesh("Line");
+	SetMesh("Line", false);
 }
 
 UCylinderComp::UCylinderComp()
 {
-	SetMesh("Cylinder");
+	SetMesh("Cylinder", false);
 }
 
 UConeComp::UConeComp()
 {
-	SetMesh("Cone");
+	SetMesh("Cone", false);
 }
 
 UDiceComp::UDiceComp()
 {
-	SetMesh("Dice");
-	SetMaterial("TextureMaterial");
+	bUseTextureIndex = true;
+	SetMaterial("TextureMaterial", true);
+	SetMesh("Dice", true);
+	GetRenderResourceCollection().SetTextureBinding("DiceTextureArray", 4, true, true);
 }

@@ -5,21 +5,21 @@
 #include "Mesh.h"
 #include "Material.h"
 
-void FRenderResourceCollection::SetMesh(const FString& _Name)
+void FRenderResourceCollection::SetMesh(const FString& _Name, bool bUseTextureArray)
 {
 	Mesh = UMesh::Find(_Name);
 
-	SetMesh(Mesh);
+	SetMesh(Mesh, bUseTextureArray);
 }
 
-void FRenderResourceCollection::SetMaterial(const FString& _Name)
+void FRenderResourceCollection::SetMaterial(const FString& _Name, bool bUseTextureArray)
 {
 	Material = UMaterial::Find(_Name);
 
-	SetMaterial(Material);
+	SetMaterial(Material, bUseTextureArray);
 }
 
-void FRenderResourceCollection::SetMesh(std::shared_ptr<UMesh> _Mesh)
+void FRenderResourceCollection::SetMesh(std::shared_ptr<UMesh> _Mesh, bool bUseTextureArray)
 {
 	Mesh = _Mesh;
 
@@ -31,12 +31,18 @@ void FRenderResourceCollection::SetMesh(std::shared_ptr<UMesh> _Mesh)
 	if (nullptr == Layout && nullptr != Material)
 	{
 		Layout = std::make_shared<UInputLayout>();
-		
-		Layout->ResCreate(Material->GetVertexShader());
+		if (!bUseTextureArray)
+		{
+			Layout->ResCreate(Material->GetVertexShader());
+		}
+		else
+		{
+			Layout->ResCreateForTextuerArray(Material->GetVertexShader());
+		}
 	}
 }
 
-void FRenderResourceCollection::SetMaterial(std::shared_ptr<UMaterial> _Material)
+void FRenderResourceCollection::SetMaterial(std::shared_ptr<UMaterial> _Material, bool bUseTextureArray)
 {
 	Material = _Material;
 
@@ -49,14 +55,21 @@ void FRenderResourceCollection::SetMaterial(std::shared_ptr<UMaterial> _Material
 	if (nullptr == Layout && nullptr != Mesh)
 	{
 		Layout = std::make_shared<UInputLayout>();
-		Layout->ResCreate( Material->GetVertexShader());
+		if (!bUseTextureArray) 
+		{
+			Layout->ResCreate(Material->GetVertexShader());
+		}
+		else
+		{
+			Layout->ResCreateForTextuerArray(Material->GetVertexShader());
+		}
 	}
 }
 
-void FRenderResourceCollection::Render()
+void FRenderResourceCollection::Render(bool bUseTextureIndex)
 {
 	Mesh->Setting();
-	Layout->Setting();
+	Layout->Setting(bUseTextureIndex);
 	Material->Setting(); 
 
 	for (auto& Binding : ConstantBufferBindings)

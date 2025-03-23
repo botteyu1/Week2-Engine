@@ -116,9 +116,9 @@ void URenderer::ReleaseConstantBuffer()
 //     }
 // }
 
-void URenderer::Render(FRenderResourceCollection& InRenderResourceCollection)
+void URenderer::Render(FRenderResourceCollection& InRenderResourceCollection, bool bUseTextureIndex)
 {
-	InRenderResourceCollection.Render();
+	InRenderResourceCollection.Render(bUseTextureIndex);
 }
 
 

@@ -32,6 +32,15 @@ public:
 		// NewRes->Address = _Address;
 		return NewRes;
 	}
+
+	// 파일명이 여러 개인 경우, TArray<FString>를 받아 처리하는 Load 함수
+	static std::shared_ptr<UTexture> Load(const TArray<FString>& InPaths, const FString& InName)
+	{
+		// 여러 파일이 전달되면, Texture Array를 생성하도록 처리
+		std::shared_ptr<UTexture> NewRes = CreateRes(InName);
+		NewRes->ResLoad(InPaths); // UTexture의 ResLoad 오버로드 (TArray<FString>&)
+		return NewRes;
+	}
 	
 	//리소스 등록
 	static std::shared_ptr<UTexture> Create(const FString& InName, ID3D11Texture2D* InRes)
@@ -98,6 +107,12 @@ private:
 	// D3D11_TEXTURE_ADDRESS_MODE Address;
 
 	void ResLoad(const FString& InPath);
+	void ResLoad(const TArray<FString>& InPaths);
 	void ResCreate(const D3D11_TEXTURE2D_DESC& Desc);
 	void ResCreate(ID3D11Texture2D* InRes);
+
+	HRESULT CreateTexture2DArrayFromFiles(ID3D11Device* device, const std::vector<std::wstring>& fileNames, 
+		ID3D11Texture2D** textureArrayOut, ID3D11ShaderResourceView** srvOut);
+
+	HRESULT LoadWICTextureDataFromFile(ID3D11Device* device, const std::wstring& fileName, std::vector<BYTE>& imageData, UINT* width, UINT* height);
 };

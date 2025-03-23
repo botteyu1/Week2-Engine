@@ -84,8 +84,8 @@ public:
 	std::shared_ptr<UMesh> GetMesh() const { return RenderResourceCollection.GetMesh(); }
 	std::shared_ptr<UMaterial> GetMaterial() const { return RenderResourceCollection.GetMaterial(); }
 
-	void SetMesh(const FString& InName) { RenderResourceCollection.SetMesh(InName); }
-	void SetMaterial(const FString& InName) { RenderResourceCollection.SetMaterial(InName); }
+	void SetMesh(const FString& InName, bool bUseTextureIndex) { RenderResourceCollection.SetMesh(InName, bUseTextureIndex); }
+	void SetMaterial(const FString& InName, bool bUseTextureArray) { RenderResourceCollection.SetMaterial(InName, bUseTextureArray); }
 	
 	FRenderResourceCollection& GetRenderResourceCollection() { return RenderResourceCollection; }
 public:
@@ -100,6 +100,7 @@ protected:
 	bool bUseVertexColor = true;
 	bool bIsOrthoGraphic = false;
 	bool bIsPicking = false;
+	bool bUseTextureIndex = false;
 
 	FVector4 CustomColor = FVector4(1.0f, 1.0f, 1.0f, 1.0f);
 

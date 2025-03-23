@@ -11,6 +11,14 @@ D3D11_INPUT_ELEMENT_DESC UInputLayout:: LayoutDesc[] = {
 		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
 
+D3D11_INPUT_ELEMENT_DESC UInputLayout::LayoutTextureArrayDesc[] = {
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXTINDEX", 0, DXGI_FORMAT_R32_SINT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+};
+
 UInputLayout::~UInputLayout()
 {
 	if (nullptr != LayOut)
@@ -18,13 +26,18 @@ UInputLayout::~UInputLayout()
 		LayOut->Release();
 		LayOut = nullptr;
 	}
+
+	if (nullptr != LayOutTextureArray) 
+	{
+		LayOutTextureArray->Release();
+		LayOutTextureArray = nullptr;
+	}
 }
 
 void UInputLayout::ResCreate(std::shared_ptr<UVertexShader> _Shader)
 {
 	
 	//const std::vector<D3D11_INPUT_ELEMENT_DESC>& Infos = _Buffer->VertexInfoPtr->Infos;
-
 	FDevice::Get().GetDevice()->CreateInputLayout(
 		&LayoutDesc[0],
 		ARRAYSIZE(LayoutDesc),
@@ -34,17 +47,46 @@ void UInputLayout::ResCreate(std::shared_ptr<UVertexShader> _Shader)
 
 	if (nullptr == LayOut)
 	{
-		MsgBoxAssert("Error: FInputLayout Create Failed") ;
+		MsgBoxAssert("Error: FInputLayout Create Failed in LayOut") ;
+	}
+
+}
+
+void UInputLayout::ResCreateForTextuerArray(std::shared_ptr<UVertexShader> _Shader)
+{
+	FDevice::Get().GetDevice()->CreateInputLayout(
+		&LayoutTextureArrayDesc[0],
+		ARRAYSIZE(LayoutTextureArrayDesc),
+		_Shader->BinaryCode->GetBufferPointer(),
+		_Shader->BinaryCode->GetBufferSize(),
+		&LayOutTextureArray);
+
+	if (nullptr == LayOutTextureArray)
+	{
+		MsgBoxAssert("Error: FinputLayout Create Failed in LayOutTextureArray");
 	}
 }
 
-void UInputLayout::Setting()
+void UInputLayout::Setting(bool bUseTextureIndex)
 {
-	if (nullptr == LayOut)
-	{
-		MsgBoxAssert("Error: FInputLayout Create Failed") ;
-	}
+	if (!bUseTextureIndex) {
+		if (nullptr == LayOut)
+		{
+			MsgBoxAssert("Error: FInputLayout Create Failed in LayOut Setting");
+		}
 
-	// 버텍스버퍼를 여러개 넣어줄수 있다.
-	FDevice::Get().GetDeviceContext()->IASetInputLayout(LayOut);
+		// 버텍스버퍼를 여러개 넣어줄수 있다.
+		FDevice::Get().GetDeviceContext()->IASetInputLayout(LayOut);
+		return;
+	}
+	else {
+		if (nullptr == LayOutTextureArray) 
+		{
+			MsgBoxAssert("Error: FInputLayout Create Failed in LayOutTextureArray Setting");
+		}
+
+		FDevice::Get().GetDeviceContext()->IASetInputLayout(LayOutTextureArray);
+		return;
+	}
+	
 }

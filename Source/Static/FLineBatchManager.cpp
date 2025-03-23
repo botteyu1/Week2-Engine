@@ -125,7 +125,7 @@ void FLineBatchManager::Render()
 	LineConstantInfo.ViewProjectionMatrix = FMatrix::Transpose(UEngine::Get().GetWorld()->GetCamera()->GetViewProjectionMatrix());
 
 
-	RenderResourceCollection.Render();
+	RenderResourceCollection.Render(false);
 
 }
 
@@ -164,8 +164,8 @@ void FLineBatchManager::Create()
 
 	RenderResourceCollection.SetConstantBufferBinding("LineConstantInfo",&LineConstantInfo, 1,true,false);
 
-	RenderResourceCollection.SetMesh(Mesh);
-	RenderResourceCollection.SetMaterial(Material);
+	RenderResourceCollection.SetMesh(Mesh, false);
+	RenderResourceCollection.SetMaterial(Material, false);
 }
 
 

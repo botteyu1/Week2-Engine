@@ -55,7 +55,7 @@ public:
     /** 셰이더를 준비 합니다. */
     //void PrepareShader() const;
 
-	void Render(class FRenderResourceCollection& InRenderResourceCollection);
+	void Render(class FRenderResourceCollection& InRenderResourceCollection, bool bUseTextureIndex);
 
     /** PrimitiveComponent를 초기화 합니다. */
     // void RenderPrimitiveInternal(UPrimitiveComponent& PrimitiveComp) const;

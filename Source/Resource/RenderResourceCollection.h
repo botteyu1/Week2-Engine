@@ -20,12 +20,12 @@ public:
 
 
 
-	void SetMesh(const FString& _Name);
-	void SetMaterial(const FString& _Name);
+	void SetMesh(const FString& _Name, bool bUseTextureArray);
+	void SetMaterial(const FString& _Name, bool bUseTextureArray);
 
 	
-	void SetMesh(std::shared_ptr<class UMesh> _Mesh);
-	void SetMaterial(std::shared_ptr<class UMaterial> _Material);
+	void SetMesh(std::shared_ptr<class UMesh> _Mesh, bool bUseTextureArray);
+	void SetMaterial(std::shared_ptr<class UMaterial> _Material, bool bUseTextureArray);
 
 	std::shared_ptr<UMesh> GetMesh() const
 	{
@@ -37,7 +37,7 @@ public:
 		return Material;
 	}
 
-	void Render();
+	void Render(bool bUseTextureIndex);
 	void Reset();
 
 

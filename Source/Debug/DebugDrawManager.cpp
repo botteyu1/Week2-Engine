@@ -54,8 +54,8 @@ void UDebugDrawManager::Initialize()
 
 	RenderResourceCollection.SetConstantBufferBinding(TEXT("DebugConstantInfo"), &DebugConstantInfo, 1, true, false);
 
-	RenderResourceCollection.SetMesh(Mesh);
-	RenderResourceCollection.SetMaterial(Material);
+	RenderResourceCollection.SetMesh(Mesh, false);
+	RenderResourceCollection.SetMaterial(Material, false);
 }
 
 void UDebugDrawManager::DrawBoxBrackets(const FBox InActor, const FTransform& LocalToWorld, const FVector4& Color, float LifeTime)
@@ -237,7 +237,7 @@ void UDebugDrawManager::Render()
 	//RenderResourceCollection.GetMesh()->GetIndexBuffer()->SetIndexCount(IndexBuffer.Num());
 
 	DebugConstantInfo.ViewProjectionMatrix = FMatrix::Transpose(UEngine::Get().GetWorld()->GetCamera()->GetViewProjectionMatrix());
-	RenderResourceCollection.Render();
+	RenderResourceCollection.Render(false);
 
 	ClearDebug();
 }

@@ -22,7 +22,9 @@
 void FDevice::InitResource()
 {
 	const std::shared_ptr<UVertexShader> VS = UVertexShader::Load(L"Shaders/ShaderW0.hlsl","Simple_VS","mainVS");
-	UInputLayout::Create("Simple_VS" , VS);
+	
+	// TODO: Create한 InputLayout을 사용하지 않고 있음 해결필요
+	/*UInputLayout::Create("Simple_VS" , VS);*/
 	UPixelShader::Load(L"Shaders/ShaderW0.hlsl","Simple_PS","mainPS");
 
 	{
@@ -33,6 +35,7 @@ void FDevice::InitResource()
 	UPixelShader::Load(L"Shaders/Font_PS.hlsl", "Font_PS", "Font_PS");
 	UPixelShader::Load(L"Shaders/SubUV_PS.hlsl", "SubUV_PS", "SubUV_PS");
 	std::shared_ptr<UVertexShader> TextureVS = UVertexShader::Load(L"Shaders/Texture_VS.hlsl", "Texture_VS", "Texture_VS");
+	/*UInputLayout::CreateForTextureArray("Texture_VS", TextureVS);*/
 	UPixelShader::Load(L"Shaders/Texture_PS.hlsl", "Texture_PS", "Texture_PS");
 	UConstantBuffer::Create("DefaultConstantBuffer", sizeof(FConstantsComponentData));
 
@@ -133,8 +136,14 @@ void FDevice::InitResource()
 		std::shared_ptr<UTexture> TextureImage = UTexture::Load("font_atlas.dds", "SubUVTexture");
 		TextureImage->CreateShaderResourceView();
 
-		std::shared_ptr<UTexture> DiceImage = UTexture::Load("Dice.png", "DiceTexture");
-		DiceImage->CreateShaderResourceView();
+		/*std::shared_ptr<UTexture> DiceImage = UTexture::Load("Dice.png", "DiceTexture");
+		DiceImage->CreateShaderResourceView();*/
+
+		TArray<FString> textureFiles;
+		textureFiles.Add(FString("Dice.png"));
+		textureFiles.Add(FString("DiceRed.png"));
+
+		std::shared_ptr<UTexture> DiceImageArray = UTexture::Load(textureFiles, "DiceTextureArray");
 	}
 
 	{
@@ -409,7 +418,7 @@ void FDevice::InitResource()
 	}
 
 	{
-		TArray<FVertexSimple> vertices;
+		TArray<FVertexTextureArray> vertices;
 		TArray<uint32> indices;
 
 		/*UAssetManager::Get().ObjParsing("cube-tex.obj", vertices, indices);*/
@@ -426,19 +435,21 @@ void FDevice::InitResource()
 
 				for (int j = 0; j < curMesh.Vertices.size(); j++) 
 				{
-					FVertexSimple inVertex = {
+					int textureIndex = j < curMesh.Vertices.size() / 2 ? 0 : 1;
+						FVertexTextureArray inVertex = {
 						curMesh.Vertices[j].Position.X, curMesh.Vertices[j].Position.Y, curMesh.Vertices[j].Position.Z,
 						0.5f, 0.5f, 0.5f, 1.0f,
 						curMesh.Vertices[j].TextureCoordinate.X, curMesh.Vertices[j].TextureCoordinate.Y,
-						curMesh.Vertices[j].Normal.X, curMesh.Vertices[j].Normal.Y, curMesh.Vertices[j].Normal.Z 
+						curMesh.Vertices[j].Normal.X, curMesh.Vertices[j].Normal.Y, curMesh.Vertices[j].Normal.Z,
+						textureIndex
 					};
 					vertices.Add(inVertex);
 				}
 				
 				for (int j = 0; j < curMesh.Indices.size(); j += 3) {
-					indices.Add(curMesh.Indices[j]);
-					indices.Add(curMesh.Indices[j + 1]);
-					indices.Add(curMesh.Indices[j + 2]);
+					indices.Add(indexStart + curMesh.Indices[j]);
+					indices.Add(indexStart + curMesh.Indices[j + 1]);
+					indices.Add(indexStart + curMesh.Indices[j + 2]);
 				}
 
 				indexStart = curMesh.Vertices.size();

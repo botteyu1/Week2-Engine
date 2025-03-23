@@ -29,8 +29,8 @@ USpotLightComponent::USpotLightComponent()
 	//GuideMesh->SetMesh("SpotLightGuideMesh");
 	//GuideMesh->SetMaterial("DebugMaterial");
 	GetRenderResourceCollection().SetConstantBufferBinding("FConstantsComponentData", &ConstantsComponentData, 0, true, false);
-	GetRenderResourceCollection().SetMesh(Mesh);
-	GetRenderResourceCollection().SetMaterial("DebugMaterial");
+	GetRenderResourceCollection().SetMesh(Mesh, false);
+	GetRenderResourceCollection().SetMaterial("DebugMaterial", false);
 }
 
 USpotLightComponent::~USpotLightComponent()
@@ -87,7 +87,7 @@ void USpotLightComponent::Render()
 		Data.MVP = MVP;
 		Data.bUseVertexColor = true;
 
-		GetRenderResourceCollection().Render();
+		GetRenderResourceCollection().Render(false);
 		//GuideMesh->Render();
 	}
 }
