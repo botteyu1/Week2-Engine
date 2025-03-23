@@ -378,10 +378,16 @@
     <ClCompile Include="Source\Core\Math\Rect.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Core\Rendering\Splitter.cpp">
+    <ClCompile Include="Source\Object\Actor\StaticMesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Object\Actor\StaticMesh.cpp">
+    <ClCompile Include="Source\Object\PrimitiveComponent\TextureComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Core\Rendering\SWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Object\PrimitiveComponent\TextureComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -812,9 +818,6 @@
     <ClInclude Include="Source\Object\Actor\WorldGrid.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Users\Jungle\Downloads\WavefrontOBJ-main\WavefrontOBJ-main\WavefrontOBJ.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Object\Assets\ObjArchive.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -833,7 +836,16 @@
     <ClInclude Include="Source\Object\Actor\StaticMesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Core\Rendering\Splitter.h">
+    <ClInclude Include="Source\Object\PrimitiveComponent\TextureComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Core\Rendering\SWindow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Core\Rendering\SWindowManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Object\PrimitiveComponent\TextureComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

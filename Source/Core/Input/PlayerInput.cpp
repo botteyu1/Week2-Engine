@@ -211,16 +211,24 @@ void UInputManager::GetNDCPosWithSplitViewPort(
 	FVector& OutMouseNDCPos,
 	EViewPortSplitter& OutSelectedViewPortIndex
 	) const {
-
+	
 	float screenPosX = InMousePos.X;
 	float screenPosY = InMousePos.Y;
+	UE_LOG("MousePos In Screen : %f, %f", screenPosX, screenPosY);
+	OutSelectedViewPortIndex = EViewPortSplitter::None;
 	for ( const auto& pair: InViewPorts ) {
-		D3D11_VIEWPORT viewport = pair.Value.GetViewportInfo();
+		FViewport viewport = pair.Value;
+		D3D11_VIEWPORT viewportInfo = viewport.GetViewportInfo();
 		if (
-			(viewport.TopLeftX < InMousePos.X && InMousePos.X < viewport.TopLeftX + viewport.Width) &&
-			(viewport.TopLeftY < InMousePos.Y && InMousePos.Y < viewport.TopLeftY + viewport.Height)
+			viewport.IsHover(FVector2D(screenPosX, screenPosY))
+			//(viewportInfo.TopLeftX < InMousePos.X && InMousePos.X < viewportInfo.TopLeftX + viewportInfo.Width) &&
+			//(viewportInfo.TopLeftY < InMousePos.Y && InMousePos.Y < viewportInfo.TopLeftY + viewportInfo.Height)
 		) {
 			OutSelectedViewPortIndex = pair.Key;
+			OutMouseNDCPos.X = 2.0f * (InMousePos.X - viewportInfo.TopLeftX) / viewportInfo.Width - 1.0f;
+			OutMouseNDCPos.Y = - 2.0f * (InMousePos.Y - viewportInfo.TopLeftY) / viewportInfo.Height + 1.0f;
+			OutMouseNDCPos.Z = 0.f;
+			UE_LOG("MousePos In NDC : %f, %f", OutMouseNDCPos.X, OutMouseNDCPos.Y);
 		}
 	}
 }

@@ -1,4 +1,4 @@
-﻿#include "JsonSaveHelper.h"
+#include "JsonSaveHelper.h"
 
 #include <fstream>
 #include <ranges>
@@ -58,6 +58,10 @@ std::unique_ptr<UWorldInfo> JsonSaveHelper::LoadScene(const std::string& SceneNa
 		);
 
         ObjectInfo->ObjectType = ActorInfo["Type"].ToString();
+		if (ObjectInfo->ObjectType == "StaticMesh") {
+			ObjectInfo->objName = ActorInfo["ObjStaticMeshAsset"].ToString();
+			ObjectInfo->bUseTexture = ActorInfo["bUseTexture"].ToInt();
+		}
 		WorldInfo->ObjectInfos.push(std::move(ObjectInfo));
     }
     return WorldInfo;
@@ -86,6 +90,10 @@ void JsonSaveHelper::SaveScene(UWorldInfo WorldInfo)
         Json["Actors"][Uuid]["Rotation"].append(ObjectInfo->Rotation.X, ObjectInfo->Rotation.Y, ObjectInfo->Rotation.Z);
         Json["Actors"][Uuid]["Scale"].append(ObjectInfo->Scale.X, ObjectInfo->Scale.Y, ObjectInfo->Scale.Z);
         Json["Actors"][Uuid]["Type"] = ObjectInfo->ObjectType;
+		if (ObjectInfo->ObjectType == "StaticMesh") {
+			Json["Actors"][Uuid]["ObjStaticMeshAsset"] = ObjectInfo->objName;
+			Json["Actors"][Uuid]["bUseTexture"] = ObjectInfo->bUseTexture;
+		}
     }
      
     std::ofstream Output(WorldInfo.SceneName + ".scene");

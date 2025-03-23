@@ -35,19 +35,22 @@ bool UMeshAsset::Load()
 
 				for (int j = 0; j < curMesh.Vertices.size(); j++)
 				{
+					FVector4 color((float)rand() / (float)RAND_MAX, (float)rand() / (float)RAND_MAX,
+						(float)rand() / (float)RAND_MAX, 1.0f);
 					FVertexSimple inVertex = {
 						curMesh.Vertices[j].Position.X, curMesh.Vertices[j].Position.Y, curMesh.Vertices[j].Position.Z,
-						0.5f, 0.5f, 0.5f, 1.0f,
+						color.X, color.Y, color.Z, color.W ,
 						curMesh.Vertices[j].TextureCoordinate.X, curMesh.Vertices[j].TextureCoordinate.Y,
 						curMesh.Vertices[j].Normal.X, curMesh.Vertices[j].Normal.Y, curMesh.Vertices[j].Normal.Z
 					};
 					vertices.Add(inVertex);
 				}
 
-				for (int j = 0; j < curMesh.Indices.size(); j += 3) {
-					indices.Add(curMesh.Indices[j]);
+				for (int j = 0; j < curMesh.Indices.size(); j += 1) {
+					/*indices.Add(curMesh.Indices[j]);
 					indices.Add(curMesh.Indices[j + 1]);
-					indices.Add(curMesh.Indices[j + 2]);
+					indices.Add(curMesh.Indices[j + 2]);*/
+					indices.Add(curMesh.Indices[j]);
 				}
 
 				indexStart = curMesh.Vertices.size();

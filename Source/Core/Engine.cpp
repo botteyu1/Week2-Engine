@@ -35,13 +35,17 @@ LRESULT UEngine::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_CAPTURECHANGED://현재 마우스 입력을 독점(capture)하고 있던 창이 마우스 캡처를 잃었을 때
 		break;
 	case WM_SIZE:
-		UEngine::Get().UpdateWindowSize(LOWORD(lParam), HIWORD(lParam));
+		UEngine::Get().ScreenWidth = LOWORD(lParam);
+		UEngine::Get().ScreenHeight = HIWORD(lParam);
+		break;
+	case WM_EXITSIZEMOVE:
+		UEngine::Get().UpdateWindowSize();
 		break;
 	case WM_MOUSEWHEEL:
 	{
 		// 마우스 휠 이벤트 처리
 		short zDelta = GET_WHEEL_DELTA_WPARAM(wParam);
-		float curZoomSize = UEngine::Get().GetWorld()->GetCamera(EViewPortSplitter::TopLeft)->GetZoomSize();
+		float curZoomSize = UEngine::Get().GetWorld()->GetCameraFocused()->GetZoomSize();
 		UEngine::Get().GetWorld()->GetCameraFocused()->SetZoomSize(curZoomSize + zDelta);
 		break;
 
@@ -269,10 +273,8 @@ void UEngine::ShutdownWindow()
 	ui.Shutdown();
 }
 
-void UEngine::UpdateWindowSize(uint32 InScreenWidth, uint32 InScreenHeight)
+void UEngine::UpdateWindowSize()
 {
-	ScreenWidth = InScreenWidth;
-	ScreenHeight = InScreenHeight;
 
 	//디바이스 초기화전에 진입막음
 	if (FDevice::Get().IsInit() == false)
@@ -284,8 +286,6 @@ void UEngine::UpdateWindowSize(uint32 InScreenWidth, uint32 InScreenHeight)
 
 	UEngine::Get().GetEditor()->OnUpdateWindowSize(ScreenWidth, ScreenHeight);
 
-
-
 	if (ui.bIsInitialized)
 	{
 		ui.OnUpdateWindowSize(ScreenWidth, ScreenHeight);
@@ -294,6 +294,8 @@ void UEngine::UpdateWindowSize(uint32 InScreenWidth, uint32 InScreenHeight)
 	FDevice::Get().OnResizeComplete();
 	
 	UEngine::Get().GetEditor()->OnResizeComplete();
+
+	World->UpdateViewPorts();
 }
 
 UObject* UEngine::GetObjectByUUID(uint32 InUUID) const

@@ -14,6 +14,8 @@ class UEditorManager
 	friend class FDevice;;
 public:
 	void Init();
+
+	void CreateUUIDTexture();
     
     inline AActor* GetSelectedActor() const {return SelectedActor;}
     
