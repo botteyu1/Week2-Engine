@@ -1,7 +1,6 @@
 #include "UI.h"
 
 #include "FDevice.h"
-#include "FViewMode.h"
 #include "Core/Engine.h"
 #include "Core/Input/PlayerInput.h"
 #include "Debug/DebugConsole.h"
@@ -16,11 +15,12 @@
 #include "Object/Actor/SpotLight.h"
 #include "Object/Light/SpotLightComponent.h"
 #include "Object/World/World.h"
-#include "Static/FEditorManager.h"
+#include "Static/EditorManager.h"
 #include "Static/FUUIDBillBoard.h"
-#include "Object/Actor/Dice.h"
+#include "Resource/DirectResource/ViewMode.h"
+#include "Object/Actor/StaticMesh.h"
 // #include "FDevice.h"
-// #include "FViewMode.h"
+// #include "FViewModeManager.h"
 // #include "Core/Engine.h"
 // #include "Core/Input/PlayerInput.h"
 // #include "Debug/DebugConsole.h"
@@ -37,7 +37,7 @@
 // #include "Object/Actor/SpotLight.h"
 // #include "Object/Light/SpotLightComponent.h"
 // #include "Object/World/World.h"
-// #include "Static/FEditorManager.h"
+// #include "Static/UEditorManager.h"
 // #include "Static/FUUIDBillBoard.h"
 
 
@@ -180,7 +180,8 @@ void UI::RenderMemoryUsage() const
 
 void UI::RenderPrimitiveSelection()
 {
-    const char* items[] = { "Sphere", "Cube", "Cylinder", "Cone", "SpotLight", "Dice"};
+    const char* items[] = { "Sphere", "Cube", "Cylinder", "Cone", "SpotLight", "Dice", "Mug",
+	"SpaceShip"};
 
     ImGui::Combo("Primitive", &currentItem, items, IM_ARRAYSIZE(items));
 
@@ -210,7 +211,13 @@ void UI::RenderPrimitiveSelection()
 				World->SpawnActor<ASpotLight>();
 			}
 			else if (strcmp(items[currentItem], "Dice") == 0) {
-				World->SpawnActor<ADice>();
+				World->SpawnStaticMeshActor("Dice.obj", true);
+			}
+			else if (strcmp(items[currentItem], "Mug") == 0) {
+				World->SpawnStaticMeshActor("Mug.obj", true);
+			}
+			else if (strcmp(items[currentItem], "SpaceShip") == 0) {
+				World->SpawnStaticMeshActor("SpaceShip.obj");
 			}
             //else if (strcmp(items[currentItem], "Triangle") == 0)
             //{
@@ -254,7 +261,7 @@ void UI::RenderCameraSettings() const
 {
     ImGui::Text("Camera");
 
-    ACamera* Camera = FEditorManager::Get().GetCamera();
+	ACamera* Camera = UEngine::Get().GetWorld()->GetCamera(EViewPortSplitter::TopLeft);
 
     bool IsOrthogonal;
     if (Camera->ProjectionMode == ECameraProjectionMode::Orthographic)
@@ -340,9 +347,9 @@ void UI::RenderCameraSettings() const
     ImGui::Text("Camera GetForward(): (%.2f %.2f %.2f)", Forward.X, Forward.Y, Forward.Z);
     ImGui::Text("Camera GetUp(): (%.2f %.2f %.2f)", Up.X, Up.Y, Up.Z);
     ImGui::Text("Camera GetRight(): (%.2f %.2f %.2f)", Right.X, Right.Y, Right.Z);
-	ImGui::Text("MouseLeftDown: %s", APlayerInput::Get().GetKeyDown(EKeyCode::LButton) ? "True" : "False");
-	ImGui::Text("MousePress : %s", APlayerInput::Get().GetKeyPress(EKeyCode::LButton) ? "True" : "False");
-	ImGui::Text("MosueLeftUp: %s", APlayerInput::Get().GetKeyUp(EKeyCode::LButton) ? "True" : "False");
+	ImGui::Text("MouseLeftDown: %s", UEngine::Get().GetInput()->GetKeyDown(EKeyCode::LButton) ? "True" : "False");
+	ImGui::Text("MousePress : %s", UEngine::Get().GetInput()->GetKeyPress(EKeyCode::LButton) ? "True" : "False");
+	ImGui::Text("MosueLeftUp: %s", UEngine::Get().GetInput()->GetKeyUp(EKeyCode::LButton) ? "True" : "False");
 	ImGui::Separator();
 }
 
@@ -359,7 +366,7 @@ void UI::RenderPropertyWindow() const
         ImGui::SetWindowSize(ResizeToScreen(Window->Size));
     }
     
-    AActor* selectedActor = FEditorManager::Get().GetSelectedActor();
+    AActor* selectedActor = UEngine::Get().GetEditor()->GetSelectedActor();
     if (selectedActor != nullptr)
     {
         FTransform selectedTransform = selectedActor->GetActorTransform();
@@ -387,9 +394,9 @@ void UI::RenderPropertyWindow() const
             selectedTransform.SetScale(scale[0], scale[1], scale[2]);
             selectedActor->SetActorTransform(selectedTransform);
         }
-		/*if (FEditorManager::Get().GetGizmoHandle() != nullptr)
+		/*if (UEditorManager::Get().GetGizmoHandle() != nullptr)
 		{
-			AGizmoHandle* Gizmo = FEditorManager::Get().GetGizmoHandle();
+			AGizmoHandle* Gizmo = UEditorManager::Get().GetGizmoHandle();
             if(Gizmo->GetGizmoType() == EGizmoType::Translate)
 			{
 				ImGui::Text("GizmoType: Translate");
@@ -526,8 +533,8 @@ void UI::RenderSceneManager()
 				//if (CurActor != nullptr)
 					//CurActor->IsHighlightValue = false;
 				CurActor = Actor;
-				FEditorManager::Get().SelectActor(CurActor);
-				FUUIDBillBoard::Get().SetTarget(CurActor);
+				UEngine::Get().GetEditor()->SelectActor(CurActor);
+				UEngine::Get().GetRenderer()->GetUUIDBillBoard()->SetTarget(CurActor);
 			}
 		}
 	}
@@ -585,13 +592,14 @@ void UI::RenderShowFlagsPanel() const
 void UI::RenderViewModePanel() const
 {
 	if (ImGui::Begin("View Mode"))
-	{													
+	{
+		FViewModeManager* viewMode = UEngine::Get().GetRenderer()->GetViewMode();
 		static const char* viewModeNames[] = { "Default", "Solid", "Wireframe" };
-		int currentViewMode = static_cast<int>(FViewMode::Get().GetViewMode());
+		int currentViewMode = static_cast<int>(viewMode->GetCurrentViewMode());
 
 		if (ImGui::Combo("View Mode", &currentViewMode, viewModeNames, IM_ARRAYSIZE(viewModeNames)))
 		{
-			FViewMode::Get().SetViewMode((static_cast<EViewModeIndex>(currentViewMode)));
+			viewMode->SetViewMode((static_cast<EViewModeIndex>(currentViewMode)));
 		}
 	}
 	ImGui::End();

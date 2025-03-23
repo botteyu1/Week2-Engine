@@ -1,7 +1,11 @@
 #include "Texture.h"
 
 #include <d3dcompiler.h>
+#include "DirectXTK/DDSTextureLoader.h"
+#include "DirectXTK/WICTextureLoader.h"
+
 #include "Core/Rendering/FDevice.h"
+#include "Object/Assets/Asset.h"
 
 #include "Debug/DebugConsole.h"
 #include "DirectXTK/DDSTextureLoader.h"
@@ -159,16 +163,24 @@ void UTexture::CreateDepthStencilView()
 	}
 }
 
-void UTexture::ResLoad(const FString& InPath)
 
+void UTexture::ResLoad(const FAssetMetaData& InMetadata)
 {
-	std::string str = *InPath;
+	std::string str = InMetadata.GetAssetPath().GetData();
 
 	std::wstring wstr(str.begin(), str.end());
 
 	ID3D11Resource* Resource = nullptr;
-	
-	if (S_OK != DirectX::CreateDDSTextureFromFile(FDevice::Get().GetDevice(), FDevice::Get().GetDeviceContext(), wstr.c_str(), &Resource, &SRV))
+
+	HRESULT hr;
+	if ( InMetadata.GetAssetExtension().Equals(TEXT(".dds")) ) {
+		hr = DirectX::CreateDDSTextureFromFile(FDevice::Get().GetDevice(), FDevice::Get().GetDeviceContext(), wstr.c_str(), &Resource, &SRV);
+	} else if ( InMetadata.GetAssetExtension().Equals(TEXT(".png")) ) {
+		hr = DirectX::CreateWICTextureFromFile(FDevice::Get().GetDevice(), FDevice::Get().GetDeviceContext(), wstr.c_str(), &Resource, &SRV);
+	} else {
+		hr = E_INVALIDARG;
+	}
+	if (S_OK != hr)
 	{
 		if (S_OK != DirectX::CreateWICTextureFromFile(FDevice::Get().GetDevice(), FDevice::Get().GetDeviceContext(), wstr.c_str(), &Resource, &SRV)) {
 			MsgBoxAssert("텍스처 로드에 실패했습니다.");
@@ -186,6 +198,7 @@ void UTexture::ResCreate(ID3D11Texture2D* InRes)
 
 	CreateRenderTargetView();
 }
+
 
 
 void UTexture::ResCreate(const D3D11_TEXTURE2D_DESC& _Desc)

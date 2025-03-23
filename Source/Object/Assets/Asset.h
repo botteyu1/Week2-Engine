@@ -11,12 +11,14 @@ enum class EAssetType : uint8
 	Animation,
 	Sound,
 	Font,
+	FontAtlas,
 	Shader,
 	Blueprint,
 	Scene,
 	World,
 	Asset,
 	EditorConfig,
+	Text,
 	None
 };
 
@@ -25,54 +27,63 @@ struct FAssetMetaData
 public:
 	FAssetMetaData() : AssetName(""), AssetPath(""), AssetSize(0), Type(EAssetType::None), BIsLoaded(false), BIsDirty(false) {}
 
-	FAssetMetaData(FString InAssetName, FString InAssetPath, uint64 assetSize, const FString& extension)
+	FAssetMetaData(FString InAssetName, FString InAssetPath, uint64 assetSize, FString InExtension)
 		: AssetName(std::move(InAssetName))
 		, AssetPath(std::move(InAssetPath))
+		, AssetExtension(std::move(InExtension))
 		, AssetSize(assetSize), BIsLoaded(false), BIsDirty(false)
 	{
-		if (extension.Equals(TEXT(".png")) || extension.Equals(TEXT(".jpb")) || extension.Equals(TEXT(".bmp")) || extension.Equals(TEXT(".dds")))
+		if ( AssetExtension.Equals(TEXT(".png")) || AssetExtension.Equals(TEXT(".jpb")) || InExtension.Equals(TEXT(".bmp")) || InExtension.Equals(TEXT(".dds")))
 		{
 			Type = EAssetType::Texture;
 		}
-		else if (extension.Equals(TEXT(".fbx")) || extension.Equals(TEXT(".obj")))
+		else if (AssetExtension.Equals(TEXT(".fbx")) || AssetExtension.Equals(TEXT(".obj")))
 		{
 			Type = EAssetType::Mesh;
 		}
-		else if (extension.Equals(TEXT(".wav")) || extension.Equals(TEXT(".mp3")))
+		else if (AssetExtension.Equals(TEXT(".wav")) || AssetExtension.Equals(TEXT(".mp3")))
 		{
 			Type = EAssetType::Sound;
 		}
-		else if (extension.Equals(TEXT(".ttf")) || extension.Equals(TEXT(".otf")))
+		else if (AssetExtension.Equals(TEXT(".ttf")) || AssetExtension.Equals(TEXT(".otf")))
 		{
 			Type = EAssetType::Font;
 		}
-		else if (extension.Equals(TEXT(".material")))
+		else if (AssetExtension.Equals(TEXT(".fontatlas")))
+		{
+			Type = EAssetType::FontAtlas;
+		}
+		else if (AssetExtension.Equals(TEXT(".material")))
 		{
 			Type = EAssetType::Material;
 		}
-		else if (extension.Equals(TEXT(".anim")))
+		else if (AssetExtension.Equals(TEXT(".anim")))
 		{
 			Type = EAssetType::Animation;
 		}
-		else if (extension.Equals(TEXT(".hlsl")))
+		else if (AssetExtension.Equals(TEXT(".hlsl")))
 		{
 			Type = EAssetType::Shader;
 		}
-		else if (extension.Equals(TEXT(".blueprint")))
+		else if (AssetExtension.Equals(TEXT(".blueprint")))
 		{
 			Type = EAssetType::Blueprint;
 		}
-		else if (extension.Equals(TEXT(".Scene")))
+		else if (AssetExtension.Equals(TEXT(".Scene")))
 		{
 			Type = EAssetType::Scene;
 		}
-		else if (extension.Equals(TEXT(".world")))
+		else if (AssetExtension.Equals(TEXT(".world")))
 		{
 			Type = EAssetType::World;
 		}
-		else if (extension.Equals(TEXT(".ini")))
+		else if (AssetExtension.Equals(TEXT(".ini")))
 		{
 			Type = EAssetType::EditorConfig;
+		}
+		else if (AssetExtension.Equals(TEXT(".txt")))
+		{
+			Type = EAssetType::Text;
 		}
 		else
 		{
@@ -83,6 +94,7 @@ public:
 public:
 	FString GetAssetName() const { return AssetName; }
 	FString GetAssetPath() const { return AssetPath; }
+	FString GetAssetExtension() const { return AssetExtension; }
 	uint64 GetAssetSize() const { return AssetSize; }
 	EAssetType GetAssetType() const { return Type; }
 	bool IsLoaded() const { return BIsLoaded; }
@@ -98,6 +110,7 @@ public:
 private:
 	FString AssetName;
 	FString AssetPath;
+	FString AssetExtension;
 	uint64 AssetSize;
 	EAssetType Type;
 

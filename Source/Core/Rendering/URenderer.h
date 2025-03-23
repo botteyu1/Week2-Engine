@@ -1,20 +1,25 @@
 #pragma once
-
-#define _TCHAR_DEFINED  // TCHAR 재정의 에러 때문
+#define _TCHAR_DEFINED  // MYTCHAR 재정의 에러 때문
 #include <d3d11.h>
 
 #include "Core/Math/Vector.h"
 
 struct FVertexSimple;
 struct FVector4;
+enum class ERenderFlags;
 
+class FViewModeManager;
+class FLineBatchManager;
+class FUUIDBillBoard;
 class ACamera;
+class UWorld;
 
 class URenderer
 {
 public:
-	friend class FLineBatchManager;
-	
+	//friend class FLineBatchManager;
+
+	ERenderFlags renderFlags;
 private:
   //   struct alignas(16) FConstantsComponentDatas
   //   {
@@ -38,7 +43,7 @@ private:
 public:
 	
     /** Renderer를 초기화 합니다. */
-    void Create(HWND hWindow);
+    void Create(HWND hWindow, UWorld* world);
 
     /** Renderer에 사용된 모든 리소스를 해제합니다. */
     void Release();
@@ -60,12 +65,15 @@ public:
     /** PrimitiveComponent를 초기화 합니다. */
     // void RenderPrimitiveInternal(UPrimitiveComponent& PrimitiveComp) const;
 
-	void LoadTexture(const wchar_t* texturePath);
 	void LoadTextures();
+
 	ID3D11ShaderResourceView* FontTextureSRV = nullptr;
 	ID3D11SamplerState* FontSamplerState = nullptr;
 
-    
+public:
+	inline FViewModeManager* GetViewMode() { return ViewMode.get(); }
+	inline FLineBatchManager* GetBatchManager() { return LineBatchManager.get(); }
+	FUUIDBillBoard* GetUUIDBillBoard();
 
 protected:
     /** 뎁스 스텐실 상태를 생성합니다. */
@@ -130,4 +138,9 @@ public:
 
 public:
 	FVector GetFrameBufferWindowSize() const;
+
+private:
+	std::shared_ptr<FViewModeManager> ViewMode;
+	std::shared_ptr<FLineBatchManager> LineBatchManager;
+	std::shared_ptr<FUUIDBillBoard> UUIDBillBoard;
 };

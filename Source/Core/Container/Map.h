@@ -16,6 +16,7 @@ public:
 private:
     MapType PrivateMap;
 
+public:
     class Iterator
     {
     private:

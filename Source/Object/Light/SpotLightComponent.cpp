@@ -5,6 +5,7 @@
 #include "Object/Actor/Camera.h"
 #include "Primitive/UGeometryGenerator.h"
 #include "Resource/Mesh.h"
+#include "Resource/DirectResource/InputLayout.h"
 
 USpotLightComponent::USpotLightComponent()
 	: InnerConeAngle(PI / 6.0f)  // 30도
@@ -22,7 +23,13 @@ USpotLightComponent::USpotLightComponent()
 
 	//UGeometryGenerator::CreateRadialCone(ConeHeight, OuterConeAngle, 16, &VertexBuffer, &IndexBuffer);
 
-	UVertexBuffer::Create("SpotLightGuideVertexBuffer", VertexBuffer, true);
+
+	UVertexBuffer::Create(
+		"SpotLightGuideVertexBuffer", 
+		VertexBuffer, 
+		UInputLayout::Find("Simple_IL"),
+		true
+	);
 	UIndexBuffer::Create("SpotLightGuideIndexBuffer", IndexBuffer, true);
 	std::shared_ptr<UMesh> Mesh = UMesh::Create("SpotLightGuideMesh", "SpotLightGuideVertexBuffer", "SpotLightGuideIndexBuffer", D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	
@@ -75,7 +82,7 @@ void USpotLightComponent::Render()
 		FMatrix ModelMatrix;
 		ModelMatrix = GetWorldTransform().GetMatrix();
 
-		const FMatrix& ViewProjectionMatrix = UEngine::Get().GetWorld()->GetCamera()->GetViewProjectionMatrix();
+		const FMatrix& ViewProjectionMatrix = UEngine::Get().GetWorld()->GetCameraRenderFocused()->GetViewProjectionMatrix();
 
 		FMatrix MVP = FMatrix::Transpose(
 			ModelMatrix *
@@ -87,7 +94,7 @@ void USpotLightComponent::Render()
 		Data.MVP = MVP;
 		Data.bUseVertexColor = true;
 
-		GetRenderResourceCollection().Render();
+		GetRenderResourceCollection().Render(ERenderFlags::None);
 		//GuideMesh->Render();
 	}
 }

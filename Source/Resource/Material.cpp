@@ -6,6 +6,7 @@
 #include "Resource/DirectResource/VertexShader.h"
 #include "Resource/DirectResource/PixelShader.h"
 #include "Resource/DirectResource/Rasterizer.h"
+#include "Core/Utils/Utils.h"
 
 UMaterial::UMaterial()
 {
@@ -128,10 +129,13 @@ void UMaterial::SetDepthState(const FString& InValue)
 	}
 }
 
- void UMaterial::Setting()
+ void UMaterial::Setting(ERenderFlags renderFlags)
 {
 	VertexShader();
-	Rasterizer();
+	if ( FFlag::Get(renderFlags, ERenderFlags::Wirefame) )
+		URasterizer::Find("DebugRasterizer")->Setting();
+	else
+		Rasterizer();
 	PixelShader();
 	Blend();
 	DepthStencil();

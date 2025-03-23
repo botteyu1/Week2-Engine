@@ -10,11 +10,20 @@ enum class RenderMode
 	Instancing,
 };
 
+enum class ERenderFlags {
+	None = 0,
+	Hide = 1 << 0,
+	Wirefame = 1 << 1,
+	NoDepthTest = 1 << 2
+};
+
+class FMesh;
+class FMaterial;
 
 class FRenderResourceCollection
 {
 public:
-
+	ERenderFlags CollectionFlag;
 
 	//테스트 임시 메쉬
 
@@ -22,7 +31,6 @@ public:
 
 	void SetMesh(const FString& _Name);
 	void SetMaterial(const FString& _Name);
-
 	
 	void SetMesh(std::shared_ptr<class UMesh> _Mesh);
 	void SetMaterial(std::shared_ptr<class UMaterial> _Material);
@@ -37,29 +45,48 @@ public:
 		return Material;
 	}
 
-	void Render();
+	void Render(ERenderFlags);
 	void Reset();
 
 
 
 	template<typename ConstantType>
-	std::shared_ptr<class FConstantBufferBinding> SetConstantBufferBinding(const FString& _Name,  const ConstantType* DataPtr,
-	 int _BindPoint, bool bIsUseVertexShader, bool bIsUsePixelShader)
+	std::shared_ptr<class FConstantBufferBinding> SetConstantBufferBinding(
+		const FString& _Name, 
+		const ConstantType* DataPtr, 
+		int _BindPoint, 
+		bool bIsUseVertexShader, 
+		bool bIsUsePixelShader
+	)
 	{
 		return SetConstantBufferBinding(_Name, DataPtr,sizeof(ConstantType),_BindPoint,  bIsUseVertexShader, bIsUsePixelShader);
 	}
 	
 	
-	std::shared_ptr<FConstantBufferBinding> SetConstantBufferBinding(const FString& _Name,
-	                                                                 const void* _CPUDataPtr, int _DataSize,int _BindPoint, bool	bIsUseVertexShader, bool bIsUsePixelShader);
+	std::shared_ptr<FConstantBufferBinding> SetConstantBufferBinding(
+		const FString& _Name, 
+		const void* _CPUDataPtr, 
+		int _DataSize, 
+		int _BindPoint, 
+		bool bIsUseVertexShader, 
+		bool bIsUsePixelShader
+	);
 	
 	
-	std::shared_ptr<class FTextureBinding> SetTextureBinding(const FString& _Name,
-		int _BindPoint, bool bIsUseVertexShader, bool bIsUsePixelShader);
+	std::shared_ptr<class FTextureBinding> SetTextureBinding(
+		const FString& _Name, 
+		int _BindPoint, 
+		bool bIsUseVertexShader, 
+		bool bIsUsePixelShader
+	);
 
 	
-	std::shared_ptr<class FSamplerBinding> SetSamplerBinding(const FString& _Name,
-		int _BindPoint,	bool bIsUseVertexShader, bool bIsUsePixelShader);
+	std::shared_ptr<class FSamplerBinding> SetSamplerBinding(
+		const FString& _Name,
+		int _BindPoint,	
+		bool bIsUseVertexShader, 
+		bool bIsUsePixelShader
+	);
 	
 private:
 	//class UPrimitiveComponent* ParentRenderer = nullptr;

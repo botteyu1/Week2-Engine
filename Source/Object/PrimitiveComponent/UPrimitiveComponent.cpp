@@ -8,7 +8,7 @@
 #include "Resource/Mesh.h"
 #include "Resource/DirectResource/BlendState.h"
 #include "Resource/DirectResource/Vertexbuffer.h"
-#include "Static/FEditorManager.h"
+#include "Static/EditorManager.h"
 
 
 UPrimitiveComponent::UPrimitiveComponent()
@@ -70,7 +70,7 @@ void UPrimitiveComponent::Render()
 	FMatrix ModelMatrix;
 	CalculateModelMatrix(ModelMatrix);
 
-	const FMatrix& ViewProjectionMatrix = UEngine::Get().GetWorld()->GetCamera()->GetViewProjectionMatrix();
+	const FMatrix& ViewProjectionMatrix = UEngine::Get().GetWorld()->GetCameraRenderFocused()->GetViewProjectionMatrix();
 
 	FMatrix MVP = FMatrix::Transpose(
 		ModelMatrix *
@@ -79,7 +79,7 @@ void UPrimitiveComponent::Render()
 	
 	uint32 ID = GetUUID();
 
-	FVector4 UUIDCOlor = FEditorManager::EncodeUUID(ID);
+	FVector4 UUIDCOlor = UEditorManager::EncodeUUID(ID);
 
 	FConstantsComponentData& Data = GetConstantsComponentData();
 
@@ -99,7 +99,7 @@ void UPrimitiveComponent::CalculateModelMatrix(FMatrix& OutMatrix)
 	//빌보드 행렬계산
 	if (bIsBillboard == true)
 	{
-		ACamera* cam = UEngine::Get().GetWorld()->GetCamera();
+		ACamera* cam = UEngine::Get().GetWorld()->GetCameraRenderFocused();
 
 		FVector cameraPosition = cam->GetActorTransform().GetPosition();
 
@@ -246,10 +246,4 @@ UCylinderComp::UCylinderComp()
 UConeComp::UConeComp()
 {
 	SetMesh("Cone");
-}
-
-UDiceComp::UDiceComp()
-{
-	SetMesh("Dice");
-	SetMaterial("TextureMaterial");
 }

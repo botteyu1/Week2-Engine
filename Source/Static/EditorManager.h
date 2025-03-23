@@ -1,0 +1,55 @@
+#pragma once
+#include <memory>
+
+#include "Core/AbstractClass/Singleton.h"
+#include "Core/Math/Vector.h"
+
+class ACamera;
+class AActor;
+class AGizmoActor;
+
+class UEditorManager
+{
+	friend class URenderer;
+	friend class FDevice;;
+public:
+	void Init();
+
+	void CreateUUIDTexture();
+    
+    inline AActor* GetSelectedActor() const {return SelectedActor;}
+    
+    void SelectActor(AActor* NewActor);
+
+
+
+	AGizmoActor* GetGizmo() const {return Gizmo;}
+	void SetGizmo(AGizmoActor* InGizmo);
+
+	static FVector4 EncodeUUID(uint32 UUID);
+	static uint32 DecodeUUID(FVector4 color);
+
+	void LateTick(float DeltaTime);
+
+	void OnUpdateWindowSize(uint32 Width, uint32 Height);
+
+	void OnResizeComplete();
+
+	FVector4 GetPixel(FVector MPos) const;
+    
+private:
+    ACamera* Camera = nullptr;
+    AActor* SelectedActor = nullptr;
+	AGizmoActor* Gizmo = nullptr;
+
+
+
+	
+
+	std::shared_ptr<class UTexture> UUIDTexture = nullptr;
+	//std::shared_ptr<class FTexture> UUIDTextureDepthStecil = nullptr;
+};
+
+
+
+

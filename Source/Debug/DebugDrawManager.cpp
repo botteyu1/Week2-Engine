@@ -1,5 +1,6 @@
 #include "DebugDrawManager.h"
 #include "Core/Engine.h"
+#include "Core/Rendering/URenderer.h"
 #include "Object/World/World.h"
 #include "Object/Actor/Camera.h"
 #include "Resource/DirectResource/Vertexbuffer.h"
@@ -30,7 +31,12 @@ UDebugDrawManager::~UDebugDrawManager()
 
 void UDebugDrawManager::Initialize()
 {
-	UVertexBuffer::Create(TEXT("DebugVertexBuffer"), VertexBuffer, true);
+	UVertexBuffer::Create(
+		TEXT("DebugVertexBuffer"), 
+		VertexBuffer, 
+		UInputLayout::Find("Simple_IL"), 
+		true
+	);
 	UIndexBuffer::Create(TEXT("DebugIndexBuffer"), IndexBuffer, true);
 	ClearDebug();
 
@@ -236,8 +242,8 @@ void UDebugDrawManager::Render()
 	//RenderResourceCollection.GetMesh()->GetVertexBuffer()->SetVertexCount(VertexBuffer.Num());
 	//RenderResourceCollection.GetMesh()->GetIndexBuffer()->SetIndexCount(IndexBuffer.Num());
 
-	DebugConstantInfo.ViewProjectionMatrix = FMatrix::Transpose(UEngine::Get().GetWorld()->GetCamera()->GetViewProjectionMatrix());
-	RenderResourceCollection.Render();
+	DebugConstantInfo.ViewProjectionMatrix = FMatrix::Transpose(UEngine::Get().GetWorld()->GetCameraRenderFocused()->GetViewProjectionMatrix());
+	RenderResourceCollection.Render(ERenderFlags::None);
 
 	ClearDebug();
 }

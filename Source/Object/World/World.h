@@ -7,12 +7,23 @@
 #include "Core/Utils/JsonSavehelper.h"
 #include "Debug/DebugConsole.h"
 #include "Object/ObjectFactory.h"
+#include "Object/Actor/StaticMesh.h"
 
 
 class URenderer;
 class AActor;
 
 class UPrimitiveComponent;
+
+
+enum class EViewPortSplitter
+{
+	TopLeft,
+	TopRight,
+	BottomLeft,
+	BottomRight,
+	None,
+};
 
 class UWorld :public UObject
 {
@@ -23,6 +34,7 @@ public:
 
 public:
 	void InitWorld();
+	void UpdateViewPorts();
 
 	void BeginPlay();
 	void Tick(float DeltaTime);
@@ -33,7 +45,10 @@ public:
 	template <typename T>
 		requires std::derived_from<T, AActor>
 	T* SpawnActor();
-  
+
+
+	AStaticMesh* SpawnStaticMeshActor(FString meshType, bool texture = false);
+
 	bool DestroyActor(AActor* InActor);
 	
 	void Render();
@@ -53,8 +68,17 @@ public:
 	void AddRenderComponent(UPrimitiveComponent* Component) { RenderComponents.Add(Component); }
 	void RemoveRenderComponent(UPrimitiveComponent* Component) { RenderComponents.Remove(Component); }
 
-	inline ACamera* GetCamera() const { return Camera; }
-	void SetCamera(ACamera* NewCamera) { Camera = NewCamera; }
+	inline ACamera* GetCamera(EViewPortSplitter InType) const { return CameraMap[InType]; }
+	// 현재 렌더되는 카메라의 getter, 렌더 루프 바깥에서 쓰면 nullptr 반환
+	inline ACamera* GetCameraRenderFocused() const { return CameraRenderFocused; }
+	inline ACamera* GetCameraFocused() const { return CameraFocused; }
+	
+	inline void SetCamera(EViewPortSplitter InType, ACamera* NewCamera) { CameraMap[InType] = NewCamera; }
+	inline void SetFocusCamera(EViewPortSplitter InType) { 
+		if ( InType == EViewPortSplitter::None )
+			return;
+		CameraFocused = CameraMap[InType]; 
+	}
 
 	void RayCasting(const FVector& MouseNDCPos);
 
@@ -67,10 +91,14 @@ public:
 	void OnChangedGridSize();
 
 	float GetGridSize() const { return GridSize; }
+
+	inline const TMap<EViewPortSplitter, ACamera*> GetCameraMap() const { return CameraMap; }
 private:
 	UWorldInfo GetWorldInfo() const;
-	ACamera* Camera = nullptr;
-
+	//ACamera* Camera = nullptr;
+	TMap<EViewPortSplitter, ACamera*> CameraMap;
+	ACamera* CameraRenderFocused = nullptr;
+	ACamera* CameraFocused = nullptr;
 	float GridSize = 100.0f;
 
 public:
@@ -87,6 +115,9 @@ protected:
 // Editor Only
 public:
 	//TArray<class ULayer*> Layers;
+
+
+
 
 	TArray<AActor*> ActiveGroupActors;
 // End Editor Only

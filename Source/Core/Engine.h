@@ -6,10 +6,21 @@
 #include "HAL/PlatformType.h"
 #include "Rendering/UI.h"
 #include "Rendering/URenderer.h"
+#include "Static/EditorManager.h"
 #include "UObject/Casts.h"
+#include "Input/PlayerInput.h"
 
 class UObject;
 class UWorld;
+
+//enum class EViewSplitter
+//{
+//	Left,
+//	Right,
+//	Top,
+//	Bottom
+//};
+
 
 enum class EScreenMode : uint8
 {
@@ -44,8 +55,9 @@ public:
      * Application에서 사용한 자원을 정리합니다.
      */
     void Shutdown();
-
+	UInputManager* GetInput() const { return InputManager.get(); }
 	URenderer* GetRenderer() const { return Renderer.get(); }
+	UEditorManager* GetEditor() const { return EditorManager.get();  }
 	float GetScreenRatio() const { return static_cast<float>(ScreenWidth) / static_cast<float>(ScreenHeight); }
     int GetScreenWidth() const { return ScreenWidth; }
     int GetScreenHeight() const { return ScreenHeight; }
@@ -58,9 +70,11 @@ private:
     void InitWindow(int InScreenWidth, int InScreenHeight);
     //void InitDevice();
     void InitRenderer();
+	void InitInput();
+	void InitEditor();
     void InitWorld();
     void ShutdownWindow();
-    void UpdateWindowSize(uint32 InScreenWidth, uint32 InScreenHeight);
+    void UpdateWindowSize();
 
 public:
 	UWorld* GetWorld() const { return World; }
@@ -92,12 +106,23 @@ private:
 
 private:
 	std::unique_ptr<URenderer> Renderer;
+	std::unique_ptr<UInputManager> InputManager;
+	std::unique_ptr<UEditorManager> EditorManager;
 
 private:
 	UI ui;
 
 private:
     UWorld* World = nullptr;
+
+
+	// 임시로 여기에 UI로 옮겨야 되지 않을까..
+	//std::shared_ptr<class SSplitterH> HorizontalSplitter;
+
+	//std::shared_ptr<class FViewport> LeftViewport;
+	//std::shared_ptr<FViewport> RightViewport;
+
+	//TMap<EViewSplitter, std::shared_ptr<FViewport>> Viewports;
 
 public:
     // TArray<std::shared_ptr<UObject>> GObjects;

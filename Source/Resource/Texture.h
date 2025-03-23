@@ -6,6 +6,7 @@
 #include "Core/Container/String.h"
 #include "Core/Container/Array.h"
 
+struct FAssetMetaData;
 
 class UTexture : public UResource<UTexture> 
 {
@@ -22,12 +23,12 @@ public:
 	// 	return Load(Path.GetStringPath(), Path.GetFileName(), _Filter, _Address);
 	//}
 
-	static std::shared_ptr<UTexture> Load(const FString& InPath, const FString& InName)
+	static std::shared_ptr<UTexture> Load(const FAssetMetaData& InMetadata, const FString& InName)
 		// D3D11_FILTER _Filter = D3D11_FILTER::D3D11_FILTER_MIN_MAG_MIP_LINEAR,
 		// D3D11_TEXTURE_ADDRESS_MODE _Address = D3D11_TEXTURE_ADDRESS_MODE::D3D11_TEXTURE_ADDRESS_CLAMP)
 	{
 		std::shared_ptr<UTexture> NewRes = CreateRes(InName);
-		NewRes->ResLoad(InPath);
+		NewRes->ResLoad(InMetadata);
 		// NewRes->Filter = _Filter;
 		// NewRes->Address = _Address;
 		return NewRes;
@@ -96,8 +97,8 @@ private:
 
 	// D3D11_FILTER Filter;
 	// D3D11_TEXTURE_ADDRESS_MODE Address;
-
-	void ResLoad(const FString& InPath);
+	
+	void ResLoad(const FAssetMetaData& metaData);
 	void ResCreate(const D3D11_TEXTURE2D_DESC& Desc);
 	void ResCreate(ID3D11Texture2D* InRes);
 };

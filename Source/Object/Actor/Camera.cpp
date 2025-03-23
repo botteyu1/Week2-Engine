@@ -2,7 +2,11 @@
 
 #include "Core/Input/PlayerInput.h"
 #include "Core/Config/ConfigManager.h"
-#include "Static/FEditorManager.h"
+#include "Static/EditorManager.h"
+#include "Core/Rendering/FViewport.h"
+#include "Core/Rendering/FDevice.h"
+#include "Object/World/World.h"
+
 
 
 ACamera::ACamera()
@@ -21,26 +25,37 @@ ACamera::ACamera()
     SetActorTransform(StartPos);
 }
 
+void ACamera::UpdateViewport(FRect InRect)
+{
+	Viewport.UpdateViewport(InRect);
+}
+
+void ACamera::SettingViewport()
+{
+	Viewport.Setting();
+}
+
+
 void ACamera::BeginPlay()
 {
 	Super::BeginPlay();
-	APlayerInput::Get().RegisterKeyPressCallback(EKeyCode::W, [this] { MoveForward(); }, GetUUID());
-	APlayerInput::Get().RegisterKeyPressCallback(EKeyCode::S, [this] { MoveBackward(); }, GetUUID());
-	APlayerInput::Get().RegisterKeyPressCallback(EKeyCode::A, [this] { MoveLeft(); }, GetUUID());
-	APlayerInput::Get().RegisterKeyPressCallback(EKeyCode::D, [this] { MoveRight(); }, GetUUID());
-	APlayerInput::Get().RegisterKeyPressCallback(EKeyCode::Q, [this] { MoveDown(); }, GetUUID());
-	APlayerInput::Get().RegisterKeyPressCallback(EKeyCode::E, [this] { MoveUp(); }, GetUUID());
+	UEngine::Get().GetInput()->RegisterKeyPressCallback(EKeyCode::W, [this] { MoveForward(); }, GetUUID());
+	UEngine::Get().GetInput()->RegisterKeyPressCallback(EKeyCode::S, [this] { MoveBackward(); }, GetUUID());
+	UEngine::Get().GetInput()->RegisterKeyPressCallback(EKeyCode::A, [this] { MoveLeft(); }, GetUUID());
+	UEngine::Get().GetInput()->RegisterKeyPressCallback(EKeyCode::D, [this] { MoveRight(); }, GetUUID());
+	UEngine::Get().GetInput()->RegisterKeyPressCallback(EKeyCode::Q, [this] { MoveDown(); }, GetUUID());
+	UEngine::Get().GetInput()->RegisterKeyPressCallback(EKeyCode::E, [this] { MoveUp(); }, GetUUID());
 
-	APlayerInput::Get().RegisterKeyDownCallback(EKeyCode::F, [this]
+	UEngine::Get().GetInput()->RegisterKeyDownCallback(EKeyCode::F, [this]
 	{
-		if (const AActor* SelectedActor = FEditorManager::Get().GetSelectedActor())
+		if (const AActor* SelectedActor = UEngine::Get().GetEditor()->GetSelectedActor())
 		{
 			if (SelectedActor == this) return;
 			SetActorPosition(SelectedActor->GetActorPosition() - (GetForward() * 10.0f));
 		}
 	}, GetUUID());
 
-	APlayerInput::Get().RegisterMousePressCallback(EKeyCode::RButton, std::bind(&ACamera::Rotate, this, std::placeholders::_1), GetUUID());
+	UEngine::Get().GetInput()->RegisterMousePressCallback(EKeyCode::RButton, std::bind(&ACamera::Rotate, this, std::placeholders::_1), GetUUID());
 
 	UConfigManager::Get().SetValue("Camera", "Sensitivity", std::to_string(Sensitivity));
 }
@@ -88,7 +103,7 @@ void ACamera::UpdateCameraMatrix()
 	ViewMatrix = GetActorTransform().GetViewMatrix();
 	
 	// 프로젝션 매트릭스 업데이트
-	float AspectRatio = UEngine::Get().GetScreenRatio();
+	float AspectRatio = Viewport.GetViewportRatio();
 
 	float FOV = FMath::DegreesToRadians(GetFieldOfView());
 	float Near = GetNear();
@@ -111,6 +126,8 @@ void ACamera::UpdateCameraMatrix()
 
 void ACamera::MoveForward()
 {
+	if ( UEngine::Get().GetWorld()->GetCameraFocused() != this )
+		return;
 	FTransform tr = GetActorTransform();
 	tr.SetPosition(tr.GetPosition() + (GetForward() * CameraSpeed * UEngine::GetDeltaTime()));
 	SetActorTransform(tr);
@@ -118,6 +135,8 @@ void ACamera::MoveForward()
 
 void ACamera::MoveBackward()
 {
+	if ( UEngine::Get().GetWorld()->GetCameraFocused() != this )
+		return;
 	FTransform tr = GetActorTransform();
 	tr.SetPosition(tr.GetPosition() - (GetForward() * CameraSpeed * UEngine::GetDeltaTime()));
 	SetActorTransform(tr);
@@ -125,6 +144,8 @@ void ACamera::MoveBackward()
 
 void ACamera::MoveLeft()
 {
+	if ( UEngine::Get().GetWorld()->GetCameraFocused() != this )
+		return;
 	FTransform tr = GetActorTransform();
 	tr.SetPosition(tr.GetPosition() - (GetRight() * CameraSpeed * UEngine::GetDeltaTime()));
 	SetActorTransform(tr);
@@ -132,6 +153,8 @@ void ACamera::MoveLeft()
 
 void ACamera::MoveRight()
 {
+	if ( UEngine::Get().GetWorld()->GetCameraFocused() != this )
+		return;
 	FTransform tr = GetActorTransform();
 	tr.SetPosition(tr.GetPosition() + (GetRight() * CameraSpeed * UEngine::GetDeltaTime()));
 	SetActorTransform(tr);
@@ -139,6 +162,8 @@ void ACamera::MoveRight()
 
 void ACamera::MoveUp()
 {
+	if ( UEngine::Get().GetWorld()->GetCameraFocused() != this )
+		return;
 	FTransform tr = GetActorTransform();
 	tr.SetPosition(tr.GetPosition() + (FVector::UpVector * CameraSpeed * UEngine::GetDeltaTime()));
 	SetActorTransform(tr);
@@ -146,6 +171,8 @@ void ACamera::MoveUp()
 
 void ACamera::MoveDown()
 {
+	if ( UEngine::Get().GetWorld()->GetCameraFocused() != this )
+		return;
 	FTransform tr = GetActorTransform();
 	tr.SetPosition(tr.GetPosition() - (FVector::UpVector * CameraSpeed * UEngine::GetDeltaTime()));
 	SetActorTransform(tr);
@@ -153,6 +180,8 @@ void ACamera::MoveDown()
 
 void ACamera::Rotate(const FVector& mouseDelta)
 {
+	if ( UEngine::Get().GetWorld()->GetCameraFocused() != this )
+		return;
 	FTransform tr = GetActorTransform();
 	FVector TargetRotation = tr.GetRotation().GetEuler();
 	TargetRotation.Y -= FMath::Clamp(Sensitivity * mouseDelta.Y, -MaxYDegree, MaxYDegree);
