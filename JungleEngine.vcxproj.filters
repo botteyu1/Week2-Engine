@@ -378,13 +378,13 @@
     <ClCompile Include="Source\Core\Math\Rect.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Core\Rendering\Splitter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Object\Actor\StaticMesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Object\PrimitiveComponent\TextureComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Core\Rendering\SWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -833,10 +833,13 @@
     <ClInclude Include="Source\Object\Actor\StaticMesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Core\Rendering\Splitter.h">
+    <ClInclude Include="Source\Object\PrimitiveComponent\TextureComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Object\PrimitiveComponent\TextureComponent.h">
+    <ClInclude Include="Source\Core\Rendering\SWindow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Core\Rendering\SWindowManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

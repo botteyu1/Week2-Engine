@@ -47,8 +47,9 @@ public:
 	SSplitterH(std::shared_ptr<SWindow> Left, std::shared_ptr<SWindow> Right) {
 		SideLT = Left;
 		SideRB = Right;
+		SplitterWidth = 5.0f;
 	}
-
+	float SplitterWidth;
 	void OnResize() override {
 		const float splitX = Rect.Width() * SplitPos;
 		SideLT->Rect = FRect(Rect.Left, Rect.Top, splitX, Rect.Height());
@@ -62,8 +63,12 @@ public:
 
 private:
 	FRect GetSplitterRect() const {
-		return FRect(Rect.Left + Rect.Width() * SplitPos - 2, Rect.Top,
-			4, Rect.Height());
+		return FRect(
+			Rect.Left + Rect.Width() * SplitPos - SplitterWidth / 2.0f, 
+			Rect.Top,
+			SplitterWidth,
+			Rect.Height()
+		);
 	}
 };
 
@@ -72,8 +77,9 @@ public:
 	SSplitterV(std::shared_ptr<SWindow> Top, std::shared_ptr<SWindow> Bottom) {
 		SideLT = Top;
 		SideRB = Bottom;
+		SplitterHeight = 5.0f;
 	}
-
+	float SplitterHeight;
 	void OnResize() override {
 		const float splitY = Rect.Height() * SplitPos;
 		SideLT->Rect = FRect(Rect.Left, Rect.Top, Rect.Width(), splitY);
@@ -86,7 +92,11 @@ public:
 
 private:
 	FRect GetSplitterRect() const {
-		return FRect(Rect.Left, Rect.Top + Rect.Height() * SplitPos - 2,
-			Rect.Width(), 4);
+		return FRect(
+			Rect.Left, 
+			Rect.Top + Rect.Height() * SplitPos - SplitterHeight / 2.0f,
+			Rect.Width(),
+			SplitterHeight
+		);
 	}
 };

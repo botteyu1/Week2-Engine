@@ -22,6 +22,7 @@ enum class EViewPortSplitter
 	TopRight,
 	BottomLeft,
 	BottomRight,
+	None,
 };
 
 class UWorld :public UObject
@@ -72,8 +73,12 @@ public:
 	inline ACamera* GetCameraRenderFocused() const { return CameraRenderFocused; }
 	inline ACamera* GetCameraFocused() const { return CameraFocused; }
 	
-	void SetCamera(EViewPortSplitter InType, ACamera* NewCamera) { CameraMap[InType] = NewCamera; }
-	void SetFocusCamera(EViewPortSplitter InType) { CameraFocused = CameraMap[InType]; }
+	inline void SetCamera(EViewPortSplitter InType, ACamera* NewCamera) { CameraMap[InType] = NewCamera; }
+	inline void SetFocusCamera(EViewPortSplitter InType) { 
+		if ( InType == EViewPortSplitter::None )
+			return;
+		CameraFocused = CameraMap[InType]; 
+	}
 
 	void RayCasting(const FVector& MouseNDCPos);
 

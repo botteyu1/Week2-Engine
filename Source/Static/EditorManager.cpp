@@ -15,7 +15,7 @@ void UEditorManager::Init()
 	CreateUUIDTexture();
 	//D3D11_TEXTURE2D_DESC DepthBufferDesc = {};
 	//DepthBufferDesc.Width = Width;
-	//DepthBufferDesc.Height = Height;
+	//DepthBufferDesc.SplitterHeight = SplitterHeight;
 	//DepthBufferDesc.MipLevels = 1;
 	//DepthBufferDesc.ArraySize = 1;
 	//DepthBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;            // 32비트 중 24비트는 깊이, 8비트는 스텐실
@@ -127,10 +127,10 @@ void UEditorManager::LateTick([[maybe_unused]] float DeltaTime)
 		ScreenToClient(UEngine::Get().GetWindowHandle(), &pt);
 
 		//float Width = FDevice::Get().GetViewPortInfo().Width;
-		//float Height = FDevice::Get().GetViewPortInfo().Height;
+		//float SplitterHeight = FDevice::Get().GetViewPortInfo().SplitterHeight;
 
 		//      float ratioX = UEngine::Get().GetInitializedScreenWidth() / Width;
-		//      float ratioY = UEngine::Get().GetInitializedScreenHeight() / Height;
+		//      float ratioY = UEngine::Get().GetInitializedScreenHeight() / SplitterHeight;
 		//      pt.x = pt.x * ratioX;
 		//      pt.y = pt.y * ratioY;
 
@@ -226,7 +226,7 @@ void UEditorManager::OnUpdateWindowSize(uint32 Width, uint32 Height)
 
 	//D3D11_TEXTURE2D_DESC textureDesc = {};
 	//textureDesc.Width = Width;
-	//textureDesc.Height = Height;
+	//textureDesc.SplitterHeight = SplitterHeight;
 	//textureDesc.MipLevels = 1;
 	//textureDesc.ArraySize = 1;
 	//textureDesc.Format = DXGI_FORMAT_R32G32B32A32_UINT; // 32비트 UINT로 변경

@@ -454,6 +454,8 @@ void UWorld::LoadWorld(const char* InSceneName)
 
 void UWorld::RayCasting(const FVector& MouseNDCPos)
 {
+	if ( GetCameraFocused() == nullptr )
+		return;
 	FMatrix ProjMatrix = GetCameraFocused()->GetProjectionMatrix();
 	FRay worldRay = FRay(GetCameraFocused()->GetViewMatrix(), ProjMatrix, MouseNDCPos.X, MouseNDCPos.Y);
 

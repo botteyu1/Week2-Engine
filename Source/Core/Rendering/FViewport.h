@@ -1,5 +1,5 @@
 #pragma once
-#include "Splitter.h"
+#include "SWindow.h"
 
 #define _TCHAR_DEFINED  // MYTCHAR 재정의 에러 때문
 #include <d3d11.h>
@@ -25,7 +25,7 @@ public:
 	
 
 	inline const D3D11_VIEWPORT& GetViewportInfo() const { return ViewportInfo; }
-	void SetViewportInfo(const D3D11_VIEWPORT& InViewportInfo) { ViewportInfo = InViewportInfo; }
+	void SetViewportInfo(const D3D11_VIEWPORT& InViewportInfo);
 	void Setting();
 private:
 
