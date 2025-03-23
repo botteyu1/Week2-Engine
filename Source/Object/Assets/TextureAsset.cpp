@@ -4,7 +4,9 @@
 #include <filesystem>
 #include <fstream>
 
+#include "Resource/DirectResource/Sampler.h"
 #include "Resource/Texture.h"
+
 
 using namespace std;
 
@@ -30,8 +32,9 @@ bool UTextureAsset::Load() {
 		return false;
 	}
 
-	Resource = UTexture::Load(MetaData, MetaData.GetAssetName());
-	Resource->CreateShaderResourceView();
+	Texture = UTexture::Load(MetaData, MetaData.GetAssetName());
+	Sampler = USampler::Find("LinearSamplerState");
+	Texture->CreateShaderResourceView();
 
 	return true;
 }
@@ -43,3 +46,9 @@ bool UTextureAsset::Save(FString path) {
 bool UTextureAsset::Unload() {
 	return false;
 }
+
+void UTextureAsset::PSSetting(UINT InSlot) {
+	Texture->PSSetting(InSlot);
+	Sampler->PSSetting(InSlot);
+}
+

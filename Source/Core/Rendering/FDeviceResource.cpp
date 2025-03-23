@@ -16,7 +16,6 @@
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 #include "Primitive/UGeometryGenerator.h"
 #include "Object/Assets/AssetManager.h"
-#include "ThirdParty/OBJ_Loader/OBJLoarder.h"
 
 
 void FDevice::InitResource()

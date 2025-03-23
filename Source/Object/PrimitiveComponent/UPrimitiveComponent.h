@@ -6,6 +6,7 @@
 #include "Core/Engine.h"
 #include "Core/Math/Matrix.h"
 #include "Object/USceneComponent.h"
+#include "Object/Assets/TextureAsset.h"
 #include "Primitive/PrimitiveVertices.h"
 #include "Resource/RenderResourceCollection.h"
 #include "Resource/DirectResource/IndexBuffer.h"
@@ -66,7 +67,6 @@ public:
 		bUseVertexColor = bUse;
 	}
 	const FVector4& GetCustomColor() const { return CustomColor; }
-
 public:
 	virtual void RegisterComponentWithWorld(UWorld* World);
 
@@ -243,18 +243,5 @@ public:
 	virtual EPrimitiveType GetType() override
 	{
 		return EPrimitiveType::EPT_Quad;
-	}
-};
-
-class UDiceComp : public UPrimitiveComponent
-{
-	DECLARE_CLASS(UDiceComp, UPrimitiveComponent)
-
-public:
-	UDiceComp();
-
-	virtual EPrimitiveType GetType() override
-	{
-		return EPrimitiveType::EPT_Cube;
 	}
 };

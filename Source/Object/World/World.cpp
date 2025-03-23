@@ -351,6 +351,23 @@ void UWorld::ClearWorld()
 }
 
 
+AStaticMesh* UWorld::SpawnStaticMeshActor(FString meshType)
+{
+	AStaticMesh* Actor = FObjectFactory::ConstructObject<AStaticMesh>();
+	Actor->SetMesh(meshType);
+	if (UWorld* World = UEngine::Get().GetWorld())
+	{
+		Actor->SetWorld(World);
+		Actors.Add(Actor);
+		ActorsToSpawn.Add(Actor);
+		return Actor;
+	}
+
+	UE_LOG("Actor Construction Failed. World is nullptr");
+	return nullptr;
+}
+
+
 bool UWorld::DestroyActor(AActor* InActor)
 {
 	// 나중에 Destroy가 실패할 일이 있다면 return false; 하기
@@ -540,6 +557,9 @@ void UWorld::RayCasting(const FVector& MouseNDCPos)
 	{
 		UEngine::Get().GetEditor()->SelectActor(SelectedActor);
 		UEngine::Get().GetRenderer()->GetUUIDBillBoard()->SetTarget(SelectedActor);
+	}
+	else {
+		UEngine::Get().GetEditor()->SelectActor(nullptr);
 	}
 }
 

@@ -7,6 +7,7 @@
 #include "Core/Utils/JsonSavehelper.h"
 #include "Debug/DebugConsole.h"
 #include "Object/ObjectFactory.h"
+#include "Object/Actor/StaticMesh.h"
 
 
 class URenderer;
@@ -42,7 +43,10 @@ public:
 	template <typename T>
 		requires std::derived_from<T, AActor>
 	T* SpawnActor();
-  
+
+
+	AStaticMesh* SpawnStaticMeshActor(FString meshType);
+
 	bool DestroyActor(AActor* InActor);
 	
 	void Render();

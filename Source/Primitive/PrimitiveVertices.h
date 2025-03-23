@@ -47,6 +47,7 @@ enum class EPrimitiveType : uint8
 	EPT_Cone,
 	EPT_Plane,
 	EPT_Gizmo,
+	EPT_StaticMesh,
 	EPT_Max,
 };
 

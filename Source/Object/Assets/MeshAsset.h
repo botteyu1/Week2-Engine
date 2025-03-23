@@ -8,6 +8,7 @@ class UMeshAsset : public UAsset
 	DECLARE_CLASS(UMeshAsset, UAsset)
 
 public:
+	UMeshAsset() = default;
 	virtual bool RegisterAsset() override;
 	virtual bool Load() override;
 	virtual bool Save(FString path = "") override;

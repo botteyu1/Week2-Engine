@@ -27,7 +27,7 @@
 
 
 void FUUIDBillBoard::SetFontAtlas(const FString& name) {
-	FontAtlas = FontAtlas = UAssetManager::Get().FindAsset<UFontAtlasAsset>(name);
+	FontAtlas = UAssetManager::Get().FindAsset<UFontAtlasAsset>(name);
 }
 
 void FUUIDBillBoard::UpdateString(const std::wstring& String)
