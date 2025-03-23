@@ -384,6 +384,9 @@
     <ClCompile Include="Source\Object\Actor\StaticMesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Object\PrimitiveComponent\TextureComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\ShaderW0.hlsl">
@@ -812,9 +815,6 @@
     <ClInclude Include="Source\Object\Actor\WorldGrid.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Users\Jungle\Downloads\WavefrontOBJ-main\WavefrontOBJ-main\WavefrontOBJ.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Object\Assets\ObjArchive.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -834,6 +834,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Core\Rendering\Splitter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Object\PrimitiveComponent\TextureComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -329,7 +329,6 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\Users\Jungle\Downloads\WavefrontOBJ-main\WavefrontOBJ-main\WavefrontOBJ.h" />
     <ClInclude Include="Source\Core\Rendering\FViewport.h" />
     <ClInclude Include="Source\Core\Math\Rect.h" />
     <ClInclude Include="Source\Core\Delegates\Delegate.h" />

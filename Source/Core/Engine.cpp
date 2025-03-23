@@ -35,7 +35,11 @@ LRESULT UEngine::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_CAPTURECHANGED://현재 마우스 입력을 독점(capture)하고 있던 창이 마우스 캡처를 잃었을 때
 		break;
 	case WM_SIZE:
-		UEngine::Get().UpdateWindowSize(LOWORD(lParam), HIWORD(lParam));
+		UEngine::Get().ScreenWidth = LOWORD(lParam);
+		UEngine::Get().ScreenHeight = HIWORD(lParam);
+		break;
+	case WM_EXITSIZEMOVE:
+		UEngine::Get().UpdateWindowSize();
 		break;
 	case WM_MOUSEWHEEL:
 	{
@@ -269,10 +273,8 @@ void UEngine::ShutdownWindow()
 	ui.Shutdown();
 }
 
-void UEngine::UpdateWindowSize(uint32 InScreenWidth, uint32 InScreenHeight)
+void UEngine::UpdateWindowSize()
 {
-	ScreenWidth = InScreenWidth;
-	ScreenHeight = InScreenHeight;
 
 	//디바이스 초기화전에 진입막음
 	if (FDevice::Get().IsInit() == false)

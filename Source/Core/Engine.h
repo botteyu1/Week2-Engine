@@ -74,7 +74,7 @@ private:
 	void InitEditor();
     void InitWorld();
     void ShutdownWindow();
-    void UpdateWindowSize(uint32 InScreenWidth, uint32 InScreenHeight);
+    void UpdateWindowSize();
 
 public:
 	UWorld* GetWorld() const { return World; }
