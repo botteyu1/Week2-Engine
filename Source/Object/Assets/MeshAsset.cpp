@@ -44,10 +44,11 @@ bool UMeshAsset::Load()
 					vertices.Add(inVertex);
 				}
 
-				for (int j = 0; j < curMesh.Indices.size(); j += 3) {
-					indices.Add(curMesh.Indices[j]);
+				for (int j = 0; j < curMesh.Indices.size(); j += 1) {
+					/*indices.Add(curMesh.Indices[j]);
 					indices.Add(curMesh.Indices[j + 1]);
-					indices.Add(curMesh.Indices[j + 2]);
+					indices.Add(curMesh.Indices[j + 2]);*/
+					indices.Add(curMesh.Indices[j]);
 				}
 
 				indexStart = curMesh.Vertices.size();

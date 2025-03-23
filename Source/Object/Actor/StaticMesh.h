@@ -8,7 +8,7 @@ class AStaticMesh : public AActor
 
 public:
 	AStaticMesh();
-	void SetMesh(FString MeshType);
+	void SetMesh(FString MeshType, bool texture);
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual const char* GetTypeName() override;

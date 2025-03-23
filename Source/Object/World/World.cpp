@@ -351,10 +351,10 @@ void UWorld::ClearWorld()
 }
 
 
-AStaticMesh* UWorld::SpawnStaticMeshActor(FString meshType)
+AStaticMesh* UWorld::SpawnStaticMeshActor(FString meshType, bool texture)
 {
 	AStaticMesh* Actor = FObjectFactory::ConstructObject<AStaticMesh>();
-	Actor->SetMesh(meshType);
+	Actor->SetMesh(meshType, texture);
 	if (UWorld* World = UEngine::Get().GetWorld())
 	{
 		Actor->SetWorld(World);

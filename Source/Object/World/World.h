@@ -45,7 +45,7 @@ public:
 	T* SpawnActor();
 
 
-	AStaticMesh* SpawnStaticMeshActor(FString meshType);
+	AStaticMesh* SpawnStaticMeshActor(FString meshType, bool texture = false);
 
 	bool DestroyActor(AActor* InActor);
 	
