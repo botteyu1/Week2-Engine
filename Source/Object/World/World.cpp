@@ -454,6 +454,9 @@ void UWorld::LoadWorld(const char* InSceneName)
 		{
 			Actor = SpawnActor<ACone>();
 		}
+		else if (ObjectInfo->ObjectType == "StaticMesh") {
+			Actor = SpawnStaticMeshActor(ObjectInfo->objName, ObjectInfo->bUseTexture);
+		}
 		
 		Actor->SetActorTransform(Transform);
 	}
@@ -589,12 +592,21 @@ UWorldInfo UWorld::GetWorldInfo() const
 			WorldInfo.ActorCount--;
 			continue;
 		}
+		FString objName = "";
+		uint32 bUseTexture = 0;
+		if (actor->GetTypeName() == "StaticMesh") {
+			AStaticMesh* StaticMeshActor = Cast<AStaticMesh>(actor);
+			objName = StaticMeshActor->GetObjName();
+			bUseTexture = StaticMeshActor->GetbUseTexture();
+		}
 		WorldInfo.ObjectInfos.push(std::make_unique<UObjectInfo>(
 			UObjectInfo{
 				.Location = actor->GetActorPosition(),
 				.Rotation = actor->GetActorRotation(),
 				.Scale = actor->GetActorScale(),
 				.ObjectType = actor->GetTypeName(),
+				.objName = objName.GetData(),
+				.bUseTexture = bUseTexture,
 				.UUID = actor->GetUUID()
 			}
 		));

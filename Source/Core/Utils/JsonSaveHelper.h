@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include <memory>
 #include <string>
 #include <queue>
@@ -13,7 +13,8 @@ struct UObjectInfo
 	FVector Rotation;
 	FVector Scale;
 	std::string ObjectType;
-
+	std::string objName;
+	uint32 bUseTexture;
 	uint32 UUID;
 };
 

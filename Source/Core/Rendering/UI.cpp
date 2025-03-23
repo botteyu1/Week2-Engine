@@ -181,7 +181,7 @@ void UI::RenderMemoryUsage() const
 void UI::RenderPrimitiveSelection()
 {
     const char* items[] = { "Sphere", "Cube", "Cylinder", "Cone", "SpotLight", "Dice", "Mug",
-	"Charizar"};
+	"SpaceShip"};
 
     ImGui::Combo("Primitive", &currentItem, items, IM_ARRAYSIZE(items));
 
@@ -216,7 +216,7 @@ void UI::RenderPrimitiveSelection()
 			else if (strcmp(items[currentItem], "Mug") == 0) {
 				World->SpawnStaticMeshActor("Mug.obj", true);
 			}
-			else if (strcmp(items[currentItem], "Charizar") == 0) {
+			else if (strcmp(items[currentItem], "SpaceShip") == 0) {
 				World->SpawnStaticMeshActor("SpaceShip.obj");
 			}
             //else if (strcmp(items[currentItem], "Triangle") == 0)
