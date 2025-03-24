@@ -31,7 +31,7 @@ struct FLineVertexSimple {
 
 struct FGeometryData
 {
-	TArray<FVertexSimple> Vertices;
+	TArray<FVertexTextureArray> Vertices;
 	TArray<uint32> Indices;
 };
 

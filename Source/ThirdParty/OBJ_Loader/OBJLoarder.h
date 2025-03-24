@@ -434,7 +434,8 @@ namespace objl
 			if (Path.substr(Path.size() - 4, 4) != ".obj")
 				return false;
 
-
+			size_t pos = Path.find_last_of("\\");
+			LoadedFolderPath = (pos != std::string::npos) ? Path.substr(0, pos) : "Error";
 			std::ifstream file(Path);
 
 			if (!file.is_open())
@@ -720,6 +721,8 @@ namespace objl
 		std::vector<unsigned int> LoadedIndices;
 		// Loaded Material Objects
 		std::vector<Material> LoadedMaterials;
+		std::string LoadedMTL;
+		std::string LoadedFolderPath;
 
 	private:
 		// Generate vertices from a list of positions, 
@@ -921,7 +924,9 @@ namespace objl
 			if (path.substr(path.size() - 4, path.size()) != ".mtl")
 				return false;
 
-			std::ifstream file(path);
+			LoadedMTL = path;
+
+			std::ifstream file(LoadedFolderPath + "\\" + path);
 
 			// If the file is not found return false
 			if (!file.is_open())

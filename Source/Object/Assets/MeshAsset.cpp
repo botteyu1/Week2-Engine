@@ -7,6 +7,8 @@
 #include "Resource/Mesh.h"
 #include <iostream>
 #include <string>
+#include "Object/Assets/AssetManager.h"
+#include "Object/Assets/ObjMTLAsset.h"
 
 
 bool UMeshAsset::RegisterAsset()
@@ -19,7 +21,7 @@ bool UMeshAsset::Load()
 	if (IsLoaded()) {
 		return true;
 	}
-	TArray<FVertexSimple>& vertices = GeometryData.Vertices;
+	TArray<FVertexTextureArray>& vertices = GeometryData.Vertices;
 	TArray<uint32>& indices = GeometryData.Indices;
 
 	/*UAssetManager::Get().ObjParsing("cube-tex.obj", vertices, indices);*/
@@ -35,6 +37,8 @@ bool UMeshAsset::Load()
 	if (!FObjArchive::ReadBinary(binaryFile, vertices, indices)) {
 		objl::Loader OBJLoader;
 		bool loadout = OBJLoader.LoadFile(MetaData.GetAssetPath().GetData());
+		UObjMTLAsset* ObjMTLAsset = UAssetManager::Get().FindAsset<UObjMTLAsset>(OBJLoader.LoadedMTL);
+		
 
 		if (loadout)
 		{
@@ -42,16 +46,35 @@ bool UMeshAsset::Load()
 			for (int i = 0; i < OBJLoader.LoadedMeshes.size(); i++)
 			{
 				objl::Mesh curMesh = OBJLoader.LoadedMeshes[i];
+				
+				int textureIndex = 0;
+				if (ObjMTLAsset == nullptr) 
+				{
+					textureIndex = -1;
+				}
+				else 
+				{
+					FObjMaterial* curMaterial = ObjMTLAsset->GetMaterialByName(FName(curMesh.MeshMaterial.name));
+					if (curMaterial == nullptr) 
+					{
+						textureIndex = -2;
+					}
+					else {
+						textureIndex = curMaterial->textureIndex;
+					}
+				}
+
 
 				for (int j = 0; j < curMesh.Vertices.size(); j++)
 				{
 					FVector4 color((float)rand() / (float)RAND_MAX, (float)rand() / (float)RAND_MAX,
 						(float)rand() / (float)RAND_MAX, 1.0f);
-					FVertexSimple inVertex = {
+					FVertexTextureArray  inVertex = {
 						curMesh.Vertices[j].Position.X, curMesh.Vertices[j].Position.Y, curMesh.Vertices[j].Position.Z,
 						color.X, color.Y, color.Z, color.W ,
 						curMesh.Vertices[j].TextureCoordinate.X, curMesh.Vertices[j].TextureCoordinate.Y,
-						curMesh.Vertices[j].Normal.X, curMesh.Vertices[j].Normal.Y, curMesh.Vertices[j].Normal.Z
+						curMesh.Vertices[j].Normal.X, curMesh.Vertices[j].Normal.Y, curMesh.Vertices[j].Normal.Z,
+						textureIndex
 					};
 					vertices.Add(inVertex);
 				}
@@ -72,7 +95,7 @@ bool UMeshAsset::Load()
 	}
 	
 	UVertexBuffer::Create(FString(TEXT(name)), vertices,
-		UInputLayout::Find("Simple_IL")
+		UInputLayout::Find("TextureArray_IL")
 	);
 	UIndexBuffer::Create(FString(TEXT(name)), indices);
 	

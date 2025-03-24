@@ -100,19 +100,7 @@ void UAssetManager::LoadAssets() {
 
 		case EAssetType::Mesh:
 		{
-			UMeshAsset* meshAsset = FObjectFactory::ConstructObject<UMeshAsset>();
-			if ( meshAsset != nullptr ) {
-				if (asset.Value.GetAssetExtension() == ".obj") {
-					if (AssetMetaDatas.Contains(asset.Value.GetAssetName() + ".objbinary")) {
-						break;
-					}
-				}
-				meshAsset->SetMetaData(asset.Value);
-				meshAsset->Load();
-				Assets.Add(meshAsset->GetAssetName(), meshAsset);
-			} else {
-				cout << "Mesh Asset Load Failed: " << asset.Value.GetAssetName().GetData() << endl;
-			}
+			ObjMetaDatas.Add(&asset.Value);
 			break;
 		}
 
@@ -147,6 +135,25 @@ void UAssetManager::LoadAssets() {
 			break;
 		}
 
+		}
+	}
+
+
+	// Obj (Mesh) 의 경우 Material이 미리 준비되어 있어야 하므로 한텀 뒤에서 돌기
+	for (auto& objMetaData : ObjMetaDatas) {
+		UMeshAsset* meshAsset = FObjectFactory::ConstructObject<UMeshAsset>();
+		if (meshAsset != nullptr) {
+			if (objMetaData->GetAssetExtension() == ".obj") {
+				if (AssetMetaDatas.Contains(objMetaData->GetAssetName() + ".objbinary")) {
+					break;
+				}
+			}
+			meshAsset->SetMetaData(*objMetaData);
+			meshAsset->Load();
+			Assets.Add(meshAsset->GetAssetName(), meshAsset);
+		}
+		else {
+			cout << "Mesh Asset Load Failed: " << objMetaData->GetAssetName().GetData() << endl;
 		}
 	}
 }

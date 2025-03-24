@@ -108,6 +108,7 @@ public:
 	
 private:
 	TMap<FString, FAssetMetaData> AssetMetaDatas;
+	TArray<FAssetMetaData*> ObjMetaDatas;
 	TMap<FString, UAsset*> Assets;
 };
 
