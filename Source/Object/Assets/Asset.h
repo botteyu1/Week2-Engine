@@ -37,7 +37,7 @@ public:
 		{
 			Type = EAssetType::Texture;
 		}
-		else if (AssetExtension.Equals(TEXT(".fbx")) || AssetExtension.Equals(TEXT(".obj")))
+		else if (AssetExtension.Equals(TEXT(".fbx")) || AssetExtension.Equals(TEXT(".obj")) || AssetExtension.Equals(TEXT(".objbinary")))
 		{
 			Type = EAssetType::Mesh;
 		}

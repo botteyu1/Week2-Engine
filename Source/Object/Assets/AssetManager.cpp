@@ -102,6 +102,11 @@ void UAssetManager::LoadAssets() {
 		{
 			UMeshAsset* meshAsset = FObjectFactory::ConstructObject<UMeshAsset>();
 			if ( meshAsset != nullptr ) {
+				if (asset.Value.GetAssetExtension() == ".obj") {
+					if (AssetMetaDatas.Contains(asset.Value.GetAssetName() + ".objbinary")) {
+						break;
+					}
+				}
 				meshAsset->SetMetaData(asset.Value);
 				meshAsset->Load();
 				Assets.Add(meshAsset->GetAssetName(), meshAsset);

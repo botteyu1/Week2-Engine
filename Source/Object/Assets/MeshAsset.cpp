@@ -5,6 +5,8 @@
 #include "Resource/DirectResource/IndexBuffer.h"
 #include "Resource/DirectResource/InputLayout.h"
 #include "Resource/Mesh.h"
+#include <iostream>
+#include <string>
 
 
 bool UMeshAsset::RegisterAsset()
@@ -21,7 +23,15 @@ bool UMeshAsset::Load()
 	TArray<uint32>& indices = GeometryData.Indices;
 
 	/*UAssetManager::Get().ObjParsing("cube-tex.obj", vertices, indices);*/
-	FString binaryFile = MetaData.GetAssetName() + ".objbinary";
+	FString binaryFile = "Contents/"+MetaData.GetAssetName();
+	FString name = MetaData.GetAssetName();
+	if (MetaData.GetAssetExtension() == ".obj") {
+		binaryFile += +".objbinary";
+	}
+	else if (MetaData.GetAssetExtension() == ".objbinary") {
+		std::string Name = name.GetData();
+		name = Name.substr(0, Name.size() - 10);
+	}
 	if (!FObjArchive::ReadBinary(binaryFile, vertices, indices)) {
 		objl::Loader OBJLoader;
 		bool loadout = OBJLoader.LoadFile(MetaData.GetAssetPath().GetData());
@@ -46,25 +56,27 @@ bool UMeshAsset::Load()
 					vertices.Add(inVertex);
 				}
 
-				for (int j = 0; j < curMesh.Indices.size(); j += 1) {
-					/*indices.Add(curMesh.Indices[j]);
-					indices.Add(curMesh.Indices[j + 1]);
-					indices.Add(curMesh.Indices[j + 2]);*/
-					indices.Add(curMesh.Indices[j]);
+				// 인덱스를 추가할 때, 반드시 메시의 정점 오프셋(indexStart)을 고려해야 함
+				for (int j = 0; j < curMesh.Indices.size(); j += 3) {  // 삼각형 기준
+					if (j + 2 < curMesh.Indices.size()) // 안전한 접근을 위해 확인
+					{
+						indices.Add(curMesh.Indices[j] + indexStart);
+						indices.Add(curMesh.Indices[j + 1] + indexStart);
+						indices.Add(curMesh.Indices[j + 2] + indexStart);
+					}
 				}
-
-				indexStart = curMesh.Vertices.size();
-
+				indexStart += curMesh.Vertices.size();
 			}
 			FObjArchive::ObjToBinary(binaryFile, vertices, indices);
 		}
 	}
-	UVertexBuffer::Create(FString(TEXT(MetaData.GetAssetName())), vertices,
+	
+	UVertexBuffer::Create(FString(TEXT(name)), vertices,
 		UInputLayout::Find("Simple_IL")
 	);
-	UIndexBuffer::Create(FString(TEXT(MetaData.GetAssetName())), indices);
-
-	UMesh::Create(TEXT(MetaData.GetAssetName()));
+	UIndexBuffer::Create(FString(TEXT(name)), indices);
+	
+	UMesh::Create(TEXT(name));
 	MetaData.SetIsLoaded(true);
 	return true;
 }
