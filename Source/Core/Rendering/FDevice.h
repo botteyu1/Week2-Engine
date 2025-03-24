@@ -81,7 +81,7 @@ private:
 
 	FLOAT PickingClearColor[4] = { 0.0f, 0.0f, 0.0f, 0.0f }; //
 	
-    D3D11_VIEWPORT ViewportInfo = {};             
+    D3D11_VIEWPORT ViewportInfo = {};       // To Do 날려야됨 반드시
 	// 렌더링 영역을 정의하는 뷰포트 정보
 
 

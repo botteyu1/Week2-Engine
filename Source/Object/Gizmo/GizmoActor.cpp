@@ -126,6 +126,9 @@ void AGizmoActor::Tick(float DeltaTime)
 			int ScreenWidth = Rect.right - Rect.left;
 			int ScreenHeight = Rect.bottom - Rect.top;
 
+			/// To Do 뷰포트 이부분 변경해야할 듯
+
+
 			// 커서 위치를 NDC로 변경
 			float PosX = 2.0f * pt.x / ScreenWidth - 1.0f;
 			float PosY = -2.0f * pt.y / ScreenHeight + 1.0f;

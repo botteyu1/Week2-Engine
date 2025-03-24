@@ -209,22 +209,23 @@ void UWorld::Render()
 
 
 
+		FDevice::Get().SetMainRenderTarget();
 		AActor* SelectedActor = UEngine::Get().GetEditor()->GetSelectedActor();
 		if (SelectedActor != nullptr)
 		{
 			const FVector LocalMax = SelectedActor->GetActorLocalBoundsMax();
 			const FVector LocalMin = SelectedActor->GetActorLocalBoundsMin();
 
-			[[maybe_unused]] FVector WorldMax = SelectedActor->GetActorWorldBoundsMax();
-			[[maybe_unused]] FVector WorldMin = SelectedActor->GetActorWorldBoundsMin();
+			//[[maybe_unused]] FVector WorldMax = SelectedActor->GetActorWorldBoundsMax();
+			//[[maybe_unused]] FVector WorldMin = SelectedActor->GetActorWorldBoundsMin();
 
+
+			// 렌더 큐 안에 넣어야 하긴 함
 			UDebugDrawManager::Get().DrawBoundingBox(LocalMin, LocalMax, SelectedActor->GetActorTransform(), FVector4::RED);
 			UEngine::Get().GetRenderer()->GetUUIDBillBoard()->Render();
-			
 		}
 		UEngine::Get().GetRenderer()->GetBatchManager()->Render();
 		UDebugDrawManager::Get().Render();
-
 	}
 	CameraRenderFocused = nullptr;
 	//ACamera* cam = FEditorManager::Get().GetCamera();
@@ -257,9 +258,15 @@ void UWorld::RenderMainTexture(URenderer& Renderer)
 
 	for (auto& RenderQueue : RenderQueueComponents)
 	{
+
+		//임시로 여기서 플래그 처리
+		ERenderFlags PrevRenderer = Renderer.renderFlags;
+
 		if (RenderQueue.Key == ERenderQueue::EditorPrimitives)
 		{
 			FDevice::Get().SetEditorPrimitiveRenderTarget();
+
+			Renderer.renderFlags = ERenderFlags::None;
 		}
 		else
 		{
@@ -278,6 +285,8 @@ void UWorld::RenderMainTexture(URenderer& Renderer)
 			RenderComponent->Render();
 		}
 
+
+		Renderer.renderFlags = PrevRenderer;
 	}
 
 
