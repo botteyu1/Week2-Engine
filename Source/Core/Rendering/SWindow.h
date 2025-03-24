@@ -12,7 +12,7 @@ public:
 		return Rect.Contains(coord);
 	}
 
-	virtual void OnResizeUpdate() {}
+	virtual void OnResizeUpdate();
 	virtual void Render() {}
 	virtual void OnMouseDown(FVector2D) {}
 	virtual void OnMouseUp(FVector2D) {}
@@ -79,7 +79,7 @@ public:
 		SideLT->OnResizeUpdate();
 		SideRB->OnResizeUpdate();
 	}
-
+	virtual void OnResizeUpdate() override;
 private:
 	FRect GetSplitterRect() const {
 		return FRect(
@@ -108,7 +108,7 @@ public:
 		SideLT->OnResizeUpdate();
 		SideRB->OnResizeUpdate();
 	}
-
+	virtual void OnResizeUpdate() override;
 private:
 	FRect GetSplitterRect() const {
 		return FRect(

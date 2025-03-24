@@ -115,6 +115,9 @@ void UEditorManager::SplitHorizontalSWindow(std::shared_ptr<SWindow>& window) {
 			window->Rect.Bottom
 		)
 	);
+	FTransform cameraTransfrom = std::dynamic_pointer_cast<SWorldWindow>(window)->GetViewportClient()->camera->GetActorTransform();
+	viewportClientLeft->camera->SetActorTransform(cameraTransfrom);
+	viewportClientRight->camera->SetActorTransform(cameraTransfrom);
 
 	FRect rect = window->Rect;
 	std::shared_ptr<SSplitter> parentSplitter = std::dynamic_pointer_cast<SSplitter>(window->parent);
@@ -200,6 +203,9 @@ void UEditorManager::SplitVerticalSWindow(std::shared_ptr<SWindow>& window) {
 			window->Rect.Bottom
 		)
 	);
+	FTransform cameraTransfrom = std::dynamic_pointer_cast<SWorldWindow>(window)->GetViewportClient()->camera->GetActorTransform();
+	viewportClientTop->camera->SetActorTransform(cameraTransfrom);
+	viewportClientBottom->camera->SetActorTransform(cameraTransfrom);
 
 	FRect rect = window->Rect;
 	std::shared_ptr<SSplitter> parentSplitter = std::dynamic_pointer_cast<SSplitter>(window->parent);
@@ -214,7 +220,7 @@ void UEditorManager::SplitVerticalSWindow(std::shared_ptr<SWindow>& window) {
 		RootWindow->Rect = rect;
 
 		// split
-		std::shared_ptr<SSplitterH> splitter = std::make_shared<SSplitterH>(
+		std::shared_ptr<SSplitterV> splitter = std::make_shared<SSplitterV>(
 			std::make_shared<SWorldWindow>(viewportClientTop),
 			std::make_shared<SWorldWindow>(viewportClientBottom)
 		);
@@ -243,7 +249,7 @@ void UEditorManager::SplitVerticalSWindow(std::shared_ptr<SWindow>& window) {
 		replace->Rect = rect;
 
 		// split
-		std::shared_ptr<SSplitterH> splitter = std::make_shared<SSplitterH>(
+		std::shared_ptr<SSplitterV> splitter = std::make_shared<SSplitterV>(
 			std::make_shared<SWorldWindow>(viewportClientTop),
 			std::make_shared<SWorldWindow>(viewportClientBottom)
 		);
