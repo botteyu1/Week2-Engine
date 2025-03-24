@@ -48,7 +48,9 @@ AGizmoActor::AGizmoActor()
 	GizmoComponents.Add(ESelectedAxis::X, XGizmo);
 	XGizmo->Axis = ESelectedAxis::X;
 
+	//기즈모 중앙 원
 	USphereComp* Comp = AddComponent<USphereComp>();
+	Comp->SetRenderQueue(ERenderQueue::EditorPrimitives);
 
 	Comp->SetMaterial(TEXT("AlwaysVisibleMaterial"));
 	//Comp->SetMesh(TEXT("GizmoArrow"));
@@ -58,15 +60,17 @@ AGizmoActor::AGizmoActor()
 	FVector(0.1f)
 		});
 
+
+
 	FVector4 Color = FVector4::WHITE * 0.8f;
 	Color.W = 1.0f;
 	Comp->SetCustomColor(Color);
 
 
-	UEngine::Get().GetWorld()->AddZIgnoreComponent(XGizmo);
-	UEngine::Get().GetWorld()->AddZIgnoreComponent(YGizmo);
-	UEngine::Get().GetWorld()->AddZIgnoreComponent(ZGizmo);
-	UEngine::Get().GetWorld()->AddZIgnoreComponent(Comp);
+	UEngine::Get().GetWorld()->AddRenderComponent(XGizmo);
+	UEngine::Get().GetWorld()->AddRenderComponent(YGizmo);
+	UEngine::Get().GetWorld()->AddRenderComponent(ZGizmo);
+	UEngine::Get().GetWorld()->AddRenderComponent(Comp);
 }
 
 void AGizmoActor::BeginPlay()
@@ -121,6 +125,9 @@ void AGizmoActor::Tick(float DeltaTime)
 			GetClientRect(UEngine::Get().GetWindowHandle(), &Rect);
 			int ScreenWidth = Rect.right - Rect.left;
 			int ScreenHeight = Rect.bottom - Rect.top;
+
+			/// To Do 뷰포트 이부분 변경해야할 듯
+
 
 			// 커서 위치를 NDC로 변경
 			float PosX = 2.0f * pt.x / ScreenWidth - 1.0f;

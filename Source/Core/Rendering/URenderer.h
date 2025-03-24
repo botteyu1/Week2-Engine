@@ -52,6 +52,7 @@ public:
 
   //  void CreateConstantBuffer();
 
+
     void ReleaseConstantBuffer();
 
     /** 렌더링 파이프라인을 준비 합니다. */

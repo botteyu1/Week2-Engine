@@ -77,6 +77,7 @@ public:
 		SideRB->Rect = FRect(Rect.Left + splitX, Rect.Top,
 			Rect.Width(), Rect.Height());
 		SideLT->OnResizeUpdate();
+		//SideLT->OnResize();
 		SideRB->OnResizeUpdate();
 	}
 	virtual void OnResizeUpdate() override;

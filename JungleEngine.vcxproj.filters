@@ -390,6 +390,12 @@
     <ClCompile Include="Source\Object\PrimitiveComponent\TextureComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Core\EngineEnum.h">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Core\UObject\UObjectIterator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\ShaderW0.hlsl">
@@ -843,6 +849,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Object\PrimitiveComponent\TextureComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Core\UObject\UObjectIterator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

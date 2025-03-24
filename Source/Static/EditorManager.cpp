@@ -551,7 +551,9 @@ void UEditorManager::OnResizeComplete()
 FVector4 UEditorManager::GetPixel(FVector MPos) const
 {
 
-	const float Width = FDevice::Get().GetViewPortInfo().Width;
+	// 선택된 카메라의 뷰포트 가져오기
+
+	const float Width = FDevice::Get().GetViewPortInfo().Width; 
 	const float Height = FDevice::Get().GetViewPortInfo().Height;
     MPos.X = FMath::Clamp(MPos.X, 0.0f, Width);
     MPos.Y = FMath::Clamp(MPos.Y, 0.0f, Height);

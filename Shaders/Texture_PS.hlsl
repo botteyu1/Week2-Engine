@@ -1,4 +1,4 @@
-Texture2DArray imageArray : register(t4);
+Texture2DArray imageArray : register(t0);
 SamplerState samLinear : register(s0);
 
 struct VS_OUTPUT

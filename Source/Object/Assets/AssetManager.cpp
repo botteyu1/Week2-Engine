@@ -6,6 +6,7 @@
 #include "TextureAsset.h"
 #include "FontAtlasAsset.h"
 #include "MeshAsset.h"
+#include "ObjMTLAsset.h"
 #include <fstream>
 #include <string>
 #include "Primitive/PrimitiveVertices.h"
@@ -99,19 +100,66 @@ void UAssetManager::LoadAssets() {
 
 		case EAssetType::Mesh:
 		{
-			UMeshAsset* meshAsset = FObjectFactory::ConstructObject<UMeshAsset>();
-			if ( meshAsset != nullptr ) {
-				meshAsset->SetMetaData(asset.Value);
-				meshAsset->Load();
-				Assets.Add(meshAsset->GetAssetName(), meshAsset);
-			} else {
-				cout << "Mesh Asset Load Failed: " << asset.Value.GetAssetName().GetData() << endl;
-			}
+			ObjMetaDatas.Add(&asset.Value);
 			break;
 		}
+
+		case EAssetType::Material:
+		{
+			// ObjMTLAsset 이라는 것이 있어서 거기서 mlt 파일 읽고 ObjMaterial 여러개 생성하여 들고 있을 것임
+			UObjMTLAsset* objMTLAsset = FObjectFactory::ConstructObject<UObjMTLAsset>();
+			if (objMTLAsset != nullptr) {
+				objMTLAsset->SetMetaData(asset.Value);
+				objMTLAsset->Load();
+
+				Assets.Add(objMTLAsset->GetAssetName(), objMTLAsset);
+			}
+			else {
+				cout << "MTL Asset Load Failed: " << asset.Value.GetAssetName().GetData() << endl;
+			}
+
+			// Texture 있으면 Array 로 만들어 두기
+			if (objMTLAsset->GetTextureNum() > 0)
+			{
+				UTextureAsset* textureAsset = FObjectFactory::ConstructObject<UTextureAsset>();
+				if (textureAsset != nullptr) {
+					textureAsset->SetMetaData(asset.Value);
+					textureAsset->Load();
+					std::string assetName = textureAsset->GetAssetName().GetData();
+					assetName = assetName.substr(0, assetName.size() - 4);
+					Assets.Add(assetName + TEXT(".textArray"), textureAsset);
+				}
+				else {
+					cout << "Texture Asset Load Failed about MTL Asset: " << asset.Value.GetAssetName().GetData() << endl;
+				}
+			}
+
+			break;
+		}
+
+		}
+	}
+
+
+	// Obj (Mesh) 의 경우 Material이 미리 준비되어 있어야 하므로 한텀 뒤에서 돌기
+	for (auto& objMetaData : ObjMetaDatas) {
+		UMeshAsset* meshAsset = FObjectFactory::ConstructObject<UMeshAsset>();
+		if (meshAsset != nullptr) {
+			if (objMetaData->GetAssetExtension() == ".obj") {
+				if (AssetMetaDatas.Contains(objMetaData->GetAssetName() + ".objbinary")) {
+					continue;
+				}
+			}
+			meshAsset->SetMetaData(*objMetaData);
+			meshAsset->Load();
+			Assets.Add(meshAsset->GetAssetName(), meshAsset);
+		}
+		else {
+			cout << "Mesh Asset Load Failed: " << objMetaData->GetAssetName().GetData() << endl;
 		}
 	}
 }
+
 
 struct VertexKey {
 	int v, vt, vn;

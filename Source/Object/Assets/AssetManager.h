@@ -26,12 +26,14 @@ public:
 		UAsset** pAsset = Assets.Find(name);
 		if (pAsset == nullptr)
 		{
+			MsgBoxAssert("Can't found pAsset");
 			UE_LOG(TEXT("Can't found Asset: %s"), *name);
 			return nullptr;
 		}
 		UAsset* asset = *pAsset;
 		if (asset == nullptr)
 		{
+			MsgBoxAssert("Can't found Asset");
 			UE_LOG(TEXT("Can't found Asset: %s"), *name);
 			return nullptr;
 		}
@@ -108,6 +110,7 @@ public:
 	
 private:
 	TMap<FString, FAssetMetaData> AssetMetaDatas;
+	TArray<FAssetMetaData*> ObjMetaDatas;
 	TMap<FString, UAsset*> Assets;
 };
 

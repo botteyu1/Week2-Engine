@@ -13,6 +13,9 @@
 
 #include <wincodec.h>
 
+#include "Object/Assets/AssetManager.h"
+#include "Object/Assets/ObjMTLAsset.h"
+
 UTexture::UTexture()
 {
 }
@@ -168,6 +171,14 @@ void UTexture::CreateDepthStencilView()
 
 void UTexture::ResLoad(const FAssetMetaData& InMetadata)
 {
+	if (InMetadata.GetAssetType() == EAssetType::Material) {
+		// MTL 파일의 Texture 목록으로 부터 생성하려는 것임
+		// Metadata의 이름으로 MTL Asset에 접근하여 Texture 이름 목록을 빼내온다.
+		UObjMTLAsset* mtlAsset = UAssetManager::Get().FindAsset<UObjMTLAsset>(InMetadata.GetAssetName());
+		ResLoad(mtlAsset->GetTextureNames());
+		return;
+	}
+
 	std::string str = InMetadata.GetAssetPath().GetData();
 
 	std::wstring wstr(str.begin(), str.end());
@@ -230,7 +241,8 @@ HRESULT UTexture::CreateTexture2DArrayFromFiles(ID3D11Device* device, const std:
 	{
 		std::vector<BYTE> imageData;
 		UINT w = 0, h = 0;
-		HRESULT hr = LoadWICTextureDataFromFile(device, file, imageData, &w, &h);
+
+		HRESULT hr = LoadWICTextureDataFromFile(device, std::wstring(L"Contents\\") + file, imageData, &w, &h);
 		if (FAILED(hr))
 			return hr;
 		if (width == 0 && height == 0)
