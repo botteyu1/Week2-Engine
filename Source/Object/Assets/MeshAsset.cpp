@@ -5,6 +5,8 @@
 #include "Resource/DirectResource/IndexBuffer.h"
 #include "Resource/DirectResource/InputLayout.h"
 #include "Resource/Mesh.h"
+#include <iostream>
+#include <string>
 
 
 bool UMeshAsset::RegisterAsset()
@@ -21,7 +23,15 @@ bool UMeshAsset::Load()
 	TArray<uint32>& indices = GeometryData.Indices;
 
 	/*UAssetManager::Get().ObjParsing("cube-tex.obj", vertices, indices);*/
-	FString binaryFile = MetaData.GetAssetName() + ".objbinary";
+	FString binaryFile = "Contents/"+MetaData.GetAssetName();
+	FString name = MetaData.GetAssetName();
+	if (MetaData.GetAssetExtension() == ".obj") {
+		binaryFile += +".objbinary";
+	}
+	else if (MetaData.GetAssetExtension() == ".objbinary") {
+		std::string Name = name.GetData();
+		name = Name.substr(0, Name.size() - 10);
+	}
 	if (!FObjArchive::ReadBinary(binaryFile, vertices, indices)) {
 		objl::Loader OBJLoader;
 		bool loadout = OBJLoader.LoadFile(MetaData.GetAssetPath().GetData());
@@ -59,12 +69,13 @@ bool UMeshAsset::Load()
 			FObjArchive::ObjToBinary(binaryFile, vertices, indices);
 		}
 	}
-	UVertexBuffer::Create(FString(TEXT(MetaData.GetAssetName())), vertices,
+	
+	UVertexBuffer::Create(FString(TEXT(name)), vertices,
 		UInputLayout::Find("Simple_IL")
 	);
-	UIndexBuffer::Create(FString(TEXT(MetaData.GetAssetName())), indices);
-
-	UMesh::Create(TEXT(MetaData.GetAssetName()));
+	UIndexBuffer::Create(FString(TEXT(name)), indices);
+	
+	UMesh::Create(TEXT(name));
 	MetaData.SetIsLoaded(true);
 	return true;
 }
