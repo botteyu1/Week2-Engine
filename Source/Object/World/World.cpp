@@ -207,7 +207,6 @@ void UWorld::Render()
 		RenderMainTexture(*Renderer);
 
 
-		FDevice::Get().SetMainRenderTarget();
 
 
 		AActor* SelectedActor = UEngine::Get().GetEditor()->GetSelectedActor();
