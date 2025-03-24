@@ -2,7 +2,20 @@
 #include "Core/Rendering/FViewport.h"
 #include "Object/World/World.h"
 
-SWorldWindow::SWorldWindow(FViewportClient* viewportClient): viewportClient(viewportClient) {}
+SWorldWindow::SWorldWindow(FViewportClient* viewportClient): viewportClient(viewportClient) {
+	D3D11_VIEWPORT viewport = viewportClient->viewport.GetViewportInfo();
+	Rect = FRect(
+		viewport.TopLeftX,
+		viewport.TopLeftY,
+		viewport.TopLeftX + viewport.Width,
+		viewport.TopLeftY + viewport.Height
+	);
+}
+
+SWorldWindow::~SWorldWindow() {
+	UWorld* world = UEngine::Get().GetWorld();
+	world->RemoveViewportClient(viewportClient);
+}
 
 void SWorldWindow::OnResizeUpdate() {
 	viewportClient->viewport.UpdateViewport(Rect);

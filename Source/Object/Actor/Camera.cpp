@@ -14,6 +14,7 @@ ACamera::ACamera()
     Near = .1f;
     Far = 1000.f;
     FieldOfView = 45.f;
+	ZoomSize = 1000.f;
     ProjectionMode = ECameraProjectionMode::Perspective;
 	CameraSpeed = 1.0f;
 	Sensitivity = std::stof(UConfigManager::Get().GetValue("Camera", "Sensitivity").GetData());

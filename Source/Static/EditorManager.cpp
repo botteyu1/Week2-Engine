@@ -11,6 +11,14 @@
 #include "Resource/Texture.h"
 #include "Core/Rendering/FDevice.h"
 
+#include <functional>
+
+void UEditorManager::Release() {
+	UUIDTexture.reset();
+	RootWindow.reset();
+	SelectedWindow.reset();
+}
+
 void UEditorManager::Init()
 {
 	CreateUUIDTexture();
@@ -42,6 +50,7 @@ void UEditorManager::RegisterInputCallbacks() {
 		this->SelectedWindow = this->GetClickedWindow(mousePos, this->GetRootWindow());
 		if ( this->SelectedWindow == nullptr )
 			return;
+		UE_LOG("%x", this->SelectedWindow.get());
 		mousePosInWindow.X = mousePos.X - this->SelectedWindow->Rect.Left;
 		mousePosInWindow.Y = mousePos.Y - this->SelectedWindow->Rect.Top;
 		this->SelectedWindow->OnMousePressed(mousePosInWindow);
@@ -80,6 +89,233 @@ void UEditorManager::InitMainSWindow() {
 	);
 	RootWindow = std::make_shared<SWorldWindow>(viewportClient);
 	world->SetFocusCamera(viewportClient->camera);
+}
+
+void UEditorManager::SplitHorizontalSWindow(std::shared_ptr<SWindow>& window) {
+	if ( window->child != nullptr )
+		return;
+	if ( std::dynamic_pointer_cast<SSplitterH>(window) != nullptr ||
+		std::dynamic_pointer_cast<SSplitterV>(window) != nullptr)
+		return;
+
+	UWorld* world = UEngine::Get().GetWorld();
+	FViewportClient* viewportClientLeft = world->AddViewportClient(
+		FRect(
+			window->Rect.Left,
+			window->Rect.Top,
+			(window->Rect.Left + window->Rect.Right) / 2.f,
+			window->Rect.Bottom
+		)
+	);
+	FViewportClient* viewportClientRight = world->AddViewportClient(
+		FRect(
+			(window->Rect.Left + window->Rect.Right) / 2.f,
+			window->Rect.Top,
+			window->Rect.Right,
+			window->Rect.Bottom
+		)
+	);
+
+	FRect rect = window->Rect;
+	std::shared_ptr<SSplitter> parentSplitter = std::dynamic_pointer_cast<SSplitter>(window->parent);
+
+	if (parentSplitter == nullptr) {
+		// delete process
+		window.reset();
+		RootWindow.reset();
+
+		// replace process
+		RootWindow = std::make_shared<SWindow>();
+		RootWindow->Rect = rect;
+
+		// split
+		std::shared_ptr<SSplitterH> splitter = std::make_shared<SSplitterH>(
+			std::make_shared<SWorldWindow>(viewportClientLeft),
+			std::make_shared<SWorldWindow>(viewportClientRight)
+		);
+
+		splitter->SideLT->parent = splitter;
+		splitter->SideRB->parent = splitter;
+		
+		RootWindow->child = splitter;
+		splitter->parent = RootWindow;
+
+		SelectedWindow = splitter->SideLT;
+		world->SetFocusCamera(viewportClientLeft->camera);
+
+	} else {
+		// delete and replace process
+		std::shared_ptr<SWindow> replace;
+		if ( window == parentSplitter->SideLT ) {
+			parentSplitter->SideLT.reset();
+			parentSplitter->SideLT = std::make_shared<SWindow>();
+			replace = parentSplitter->SideLT;
+		}
+		else {
+			parentSplitter->SideRB.reset();
+			parentSplitter->SideRB = std::make_shared<SWindow>();
+			replace = parentSplitter->SideRB;
+		}
+		window.reset();
+		replace->Rect = rect;
+		
+		// split
+		std::shared_ptr<SSplitterH> splitter = std::make_shared<SSplitterH>(
+			std::make_shared<SWorldWindow>(viewportClientLeft),
+			std::make_shared<SWorldWindow>(viewportClientRight)
+		);
+		splitter->SideLT->parent = splitter;
+		splitter->SideRB->parent = splitter;
+
+		replace->parent = parentSplitter;
+		replace->child = splitter;
+		splitter->parent = replace;
+
+		SelectedWindow = splitter->SideLT;
+		world->SetFocusCamera(viewportClientLeft->camera);
+	}
+}
+
+void UEditorManager::SplitVerticalSWindow(std::shared_ptr<SWindow>& window) {
+	if ( window->child != nullptr )
+		return;
+	if ( std::dynamic_pointer_cast<SSplitterH>(window) != nullptr ||
+		std::dynamic_pointer_cast<SSplitterV>(window) != nullptr )
+		return;
+
+	UWorld* world = UEngine::Get().GetWorld();
+	FViewportClient* viewportClientTop = world->AddViewportClient(
+		FRect(
+			window->Rect.Left,
+			window->Rect.Top,
+			window->Rect.Right,
+			(window->Rect.Top + window->Rect.Bottom) / 2.f
+		)
+	);
+	FViewportClient* viewportClientBottom = world->AddViewportClient(
+		FRect(
+			window->Rect.Left,
+			(window->Rect.Top + window->Rect.Bottom) / 2.f,
+			window->Rect.Right,
+			window->Rect.Bottom
+		)
+	);
+
+	FRect rect = window->Rect;
+	std::shared_ptr<SSplitter> parentSplitter = std::dynamic_pointer_cast<SSplitter>(window->parent);
+
+	if ( parentSplitter == nullptr ) {
+		// delete process
+		window.reset();
+		RootWindow.reset();
+
+		// replace process
+		RootWindow = std::make_shared<SWindow>();
+		RootWindow->Rect = rect;
+
+		// split
+		std::shared_ptr<SSplitterH> splitter = std::make_shared<SSplitterH>(
+			std::make_shared<SWorldWindow>(viewportClientTop),
+			std::make_shared<SWorldWindow>(viewportClientBottom)
+		);
+		splitter->SideLT->parent = splitter;
+		splitter->SideRB->parent = splitter;
+
+		RootWindow->child = splitter;
+		splitter->parent = RootWindow;
+
+		SelectedWindow = splitter->SideLT;
+		world->SetFocusCamera(viewportClientTop->camera);
+
+	} else {
+		// delete and replace process
+		std::shared_ptr<SWindow> replace;
+		if ( window == parentSplitter->SideLT ) {
+			parentSplitter->SideLT.reset();
+			parentSplitter->SideLT = std::make_shared<SWindow>();
+			replace = parentSplitter->SideLT;
+		} else {
+			parentSplitter->SideRB.reset();
+			parentSplitter->SideRB = std::make_shared<SWindow>();
+			replace = parentSplitter->SideRB;
+		}
+		window.reset();
+		replace->Rect = rect;
+
+		// split
+		std::shared_ptr<SSplitterH> splitter = std::make_shared<SSplitterH>(
+			std::make_shared<SWorldWindow>(viewportClientTop),
+			std::make_shared<SWorldWindow>(viewportClientBottom)
+		);
+		splitter->SideLT->parent = splitter;
+		splitter->SideRB->parent = splitter;
+
+		replace->parent = parentSplitter;
+		replace->child = splitter;
+		splitter->parent = replace;
+
+		SelectedWindow = splitter->SideLT;
+		world->SetFocusCamera(viewportClientTop->camera);
+	}
+}
+
+void UEditorManager::RemoveSWindow(std::shared_ptr<SWindow>& window) {
+	if ( window->parent == nullptr )
+		return;
+	if ( window->child != nullptr )
+		return;
+
+	SSplitter* p = dynamic_cast<SSplitter*>(window->parent.get());
+	std::shared_ptr<SWindow> sibiling;
+	if (p->SideLT == window)
+		sibiling = p->SideRB;
+	else
+		sibiling = p->SideLT;
+
+	SWindow* pp = p->parent.get();
+	FRect ppRect = pp->Rect;
+	sibiling->Rect = ppRect;
+	sibiling->OnResizeUpdate();
+
+	SSplitter* ppp = dynamic_cast<SSplitter*>(pp->parent.get());
+	
+	{
+		p->SideLT->parent.reset();
+		p->SideRB->parent.reset();
+		p->SideLT.reset();
+		p->SideRB.reset();
+		p->parent.reset();
+		pp->child.reset();
+	}
+
+	if (pp->parent != nullptr) {
+
+		sibiling->parent = pp->parent;
+
+		if ( ppp->SideLT.get() == pp ) {
+			ppp->SideLT.reset();
+			ppp->SideLT = sibiling;
+		} else {
+			ppp->SideRB.reset();
+			ppp->SideRB = sibiling;
+		}
+	} else {
+		sibiling->parent = nullptr;
+		RootWindow.reset();
+		RootWindow = sibiling;
+	}
+	SelectedWindow.reset();
+	SelectedWindow = sibiling;
+
+
+	std::function<SWindow*(SWindow*)> findLeftest = [&](SWindow* window)->SWindow* {
+		if ( window->child == nullptr )
+			return window;
+		return findLeftest(window->child->SideLT.get());
+	};
+	SWorldWindow* leftest = dynamic_cast<SWorldWindow*>(findLeftest(RootWindow.get()));
+	UEngine::Get().GetWorld()->SetFocusCamera(leftest->GetViewportClient()->camera);
+
 }
 
 void UEditorManager::SelectActor(AActor* NewActor)
@@ -128,8 +364,8 @@ std::shared_ptr<SWindow> UEditorManager::GetClickedWindow(
 	if ( InSWindow->child == nullptr ) {
 		return InSWindow;
 	} else {
-		std::shared_ptr<SWindow> childLT = InSWindow->child->GetSideLT();
-		std::shared_ptr<SWindow> childRB = InSWindow->child->GetSideRB();
+		std::shared_ptr<SWindow> childLT = InSWindow->child->SideLT;
+		std::shared_ptr<SWindow> childRB = InSWindow->child->SideRB;
 		std::shared_ptr<SWindow> resLT = GetClickedWindow(InMouseScreenPos, childLT);
 		std::shared_ptr<SWindow> resRB = GetClickedWindow(InMouseScreenPos, childRB);
 		if ( resLT != nullptr )

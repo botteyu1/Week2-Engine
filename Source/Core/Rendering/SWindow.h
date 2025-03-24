@@ -20,6 +20,7 @@ public:
 	virtual void OnMouseReleased(FVector2D) {}
 
 	std::shared_ptr<SSplitter> child = nullptr;
+	std::shared_ptr<SWindow> parent = nullptr;
 	//virtual void OnDraw() = 0;
 };
 
@@ -28,6 +29,7 @@ private:
 	FViewportClient* viewportClient;
 public:
 	SWorldWindow(FViewportClient* viewportClient);
+	~SWorldWindow();
 	inline FViewportClient* GetViewportClient() { return viewportClient; }
 	virtual void OnResizeUpdate() override;
 	virtual void OnMousePressed(FVector2D InCoord);
@@ -35,12 +37,14 @@ public:
 
 class SSplitter : public SWindow {
 protected:
-	std::shared_ptr<SWindow> SideLT; // Left/Top 영역
-	std::shared_ptr<SWindow> SideRB; // Right/Bottom 영역
+
 	float SplitPos = 0.5f; // 분할 비율 (0.0~1.0)
 	bool bIsDragging = false;
 
 public:
+	std::shared_ptr<SWindow> SideLT; // Left/Top 영역
+	std::shared_ptr<SWindow> SideRB; // Right/Bottom 영역
+	
 	virtual void OnResize() = 0;
 	virtual FRect GetSplitterRect() const = 0;
 
@@ -56,9 +60,6 @@ public:
 	void OnMouseUp(FVector2D coord) override {
 		bIsDragging = false;
 	}
-
-	inline std::shared_ptr<SWindow> GetSideLT() { return SideLT; }
-	inline std::shared_ptr<SWindow> GetSideRB() { return SideRB; }
 };
 
 
@@ -75,10 +76,8 @@ public:
 		SideLT->Rect = FRect(Rect.Left, Rect.Top, splitX, Rect.Height());
 		SideRB->Rect = FRect(Rect.Left + splitX, Rect.Top,
 			Rect.Width(), Rect.Height());
-
 		SideLT->OnResizeUpdate();
 		SideRB->OnResizeUpdate();
-
 	}
 
 private:

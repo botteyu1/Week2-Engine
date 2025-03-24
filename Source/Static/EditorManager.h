@@ -14,13 +14,19 @@ class UEditorManager
 	friend class URenderer;
 	friend class FDevice;;
 public:
+	
+
 	void Init();
+	void Release();
 
 	void RegisterInputCallbacks();
 
 	void CreateUUIDTexture();
 
 	void InitMainSWindow();
+	void SplitHorizontalSWindow(std::shared_ptr<SWindow>& window);
+	void SplitVerticalSWindow(std::shared_ptr<SWindow>& window);
+	void RemoveSWindow(std::shared_ptr<SWindow>& window);
     
     inline AActor* GetSelectedActor() const {return SelectedActor;}
     

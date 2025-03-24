@@ -193,6 +193,7 @@ void UEngine::Run()
 
 void UEngine::Shutdown()
 {
+	EditorManager->Release();
 	World->OnDestroy();
 	Renderer->Release();
 	FDevice::Get().Release();
