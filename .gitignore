@@ -17,6 +17,7 @@ Intermediate/
 *.lo
 *.o
 *.obj
+!Contents/**/*.obj
 
 # Precompiled Headers
 *.gch

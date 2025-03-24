@@ -35,7 +35,19 @@ void FDevice::InitResource()
 	UPixelShader::Load(L"Shaders/Font_PS.hlsl", "Font_PS", "Font_PS");
 
 	UPixelShader::Load(L"Shaders/SubUV_PS.hlsl", "SubUV_PS", "SubUV_PS");
+
+	std::vector<D3D11_INPUT_ELEMENT_DESC> InputLayoutTextureArrayDesc = {
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXTINDEX", 0, DXGI_FORMAT_R32_SINT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	};
+
 	std::shared_ptr<UVertexShader> TextureVS = UVertexShader::Load(L"Shaders/Texture_VS.hlsl", "Texture_VS", "Texture_VS");
+	const std::shared_ptr<UInputLayout> TextureArrayIL = UInputLayout::Create("TextureArray_IL", InputLayoutTextureArrayDesc, TextureVS);
+
+	/*UInputLayout::CreateForTextureArray("Texture_VS", TextureVS);*/
 	UPixelShader::Load(L"Shaders/Texture_PS.hlsl", "Texture_PS", "Texture_PS");
 	UConstantBuffer::Create("DefaultConstantBuffer", sizeof(FConstantsComponentData));
 
@@ -154,12 +166,22 @@ void FDevice::InitResource()
 	}
 	
 	{
+		// metaData로써 Contents에 있는 이미지들은 
+		// UAssetManager::Get().LoadAssets() 할 때 텍스쳐로 변환됨
+		// LoadAssets()는 Engine.Run 때 불리므로
+		// 현재 파트인 Initialize가 Engine.Init 때 불리는 것보단 한 박자 느리게
+		
 		// TextureSRV
 		//std::shared_ptr<UTexture> TextureImage = UTexture::Load("font_atlas.dds", "SubUVTexture");
 		//TextureImage->CreateShaderResourceView();
 
-		//std::shared_ptr<UTexture> DiceImage = UTexture::Load("Dice.png", "DiceTexture");
-		//DiceImage->CreateShaderResourceView();
+		/*std::shared_ptr<UTexture> DiceImage = UTexture::Load("Dice.png", "DiceTexture");
+		DiceImage->CreateShaderResourceView();*/
+
+	
+
+		// TODO: FIX
+		//std::shared_ptr<UTexture> DiceImageArray = UTexture::Load(textureFiles, "DiceTextureArray");
 	}
 
 	{
@@ -448,5 +470,51 @@ void FDevice::InitResource()
 		UIndexBuffer::Create(FString(TEXT("GizmoScale")), indices);
 
 		UMesh::Create(TEXT("GizmoScale"));
+	}
+
+	{
+		TArray<FVertexTextureArray> vertices;
+		TArray<uint32> indices;
+
+		/*UAssetManager::Get().ObjParsing("cube-tex.obj", vertices, indices);*/
+		
+		/*objl::Loader OBJLoader;
+		bool loadout = OBJLoader.LoadFile("cube-tex.obj");
+
+		if (loadout) 
+		{
+			uint32 indexStart = 0;
+			for (int i = 0; i < OBJLoader.LoadedMeshes.size(); i++) 
+			{
+				objl::Mesh curMesh = OBJLoader.LoadedMeshes[i];
+
+				for (int j = 0; j < curMesh.Vertices.size(); j++) 
+				{
+					int textureIndex = j < curMesh.Vertices.size() / 2 ? 0 : 1;
+						FVertexTextureArray inVertex = {
+						curMesh.Vertices[j].Position.X, curMesh.Vertices[j].Position.Y, curMesh.Vertices[j].Position.Z,
+						0.5f, 0.5f, 0.5f, 1.0f,
+						curMesh.Vertices[j].TextureCoordinate.X, curMesh.Vertices[j].TextureCoordinate.Y,
+						curMesh.Vertices[j].Normal.X, curMesh.Vertices[j].Normal.Y, curMesh.Vertices[j].Normal.Z,
+						textureIndex
+					};
+					vertices.Add(inVertex);
+				}
+				
+				for (int j = 0; j < curMesh.Indices.size(); j += 3) {
+					indices.Add(indexStart + curMesh.Indices[j]);
+					indices.Add(indexStart + curMesh.Indices[j + 1]);
+					indices.Add(indexStart + curMesh.Indices[j + 2]);
+				}
+
+				indexStart = curMesh.Vertices.size();
+
+			}
+		}*/
+
+		//UVertexBuffer::Create(FString(TEXT("Dice")), vertices, IL);
+		//UIndexBuffer::Create(FString(TEXT("Dice")), indices);
+
+		//UMesh::Create(TEXT("Dice"));
 	}
 }

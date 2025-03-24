@@ -99,6 +99,12 @@ private:
 	// D3D11_TEXTURE_ADDRESS_MODE Address;
 	
 	void ResLoad(const FAssetMetaData& metaData);
+	void ResLoad(const TArray<FString>& InPaths);
 	void ResCreate(const D3D11_TEXTURE2D_DESC& Desc);
 	void ResCreate(ID3D11Texture2D* InRes);
+
+	HRESULT CreateTexture2DArrayFromFiles(ID3D11Device* device, const std::vector<std::wstring>& fileNames, 
+		ID3D11Texture2D** textureArrayOut, ID3D11ShaderResourceView** srvOut);
+
+	HRESULT LoadWICTextureDataFromFile(ID3D11Device* device, const std::wstring& fileName, std::vector<BYTE>& imageData, UINT* width, UINT* height);
 };

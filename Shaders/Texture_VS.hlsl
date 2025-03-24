@@ -4,12 +4,14 @@ struct VS_INPUT
 	float4 Color : COLOR; // 4개의 float 값 (DXGI_FORMAT_R32G32B32A32_FLOAT)
 	float2 Texcoord : TEXCOORD; // 2개의 float 값 (DXGI_FORMAT_R32G32_FLOAT)
 	float3 Normal : NORMAL; // 3개의 float 값 (DXGI_FORMAT_R32G32B32_FLOAT)
+	int TextIndex : TEXTINDEX;
 };
 
 struct VS_OUTPUT
 {
 	float4 Pos : SV_POSITION;
 	float2 Tex : TEXCOORD;
+	int TextIndex : TEXTINDEX;
 };
 
 cbuffer constants : register(b0)
@@ -34,6 +36,7 @@ VS_OUTPUT Texture_VS(VS_INPUT input)
 
 	output.Pos = mul(float4(input.Position.xyz, 1.0f), MVP);
 	output.Tex = input.Texcoord;
-
+	output.TextIndex = input.TextIndex;
+	
 	return output;
 }

@@ -11,6 +11,15 @@ struct FVertexSimple
 	float NX, NY, NZ;  // Normal
 };
 
+struct FVertexTextureArray 
+{
+	float X, Y, Z;    // Position
+	float R, G, B, A; // Color
+	float U, V;		  // Texture UV
+	float NX, NY, NZ;  // Normal
+	int TI;			  // Texture Index
+};
+
 struct FLineVertexSimple {
 	float X, Y, Z;
 	float R, G, B, A;
@@ -22,7 +31,7 @@ struct FLineVertexSimple {
 
 struct FGeometryData
 {
-	TArray<FVertexSimple> Vertices;
+	TArray<FVertexTextureArray> Vertices;
 	TArray<uint32> Indices;
 };
 
