@@ -145,7 +145,7 @@ void UAssetManager::LoadAssets() {
 		if (meshAsset != nullptr) {
 			if (objMetaData->GetAssetExtension() == ".obj") {
 				if (AssetMetaDatas.Contains(objMetaData->GetAssetName() + ".objbinary")) {
-					break;
+					continue;
 				}
 			}
 			meshAsset->SetMetaData(*objMetaData);
