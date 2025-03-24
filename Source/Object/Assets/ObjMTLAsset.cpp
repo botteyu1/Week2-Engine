@@ -93,6 +93,8 @@ bool UObjMTLAsset::Load()
 		else if (keyword == "map_Kd")
 		{
 			iss >> currentMat.map_Kd;
+			TextureNames.Add(currentMat.map_Kd);
+			currentMat.textureIndex = TextureNames.Num() - 1;
 		}
 		else if (keyword == "map_Ks")
 		{
