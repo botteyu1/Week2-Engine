@@ -11,12 +11,12 @@ void FObjArchive::ObjToBinary(const FString& filePath, const TArray<FVertexSimpl
 		return;
 	}
 	// 정점 개수 저장 (int32)
-	int32 vertexCount = vertices.Num();
-	objBinary.write(reinterpret_cast<const char*>(&vertexCount), sizeof(int32));
+	uint32 vertexCount = vertices.Num();
+	objBinary.write(reinterpret_cast<const char*>(&vertexCount), sizeof(uint32));
 
-	// 인덱스 개수 저장 (int32)
-	int32 indexCount = indices.Num();
-	objBinary.write(reinterpret_cast<const char*>(&indexCount), sizeof(int32));
+	// 인덱스 개수 저장 (uint32)
+	uint32 indexCount = indices.Num();
+	objBinary.write(reinterpret_cast<const char*>(&indexCount), sizeof(uint32));
 
 	// 모든 정점 데이터 저장
 	objBinary.write(reinterpret_cast<const char*>(vertices.GetData()), sizeof(FVertexSimple) * vertexCount);
@@ -35,12 +35,12 @@ bool FObjArchive::ReadBinary(const FString& filePath, TArray<FVertexSimple>& out
 		return false;
 	}
 	// 정점(Vertex) 개수 읽기
-	int32 vertexCount;
-	objBinary.read(reinterpret_cast<char*>(&vertexCount), sizeof(int32));
+	uint32 vertexCount;
+	objBinary.read(reinterpret_cast<char*>(&vertexCount), sizeof(uint32));
 
 	// 인덱스(Index) 개수 읽기
-	int32 indexCount;
-	objBinary.read(reinterpret_cast<char*>(&indexCount), sizeof(int32));
+	uint32 indexCount;
+	objBinary.read(reinterpret_cast<char*>(&indexCount), sizeof(uint32));
 
 	// 정점(Vertex) 데이터 읽기
 	outVertices.SetNum(vertexCount);
