@@ -13,6 +13,7 @@
 #include "Resource/DirectResource/Vertexbuffer.h"
 #include <Resource/Mesh.h>
 #include <Resource/Material.h>
+#include "Core/EngineEnum.h"
 
 
 class UVertexShader;
@@ -88,6 +89,10 @@ public:
 	void SetMaterial(const FString& InName) { RenderResourceCollection.SetMaterial(InName); }
 	
 	FRenderResourceCollection& GetRenderResourceCollection() { return RenderResourceCollection; }
+
+	ERenderQueue GetRenderQueue() const { return RenderQueue; }
+	void SetRenderQueue(ERenderQueue InRenderQueue) { RenderQueue = InRenderQueue; }
+
 public:
 	void SetBoundsScale(float NewBoudnsScale);
 
@@ -100,7 +105,7 @@ protected:
 	bool bUseVertexColor = true;
 	bool bIsOrthoGraphic = false;
 	bool bIsPicking = false;
-	bool bUseTextureIndex = false;
+	ERenderQueue RenderQueue = ERenderQueue::Default;
 
 	FVector4 CustomColor = FVector4(1.0f, 1.0f, 1.0f, 1.0f);
 

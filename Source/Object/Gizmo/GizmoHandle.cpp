@@ -42,8 +42,8 @@ AGizmoHandle::AGizmoHandle()
 	//UEngine::Get().GetWorld()->AddRenderComponent(ZArrow);
 	//UEngine::Get().GetWorld()->AddRenderComponent(XArrow);
 	//UEngine::Get().GetWorld()->AddRenderComponent(YArrow);
-	UEngine::Get().GetWorld()->AddZIgnoreComponent(XArrow);
-	UEngine::Get().GetWorld()->AddZIgnoreComponent(YArrow);
+	UEngine::Get().GetWorld()->AddRenderComponent(XArrow);
+	UEngine::Get().GetWorld()->AddRenderComponent(YArrow);
 
 	SetActive(false);  
 }	

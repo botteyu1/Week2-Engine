@@ -256,6 +256,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Core\EngineEnum.h" />
     <ClCompile Include="Source\Core\Rendering\FViewport.cpp" />
     <ClCompile Include="Source\Core\Math\Rect.cpp" />
     <ClCompile Include="Source\Core\Math\Transform.cpp" />
