@@ -15,7 +15,7 @@ bool UObjMTLAsset::Load()
 	std::ifstream file(GetAssetPath().GetData());
 	if (!file.is_open()) 
 	{
-		MsgBoxAssert("Failed to open MTL File: %s", GetAssetPath().GetData());
+		MsgBoxAssert("Failed to open MTL File: ");
 		return false;
 	}
 
