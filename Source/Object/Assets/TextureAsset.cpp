@@ -7,6 +7,8 @@
 #include "Resource/DirectResource/Sampler.h"
 #include "Resource/Texture.h"
 
+#include "Debug/DebugConsole.h"
+
 
 using namespace std;
 
@@ -33,7 +35,15 @@ bool UTextureAsset::Load() {
 	}
 
 	Texture = UTexture::Load(MetaData, MetaData.GetAssetName());
+	if (Texture == nullptr) 
+	{
+		MsgBoxAssert("텍스처 Load 실패");
+	}
 	Sampler = USampler::Find("LinearSamplerState");
+	if (Sampler == nullptr) 
+	{
+		MsgBoxAssert("Sampler Load 실패");
+	}
 	Texture->CreateShaderResourceView();
 
 	return true;

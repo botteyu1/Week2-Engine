@@ -434,7 +434,8 @@ namespace objl
 			if (Path.substr(Path.size() - 4, 4) != ".obj")
 				return false;
 
-
+			size_t pos = Path.find_last_of("\\");
+			LoadedFolderPath = (pos != std::string::npos) ? Path.substr(0, pos) : "Error";
 			std::ifstream file(Path);
 
 			if (!file.is_open())
@@ -483,7 +484,7 @@ namespace objl
 #endif
 
 				// Generate a Mesh Object or Prepare for an object to be created
-				if (algorithm::firstToken(curline) == "o" || algorithm::firstToken(curline) == "g" || curline[0] == 'g')
+				if (algorithm::firstToken(curline) == "o" || algorithm::firstToken(curline) == "g" || curline[0] == 'g' || curline[0] == 'o')
 				{
 					if (!listening)
 					{
@@ -601,7 +602,6 @@ namespace objl
 
 						indnum = (unsigned int)((LoadedVertices.size()) - vVerts.size()) + iIndices[i];
 						LoadedIndices.push_back(indnum);
-
 					}
 				}
 				// Get Mesh Material Name
@@ -721,6 +721,8 @@ namespace objl
 		std::vector<unsigned int> LoadedIndices;
 		// Loaded Material Objects
 		std::vector<Material> LoadedMaterials;
+		std::string LoadedMTL;
+		std::string LoadedFolderPath;
 
 	private:
 		// Generate vertices from a list of positions, 
@@ -741,7 +743,7 @@ namespace objl
 			for (int i = 0; i < int(sface.size()); i++)
 			{
 				// See What type the vertex is.
-				int vtype;
+				int vtype = 0;
 
 				algorithm::split(sface[i], svert, "/");
 
@@ -839,14 +841,10 @@ namespace objl
 		void VertexTriangluation(std::vector<unsigned int>& oIndices,
 			const std::vector<Vertex>& iVerts)
 		{
-			// If there are 2 or less verts,
-			// no triangle can be created,
-			// so exit
-			if (iVerts.size() < 3)
-			{
-				return;
-			}
-			// If it is a triangle no need to calculate it
+			// 3개 미만의 정점이면 삼각형을 만들 수 없음
+			if (iVerts.size() < 3) return;
+
+			// 이미 삼각형이면 그대로 추가
 			if (iVerts.size() == 3)
 			{
 				oIndices.push_back(0);
@@ -855,153 +853,69 @@ namespace objl
 				return;
 			}
 
-			// Create a list of vertices
-			std::vector<Vertex> tVerts = iVerts;
+			// 현재 다각형을 삼각형으로 변환하기 위한 정점 리스트
+			std::vector<int> vertIndices;
+			for (int i = 0; i < iVerts.size(); i++)
+				vertIndices.push_back(i);
 
-			while (true)
+			while (vertIndices.size() > 3) // 남은 정점이 3개 이하가 될 때까지 반복
 			{
-				// For every vertex
-				for (int i = 0; i < int(tVerts.size()); i++)
+				int vCount = vertIndices.size();
+				bool triangleFound = false;
+
+				for (int i = 0; i < vCount; i++)
 				{
-					// pPrev = the previous vertex in the list
-					Vertex pPrev;
-					if (i == 0)
-					{
-						pPrev = tVerts[tVerts.size() - 1];
-					}
-					else
-					{
-						pPrev = tVerts[i - 1];
-					}
+					// 이전, 현재, 다음 정점 선택
+					int prevIdx = (i == 0) ? vertIndices[vCount - 1] : vertIndices[i - 1];
+					int curIdx = vertIndices[i];
+					int nextIdx = (i == vCount - 1) ? vertIndices[0] : vertIndices[i + 1];
 
-					// pCur = the current vertex;
-					Vertex pCur = tVerts[i];
+					const Vertex& pPrev = iVerts[prevIdx];
+					const Vertex& pCur = iVerts[curIdx];
+					const Vertex& pNext = iVerts[nextIdx];
 
-					// pNext = the next vertex in the list
-					Vertex pNext;
-					if (i == tVerts.size() - 1)
-					{
-						pNext = tVerts[0];
-					}
-					else
-					{
-						pNext = tVerts[i + 1];
-					}
-
-					// Check to see if there are only 3 verts left
-					// if so this is the last triangle
-					if (tVerts.size() == 3)
-					{
-						// Create a triangle from pCur, pPrev, pNext
-						for (int j = 0; j < int(tVerts.size()); j++)
-						{
-							if (iVerts[j].Position == pCur.Position)
-								oIndices.push_back(j);
-							if (iVerts[j].Position == pPrev.Position)
-								oIndices.push_back(j);
-							if (iVerts[j].Position == pNext.Position)
-								oIndices.push_back(j);
-						}
-
-						tVerts.clear();
-						break;
-					}
-					if (tVerts.size() == 4)
-					{
-						// Create a triangle from pCur, pPrev, pNext
-						for (int j = 0; j < int(iVerts.size()); j++)
-						{
-							if (iVerts[j].Position == pCur.Position)
-								oIndices.push_back(j);
-							if (iVerts[j].Position == pPrev.Position)
-								oIndices.push_back(j);
-							if (iVerts[j].Position == pNext.Position)
-								oIndices.push_back(j);
-						}
-
-						Vector3 tempVec;
-						for (int j = 0; j < int(tVerts.size()); j++)
-						{
-							if (tVerts[j].Position != pCur.Position
-								&& tVerts[j].Position != pPrev.Position
-								&& tVerts[j].Position != pNext.Position)
-							{
-								tempVec = tVerts[j].Position;
-								break;
-							}
-						}
-
-						// Create a triangle from pCur, pPrev, pNext
-						for (int j = 0; j < int(iVerts.size()); j++)
-						{
-							if (iVerts[j].Position == pPrev.Position)
-								oIndices.push_back(j);
-							if (iVerts[j].Position == pNext.Position)
-								oIndices.push_back(j);
-							if (iVerts[j].Position == tempVec)
-								oIndices.push_back(j);
-						}
-
-						tVerts.clear();
-						break;
-					}
-
-					// If Vertex is not an interior vertex
+					// 삼각형의 각도 확인
 					float angle = math::AngleBetweenV3(pPrev.Position - pCur.Position, pNext.Position - pCur.Position) * (180 / 3.14159265359);
-					if (angle <= 0 && angle >= 180)
+					if (angle < 1.0f || angle > 179.0f) // 너무 평평한 삼각형 방지
 						continue;
 
-					// If any vertices are within this triangle
+					// 삼각형 내부에 다른 정점이 있는지 확인
 					bool inTri = false;
-					for (int j = 0; j < int(iVerts.size()); j++)
+					for (int j = 0; j < iVerts.size(); j++)
 					{
-						if (algorithm::inTriangle(iVerts[j].Position, pPrev.Position, pCur.Position, pNext.Position)
-							&& iVerts[j].Position != pPrev.Position
-							&& iVerts[j].Position != pCur.Position
-							&& iVerts[j].Position != pNext.Position)
+						if (j == prevIdx || j == curIdx || j == nextIdx) continue;
+						if (algorithm::inTriangle(iVerts[j].Position, pPrev.Position, pCur.Position, pNext.Position))
 						{
 							inTri = true;
 							break;
 						}
 					}
-					if (inTri)
-						continue;
+					if (inTri) continue;
 
-					// Create a triangle from pCur, pPrev, pNext
-					for (int j = 0; j < int(iVerts.size()); j++)
-					{
-						if (iVerts[j].Position == pCur.Position)
-							oIndices.push_back(j);
-						if (iVerts[j].Position == pPrev.Position)
-							oIndices.push_back(j);
-						if (iVerts[j].Position == pNext.Position)
-							oIndices.push_back(j);
-					}
+					// 유효한 삼각형을 찾으면 인덱스 추가
+					oIndices.push_back(prevIdx);
+					oIndices.push_back(curIdx);
+					oIndices.push_back(nextIdx);
 
-					// Delete pCur from the list
-					for (int j = 0; j < int(tVerts.size()); j++)
-					{
-						if (tVerts[j].Position == pCur.Position)
-						{
-							tVerts.erase(tVerts.begin() + j);
-							break;
-						}
-					}
-
-					// reset i to the start
-					// -1 since loop will add 1 to it
-					i = -1;
+					// 현재 정점(curIdx) 제거 (Ear Clipping 방식)
+					vertIndices.erase(vertIndices.begin() + i);
+					triangleFound = true;
+					break; // 하나의 삼각형을 만들었으므로 다시 처음부터 체크
 				}
 
-				// if no triangles were created
-				if (oIndices.size() == 0)
-					break;
+				// 삼각형을 찾지 못하면 루프 탈출 (이상한 구조의 다각형 방지)
+				if (!triangleFound) break;
+			}
 
-				// if no more vertices
-				if (tVerts.size() == 0)
-					break;
+			// 마지막 남은 3개의 정점 추가
+			if (vertIndices.size() == 3)
+			{
+				oIndices.push_back(vertIndices[0]);
+				oIndices.push_back(vertIndices[1]);
+				oIndices.push_back(vertIndices[2]);
 			}
 		}
+
 
 		// Load Materials from .mtl file
 		bool LoadMaterials(std::string path)
@@ -1010,7 +924,9 @@ namespace objl
 			if (path.substr(path.size() - 4, path.size()) != ".mtl")
 				return false;
 
-			std::ifstream file(path);
+			LoadedMTL = path;
+
+			std::ifstream file(LoadedFolderPath + "\\" + path);
 
 			// If the file is not found return false
 			if (!file.is_open())
