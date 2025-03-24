@@ -259,7 +259,7 @@ void FDevice::ReleaseDepthStencilBuffer()
 void FDevice::Prepare() const
 {
 	Clear();
-	SetRenderTarget();
+	SetMainRenderTarget();
 }
 
 void FDevice::Clear() const
@@ -275,7 +275,7 @@ void FDevice::Clear() const
 	FDevice::Get().GetDeviceContext()->ClearDepthStencilView(PickingDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 }
 
-void FDevice::SetRenderTarget() const
+void FDevice::SetMainRenderTarget() const
 {
 	//// Rasterization할 Viewport를 설정 
 	//const D3D11_VIEWPORT& ViewportInfo = Viewports[EViewSplitter::Right]->GetViewportInfo();
@@ -293,9 +293,8 @@ void FDevice::SetRenderTarget() const
 	// FDevice::Get().GetDeviceContext()->OMSetRenderTargets(2, &RTV, nullptr);
 }
 
-void FDevice::PickingPrepare() const
+void FDevice::SetEditorPrimitiveRenderTarget() const
 {
-
 	ID3D11RenderTargetView* RTV = UEngine::Get().GetEditor()->UUIDTexture->GetRTV();
 	// 렌더 타겟 바인딩
 	ID3D11RenderTargetView* RTVs[2] = { FrameBufferRTV, RTV };

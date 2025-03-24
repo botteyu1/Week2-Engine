@@ -57,6 +57,7 @@ public:
 			Rect.Width(), Rect.Height());
 
 		SideLT->OnResizeUpdate();
+		//SideLT->OnResize();
 		SideRB->OnResizeUpdate();
 
 	}

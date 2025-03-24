@@ -7,6 +7,7 @@ UGizmoComponent::UGizmoComponent()
 	//SetMaterial(TEXT("AlwaysVisibleMaterial"));
 	SetMesh(TEXT("GizmoArrow"));
 	bCanBeRendered = true;
+	RenderQueue = ERenderQueue::EditorPrimitives;
 }
 
 void UGizmoComponent::BeginPlay()

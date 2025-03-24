@@ -53,10 +53,10 @@ public:
 
 	void Clear() const;
 	
-	void SetRenderTarget() const;
+	void SetMainRenderTarget() const;
 
 	/** 픽킹렌더링 파이프라인을 준비 합니다. */
-	void PickingPrepare() const;
+	void SetEditorPrimitiveRenderTarget() const;
 	
 	/** 스왑 체인의 백 버퍼와 프론트 버퍼를 교체하여 화면에 출력 */
 	void SwapBuffer() const;

@@ -48,7 +48,9 @@ AGizmoActor::AGizmoActor()
 	GizmoComponents.Add(ESelectedAxis::X, XGizmo);
 	XGizmo->Axis = ESelectedAxis::X;
 
+	//기즈모 중앙 원
 	USphereComp* Comp = AddComponent<USphereComp>();
+	Comp->SetRenderQueue(ERenderQueue::EditorPrimitives);
 
 	Comp->SetMaterial(TEXT("AlwaysVisibleMaterial"));
 	//Comp->SetMesh(TEXT("GizmoArrow"));
@@ -58,15 +60,17 @@ AGizmoActor::AGizmoActor()
 	FVector(0.1f)
 		});
 
+
+
 	FVector4 Color = FVector4::WHITE * 0.8f;
 	Color.W = 1.0f;
 	Comp->SetCustomColor(Color);
 
 
-	UEngine::Get().GetWorld()->AddZIgnoreComponent(XGizmo);
-	UEngine::Get().GetWorld()->AddZIgnoreComponent(YGizmo);
-	UEngine::Get().GetWorld()->AddZIgnoreComponent(ZGizmo);
-	UEngine::Get().GetWorld()->AddZIgnoreComponent(Comp);
+	UEngine::Get().GetWorld()->AddRenderComponent(XGizmo);
+	UEngine::Get().GetWorld()->AddRenderComponent(YGizmo);
+	UEngine::Get().GetWorld()->AddRenderComponent(ZGizmo);
+	UEngine::Get().GetWorld()->AddRenderComponent(Comp);
 }
 
 void AGizmoActor::BeginPlay()

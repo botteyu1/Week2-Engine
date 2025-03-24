@@ -8,6 +8,8 @@
 #include "Debug/DebugConsole.h"
 #include "Object/ObjectFactory.h"
 #include "Object/Actor/StaticMesh.h"
+#include "Core/EngineEnum.h"
+
 
 
 class URenderer;
@@ -52,7 +54,7 @@ public:
 	bool DestroyActor(AActor* InActor);
 	
 	void Render();
-	void RenderPickingTexture(URenderer& Renderer);
+
 	//void DisplayPickingTexture(URenderer& Renderer);
 	void RenderMainTexture(URenderer& Renderer);
 
@@ -60,13 +62,13 @@ public:
 	void LoadWorld(const char* InSceneName);
 	void SaveWorld();
 
-	void AddZIgnoreComponent(UPrimitiveComponent* InComponent);
-	void RemoveZIgnoreComponent(UPrimitiveComponent* InComponent) {ZIgnoreRenderComponents.Remove(InComponent); }
-	bool ContainsZIgnoreComponent(UPrimitiveComponent* InComponent) {return ZIgnoreRenderComponents.Find(InComponent) != -1; }
+	//void AddZIgnoreComponent(UPrimitiveComponent* InComponent);
+	//void RemoveZIgnoreComponent(UPrimitiveComponent* InComponent) {ZIgnoreRenderComponents.Remove(InComponent); }
+	//bool ContainsZIgnoreComponent(UPrimitiveComponent* InComponent) {return ZIgnoreRenderComponents.Find(InComponent) != -1; }
 	
 	// render
-	void AddRenderComponent(UPrimitiveComponent* Component) { RenderComponents.Add(Component); }
-	void RemoveRenderComponent(UPrimitiveComponent* Component) { RenderComponents.Remove(Component); }
+	void AddRenderComponent(class UPrimitiveComponent* Component); 
+	void RemoveRenderComponent(UPrimitiveComponent* Component); 
 
 	inline ACamera* GetCamera(EViewPortSplitter InType) const { return CameraMap[InType]; }
 	// 현재 렌더되는 카메라의 getter, 렌더 루프 바깥에서 쓰면 nullptr 반환
@@ -107,10 +109,10 @@ public:
 	
 protected:
 	TArray<AActor*> Actors;
-	TArray<UPrimitiveComponent*> ZIgnoreRenderComponents;
+	//TArray<UPrimitiveComponent*> ZIgnoreRenderComponents;
 	TArray<AActor*> ActorsToSpawn;
 	TArray<AActor*> PendingDestroyActors; // TODO: 추후에 TQueue로 변경
-	TSet<UPrimitiveComponent*> RenderComponents;
+	TMap<ERenderQueue,TSet<UPrimitiveComponent*>> RenderQueueComponents;
 
 // Editor Only
 public:

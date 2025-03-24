@@ -207,6 +207,9 @@ void UWorld::Render()
 		RenderMainTexture(*Renderer);
 
 
+		FDevice::Get().SetMainRenderTarget();
+
+
 		AActor* SelectedActor = UEngine::Get().GetEditor()->GetSelectedActor();
 		if (SelectedActor != nullptr)
 		{
@@ -244,40 +247,6 @@ void UWorld::Render()
 
 }
 
-void UWorld::RenderPickingTexture(URenderer& Renderer)
-{
-	// Renderer.PreparePicking();
-	// Renderer.PreparePickingShader();
-
-	for (auto& RenderComponent : RenderComponents)
-	{
-
-		AActor* Owner = RenderComponent->GetOwner();
-		if (Owner->GetDepth() > 0 or Owner->IsHidden() == true)
-		{
-			continue;
-		}
-		// uint32 UUID = RenderComponent->GetUUID();
-		// RenderComponent->UpdateConstantPicking(Renderer, APicker::EncodeUUID(UUID));
-		RenderComponent->Render();
-	}
-
-	// Renderer.PrepareZIgnore();
-	for (auto& RenderComponent: ZIgnoreRenderComponents)
-	{
-		AActor* Owner = RenderComponent->GetOwner();
-		if (Owner->IsHidden() == true)
-		{
-			continue;
-		}
-		RenderComponent->Render();
-		// uint32 UUID = RenderComponent->GetUUID();
-		// RenderComponent->UpdateConstantPicking(Renderer, APicker::EncodeUUID(UUID));
-		// uint32 depth = RenderComponent->GetOwner()->GetDepth();
-		// RenderComponent->Render();
-	}
-}
-
 void UWorld::RenderMainTexture(URenderer& Renderer)
 {
 	// Renderer.Prepare();
@@ -285,32 +254,47 @@ void UWorld::RenderMainTexture(URenderer& Renderer)
 	// Renderer.PrepareMain();
 
 	//Renderer.PrepareMainShader();
-	for (auto& RenderComponent : RenderComponents)
+
+
+	for (auto& RenderQueue : RenderQueueComponents)
 	{
-		AActor* Owner = RenderComponent->GetOwner();
-		if (Owner->GetDepth() > 0 or Owner->IsHidden() == true)
+		if (RenderQueue.Key == ERenderQueue::EditorPrimitives)
 		{
-			continue;
+			FDevice::Get().SetEditorPrimitiveRenderTarget();
 		}
-		uint32 depth = RenderComponent->GetOwner()->GetDepth();
-		// RenderComponent->UpdateConstantDepth(Renderer, depth);
-		RenderComponent->Render();
+		else
+		{
+			FDevice::Get().SetMainRenderTarget();
+		}
+
+		for (auto& RenderComponent : RenderQueue.Value)
+		{
+			AActor* Owner = RenderComponent->GetOwner();
+			if (Owner->IsHidden() == true)
+			{
+				continue;
+			}
+			uint32 depth = RenderComponent->GetOwner()->GetDepth();
+			// RenderComponent->UpdateConstantDepth(Renderer, depth);
+			RenderComponent->Render();
+		}
+
 	}
 
-	FDevice::Get().PickingPrepare();
 
-	//Renderer.PrepareZIgnore();
-	for (auto& RenderComponent: ZIgnoreRenderComponents)
-	{
-		if (RenderComponent->GetOwner()->IsHidden() == true)
-		{
-			continue;
-		}
-		uint32 depth = RenderComponent->GetOwner()->GetDepth();
-		RenderComponent->Render();
-	}
+	
 
-	FDevice::Get().SetRenderTarget();
+	////Renderer.PrepareZIgnore();
+	//for (auto& RenderComponent: ZIgnoreRenderComponents)
+	//{
+	//	if (RenderComponent->GetOwner()->IsHidden() == true)
+	//	{
+	//		continue;
+	//	}
+	//	uint32 depth = RenderComponent->GetOwner()->GetDepth();
+	//	RenderComponent->Render();
+	//}
+
 }
 
 // void UWorld::DisplayPickingTexture(URenderer& Renderer)
@@ -392,11 +376,22 @@ void UWorld::SaveWorld()
 	JsonSaveHelper::SaveScene(GetWorldInfo());
 }
 
-void UWorld::AddZIgnoreComponent(UPrimitiveComponent* InComponent)
+//void UWorld::AddZIgnoreComponent(UPrimitiveComponent* InComponent)
+//{
+//	ZIgnoreRenderComponents.Add(InComponent);
+//	//InComponent->SetIsOrthoGraphic(true);
+//}
+
+void UWorld::AddRenderComponent(UPrimitiveComponent* Component)
 {
-	ZIgnoreRenderComponents.Add(InComponent);
-	//InComponent->SetIsOrthoGraphic(true);
+	RenderQueueComponents[Component->GetRenderQueue()].Add(Component); 
 }
+
+void UWorld::RemoveRenderComponent(UPrimitiveComponent* Component)
+{
+	RenderQueueComponents[Component->GetRenderQueue()].Remove(Component); 
+}
+
 
 void UWorld::LoadWorld(const char* InSceneName)
 {
@@ -609,3 +604,4 @@ UWorldInfo UWorld::GetWorldInfo() const
 	}
 	return WorldInfo;
 }
+
