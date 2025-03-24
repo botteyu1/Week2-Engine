@@ -79,11 +79,13 @@ void UEngine::Initialize(
 	UE_LOG("Init Device...");
 	FDevice::Get().Init(WindowHandle); // require window
 
-	UE_LOG("Init Editor...");
-	InitEditor(); // require FDevice 나중에 멀티쓰레드로?
-
 	UE_LOG("Init World...");
-	InitWorld(); // require Editor
+	InitWorld();
+
+	UE_LOG("Init Editor...");
+	InitEditor(); // require FDevice, World 나중에 멀티쓰레드로?
+
+	
 
 	UE_LOG("Init Renderer...");
 	InitRenderer(); // require FDevice, World
@@ -294,8 +296,6 @@ void UEngine::UpdateWindowSize()
 	FDevice::Get().OnResizeComplete();
 	
 	UEngine::Get().GetEditor()->OnResizeComplete();
-
-	World->UpdateViewPorts();
 }
 
 UObject* UEngine::GetObjectByUUID(uint32 InUUID) const

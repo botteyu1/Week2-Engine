@@ -3,6 +3,7 @@
 #include "Object/World/World.h"
 #include "Core/Math/Vector.h"
 #include "Core/Math/Transform.h"
+#include "Core/Rendering/SWindow.h"
 #include <Object/Gizmo/GizmoActor.h>
 #include "Debug/DebugDrawManager.h"
 
@@ -13,6 +14,8 @@
 void UEditorManager::Init()
 {
 	CreateUUIDTexture();
+	RegisterInputCallbacks();
+	InitMainSWindow();
 	//D3D11_TEXTURE2D_DESC DepthBufferDesc = {};
 	//DepthBufferDesc.Width = Width;
 	//DepthBufferDesc.SplitterHeight = SplitterHeight;
@@ -28,6 +31,21 @@ void UEditorManager::Init()
 	//
 	//UUIDTextureDepthStecil = FTexture::Create("UUIDTextureDepthStecil", DepthBufferDesc);
 	//UUIDTextureDepthStecil->CreateDepthStencilView();
+}
+
+void UEditorManager::RegisterInputCallbacks() {
+	UEngine::Get().GetInput()->RegisterMouseDownCallback(EKeyCode::LButton, [this](const FVector& MouseNDCPos) {
+		UInputManager* inputManager = UEngine::Get().GetInput();
+		FVector mousePos = inputManager->GetMousePos();
+		FVector2D mousePosInWindow;
+
+		this->SelectedWindow = this->GetClickedWindow(mousePos, this->GetRootWindow());
+		if ( this->SelectedWindow == nullptr )
+			return;
+		mousePosInWindow.X = mousePos.X - this->SelectedWindow->Rect.Left;
+		mousePosInWindow.Y = mousePos.Y - this->SelectedWindow->Rect.Top;
+		this->SelectedWindow->OnMousePressed(mousePosInWindow);
+	}, UEngine::Get().GetWorld()->GetUUID());
 }
 
 void UEditorManager::CreateUUIDTexture() {
@@ -46,6 +64,22 @@ void UEditorManager::CreateUUIDTexture() {
 
 	UUIDTexture = UTexture::Create("UUIDTexture", textureDesc);
 	//UUIDTexture->CreateRenderTargetView(); // 이미 create 내에서 실행됨
+}
+
+void UEditorManager::InitMainSWindow() {
+	UWorld* world = UEngine::Get().GetWorld();
+	DXGI_SWAP_CHAIN_DESC SwapChainDesc;
+	FDevice::Get().GetSwapChain()->GetDesc(&SwapChainDesc);
+	FViewportClient* viewportClient = world->AddViewportClient(
+		FRect(
+			0,
+			0,
+			SwapChainDesc.BufferDesc.Width,
+			SwapChainDesc.BufferDesc.Height
+		)
+	);
+	RootWindow = std::make_shared<SWorldWindow>(viewportClient);
+	world->SetFocusCamera(viewportClient->camera);
 }
 
 void UEditorManager::SelectActor(AActor* NewActor)
@@ -85,6 +119,36 @@ void UEditorManager::SelectActor(AActor* NewActor)
 
 }
 
+std::shared_ptr<SWindow> UEditorManager::GetClickedWindow(
+	const FVector& InMouseScreenPos,
+	const std::shared_ptr<SWindow> InSWindow
+) {
+	if ( !InSWindow->IsHover(FVector2D(InMouseScreenPos.X, InMouseScreenPos.Y)) )
+		return nullptr;
+	if ( InSWindow->child == nullptr ) {
+		return InSWindow;
+	} else {
+		std::shared_ptr<SWindow> childLT = InSWindow->child->GetSideLT();
+		std::shared_ptr<SWindow> childRB = InSWindow->child->GetSideRB();
+		std::shared_ptr<SWindow> resLT = GetClickedWindow(InMouseScreenPos, childLT);
+		std::shared_ptr<SWindow> resRB = GetClickedWindow(InMouseScreenPos, childRB);
+		if ( resLT != nullptr )
+			return resLT;
+		else if ( resRB != nullptr )
+			return resRB;
+		else
+			return nullptr;
+	}
+}
+
+//void UEditorManager::RenderWindow(const std::shared_ptr<SWindow> InSWindow) {
+//	if ( InSWindow->child == nullptr ) {
+//		SWorldWindow* camWindow = dynamic_cast<SWorldWindow*>(InSWindow.get());
+//		camWindow->GetViewportClient()->
+//		/*camWindow->GetCamera()->UpdateCameraMatrix();
+//		camWindow->GetCamera()->SettingViewport();*/
+//	}
+//}
 
 void UEditorManager::SetGizmo(AGizmoActor* InGizmo)
 {

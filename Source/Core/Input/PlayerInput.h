@@ -170,7 +170,6 @@ private:
 
 
 class FViewport;
-enum class EViewPortSplitter;
 class UInputManager
 {
 public:
@@ -210,12 +209,16 @@ public:
 	template <typename Fn>
 	void RegisterMouseUpCallback(EKeyCode Button, const Fn& Callback, uint32 uuid);
 
-	void GetNDCPosWithSplitViewPort(
+	static FVector GetNDCPosInWindow(
 		const FVector InMousePos,
-		const TMap<EViewPortSplitter, FViewport> InViewPorts,
-		FVector& OutMouseNDCPos,
-		EViewPortSplitter& OutSelectedViewPortIndex
-	) const;
+		const float InWidth,
+		const float InHeight
+	);
+	static FVector GetNDCPosInWindow(
+		const FVector2D InMousePos, 
+		const float InWidth, 
+		const float InHeight
+	);
 private:
 	void CreateKeys();
 	void ClearKeys();

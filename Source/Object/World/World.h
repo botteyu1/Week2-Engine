@@ -5,24 +5,29 @@
 #include "Core/UObject/Object.h"
 #include "Core/UObject/ObjectMacros.h"
 #include "Core/Utils/JsonSavehelper.h"
+#include "Core/Rendering/FViewport.h"
 #include "Debug/DebugConsole.h"
 #include "Object/ObjectFactory.h"
 #include "Object/Actor/StaticMesh.h"
-
-
-class URenderer;
-class AActor;
+#include "Object/Actor/Camera.h"
 
 class UPrimitiveComponent;
 
 
-enum class EViewPortSplitter
-{
-	TopLeft,
-	TopRight,
-	BottomLeft,
-	BottomRight,
-	None,
+//enum class EViewPortSplitter
+//{
+//	TopLeft,
+//	TopRight,
+//	BottomLeft,
+//	BottomRight,
+//	None,
+//};
+
+struct FViewportClient {
+	ACamera* camera;
+	FViewport viewport;
+	FViewportClient(ACamera* camera, FViewport viewport) : camera(camera), viewport(viewport) {};
+	void PrepareRender();
 };
 
 class UWorld :public UObject
@@ -34,7 +39,13 @@ public:
 
 public:
 	void InitWorld();
-	void UpdateViewPorts();
+
+	//std::shared_ptr<SWindow> GetClickedWindow(
+	//	const FVector& InMouseScreenPos, 
+	//	const std::shared_ptr<SWindow> InSWindow
+	//);
+
+	//void RenderWindow(const std::shared_ptr<SWindow> InSWindow);
 
 	void BeginPlay();
 	void Tick(float DeltaTime);
@@ -68,16 +79,27 @@ public:
 	void AddRenderComponent(UPrimitiveComponent* Component) { RenderComponents.Add(Component); }
 	void RemoveRenderComponent(UPrimitiveComponent* Component) { RenderComponents.Remove(Component); }
 
-	inline ACamera* GetCamera(EViewPortSplitter InType) const { return CameraMap[InType]; }
+	// camera
+	//inline ACamera* GetCamera(EViewPortSplitter InType) const { return CameraMap[InType]; }
+	inline FViewportClient* AddViewportClient(FRect InRect) {
+		FViewportClient* viewportClient = new FViewportClient(
+			SpawnActor<ACamera>(),
+			FViewport(InRect)
+		);
+		viewportClient->camera->Viewport = &(viewportClient->viewport);
+		ViewportClients.Add(viewportClient);
+		return viewportClient;
+	};
+	inline void RemoveViewportClient(FViewportClient* viewportClient) { 
+		ViewportClients.Remove(viewportClient); 
+		DestroyActor(viewportClient->camera);
+		delete viewportClient;
+	}
 	// 현재 렌더되는 카메라의 getter, 렌더 루프 바깥에서 쓰면 nullptr 반환
 	inline ACamera* GetCameraRenderFocused() const { return CameraRenderFocused; }
 	inline ACamera* GetCameraFocused() const { return CameraFocused; }
-	
-	inline void SetCamera(EViewPortSplitter InType, ACamera* NewCamera) { CameraMap[InType] = NewCamera; }
-	inline void SetFocusCamera(EViewPortSplitter InType) { 
-		if ( InType == EViewPortSplitter::None )
-			return;
-		CameraFocused = CameraMap[InType]; 
+	inline void SetFocusCamera(ACamera* InCamera) {
+		CameraFocused = InCamera;
 	}
 
 	void RayCasting(const FVector& MouseNDCPos);
@@ -92,11 +114,18 @@ public:
 
 	float GetGridSize() const { return GridSize; }
 
-	inline const TMap<EViewPortSplitter, ACamera*> GetCameraMap() const { return CameraMap; }
+	//inline const TMap<EViewPortSplitter, ACamera*> GetCameraMap() const { return CameraMap; }
+
+	TArray<FViewportClient*> ViewportClients;
+
 private:
 	UWorldInfo GetWorldInfo() const;
+
 	//ACamera* Camera = nullptr;
-	TMap<EViewPortSplitter, ACamera*> CameraMap;
+	//TMap<EViewPortSplitter, ACamera*> CameraMap;
+	
+
+	//std::shared_ptr<SWindow> RootWindow;
 	ACamera* CameraRenderFocused = nullptr;
 	ACamera* CameraFocused = nullptr;
 	float GridSize = 100.0f;

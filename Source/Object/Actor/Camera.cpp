@@ -27,12 +27,12 @@ ACamera::ACamera()
 
 void ACamera::UpdateViewport(FRect InRect)
 {
-	Viewport.UpdateViewport(InRect);
+	Viewport->UpdateViewport(InRect);
 }
 
 void ACamera::SettingViewport()
 {
-	Viewport.Setting();
+	Viewport->Setting();
 }
 
 
@@ -103,7 +103,7 @@ void ACamera::UpdateCameraMatrix()
 	ViewMatrix = GetActorTransform().GetViewMatrix();
 	
 	// 프로젝션 매트릭스 업데이트
-	float AspectRatio = Viewport.GetViewportRatio();
+	float AspectRatio = Viewport->GetViewportRatio();
 
 	float FOV = FMath::DegreesToRadians(GetFieldOfView());
 	float Near = GetNear();

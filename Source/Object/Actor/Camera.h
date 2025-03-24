@@ -41,9 +41,7 @@ private:
 	FMatrix ViewMatrix;
 	FMatrix ProjectionMatrix;
 	FMatrix ViewProjectionMatrix;
-
-
-	FViewport Viewport;
+	
 
 	float ZoomSize = 1000.f;
 public:
@@ -54,7 +52,7 @@ public:
     
     // 투영 타입 - Perspective, Orthographic
     ECameraProjectionMode::Type ProjectionMode;
-
+	FViewport* Viewport;
 
 
 	virtual void BeginPlay() override;
@@ -66,7 +64,6 @@ public:
     float GetFieldOfView() const;
     float GetNear() const;
     float GetFar() const;
-	inline const FViewport GetViewPort() const { return Viewport; }
 
 	void SetZoomSize(float InZoomSize) { ZoomSize = FMath::Clamp(InZoomSize, 100.f, 1000.f); }
 	float GetZoomSize() const { return ZoomSize; }

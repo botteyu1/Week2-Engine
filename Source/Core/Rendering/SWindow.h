@@ -1,7 +1,9 @@
 #pragma once
 #include <Core/Math/Rect.h>
 
-
+class ACamera;
+class SSplitter;
+struct FViewportClient;
 class SWindow {
 public:
 	FRect Rect;
@@ -11,10 +13,25 @@ public:
 	}
 
 	virtual void OnResizeUpdate() {}
+	virtual void Render() {}
+	virtual void OnMouseDown(FVector2D) {}
+	virtual void OnMouseUp(FVector2D) {}
+	virtual void OnMousePressed(FVector2D) {}
+	virtual void OnMouseReleased(FVector2D) {}
 
+	std::shared_ptr<SSplitter> child = nullptr;
 	//virtual void OnDraw() = 0;
 };
 
+class SWorldWindow: public SWindow {
+private:
+	FViewportClient* viewportClient;
+public:
+	SWorldWindow(FViewportClient* viewportClient);
+	inline FViewportClient* GetViewportClient() { return viewportClient; }
+	virtual void OnResizeUpdate() override;
+	virtual void OnMousePressed(FVector2D InCoord);
+};
 
 class SSplitter : public SWindow {
 protected:
@@ -32,13 +49,16 @@ public:
 		return splitterRect.Contains(coord);
 	}
 
-	void OnMouseDown(FVector2D coord)  {
+	void OnMouseDown(FVector2D coord) override {
 		if (IsHover(coord)) bIsDragging = true;
 	}
 
-	void OnMouseUp() {
+	void OnMouseUp(FVector2D coord) override {
 		bIsDragging = false;
 	}
+
+	inline std::shared_ptr<SWindow> GetSideLT() { return SideLT; }
+	inline std::shared_ptr<SWindow> GetSideRB() { return SideRB; }
 };
 
 

@@ -261,7 +261,7 @@ void UI::RenderCameraSettings() const
 {
     ImGui::Text("Camera");
 
-	ACamera* Camera = UEngine::Get().GetWorld()->GetCamera(EViewPortSplitter::TopLeft);
+	ACamera* Camera = UEngine::Get().GetWorld()->GetCameraFocused();
 
     bool IsOrthogonal;
     if (Camera->ProjectionMode == ECameraProjectionMode::Orthographic)

@@ -7,6 +7,7 @@
 class ACamera;
 class AActor;
 class AGizmoActor;
+class SWindow;
 
 class UEditorManager
 {
@@ -15,11 +16,22 @@ class UEditorManager
 public:
 	void Init();
 
+	void RegisterInputCallbacks();
+
 	void CreateUUIDTexture();
+
+	void InitMainSWindow();
     
     inline AActor* GetSelectedActor() const {return SelectedActor;}
     
     void SelectActor(AActor* NewActor);
+
+	std::shared_ptr<SWindow> GetClickedWindow(
+		const FVector& InMouseScreenPos, 
+		const std::shared_ptr<SWindow> InSWindow
+	);
+
+	//void RenderWindow(const std::shared_ptr<SWindow> InSWindow);
 
 
 
@@ -34,16 +46,14 @@ public:
 	void OnUpdateWindowSize(uint32 Width, uint32 Height);
 
 	void OnResizeComplete();
-
 	FVector4 GetPixel(FVector MPos) const;
-    
+	std::shared_ptr<SWindow> SelectedWindow;
+	std::shared_ptr<SWindow> GetRootWindow() { return RootWindow; }
 private:
     ACamera* Camera = nullptr;
     AActor* SelectedActor = nullptr;
 	AGizmoActor* Gizmo = nullptr;
-
-
-
+	std::shared_ptr<SWindow> RootWindow;
 	
 
 	std::shared_ptr<class UTexture> UUIDTexture = nullptr;

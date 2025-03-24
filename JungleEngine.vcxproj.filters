@@ -842,9 +842,6 @@
     <ClInclude Include="Source\Core\Rendering\SWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Core\Rendering\SWindowManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Object\PrimitiveComponent\TextureComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
