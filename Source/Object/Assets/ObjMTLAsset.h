@@ -3,6 +3,7 @@
 #include <array>
 #include <string>
 #include "Core/Container/Array.h"
+#include "Core/Container/Map.h"
 
 struct FObjMaterial {
 	// 머티리얼 이름 (newmtl)
@@ -24,7 +25,7 @@ struct FObjMaterial {
 	std::string map_Kd;  // map_Kd : Diffuse texture map
 	std::string map_Ks; // map_Ks : Specular texture map
 	std::string map_d;    // map_d  : Alpha (투명도) texture map
-	int textureIndex;
+	int32 textureIndex;
 	std::string map_bump;     // bump 또는 map_bump : Bump 또는 Normal map
 	std::string disp; // disp : Displacement map
 	std::string decal;        // decal : Decal map
@@ -63,7 +64,13 @@ public:
 	bool Save(FString path = "") override;
 	bool Unload() override;
 
+	FObjMaterial* GetMaterialByName(const FName& MaterialName);
+
+	int GetTextureNum() { return TextureNames.Num(); }
+	
+	const TArray<FString>& GetTextureNames() const;
+
 private:
-	TArray<FObjMaterial> ObjMaterials;
+	TMap<FName, FObjMaterial> ObjMaterialMap;
 	TArray<FString> TextureNames;
 };

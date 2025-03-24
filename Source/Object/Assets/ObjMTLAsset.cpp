@@ -10,7 +10,7 @@ bool UObjMTLAsset::RegisterAsset()
 
 bool UObjMTLAsset::Load()
 {
-	ObjMaterials.Empty();
+	ObjMaterialMap.Empty();
 	
 	std::ifstream file(GetAssetPath().GetData());
 	if (!file.is_open()) 
@@ -37,7 +37,7 @@ bool UObjMTLAsset::Load()
 		{
 			if (materialStarted) 
 			{
-				ObjMaterials.Add(currentMat);
+				ObjMaterialMap.Add(FString(currentMat.Name.c_str()), currentMat);
 				currentMat = FObjMaterial();
 			}
 			else
@@ -122,7 +122,7 @@ bool UObjMTLAsset::Load()
 
 	if (materialStarted) 
 	{
-		ObjMaterials.Add(currentMat);
+		ObjMaterialMap.Add(FString(currentMat.Name.c_str()), currentMat);
 	}
 
 	file.close();
@@ -136,7 +136,17 @@ bool UObjMTLAsset::Save(FString path)
 
 bool UObjMTLAsset::Unload()
 {
-	ObjMaterials.Empty();
+	ObjMaterialMap.Empty();
 	TextureNames.Empty();
 	return false;
+}
+
+FObjMaterial* UObjMTLAsset::GetMaterialByName(const FName& MaterialName)
+{
+	return ObjMaterialMap.Find(MaterialName);
+}
+
+const TArray<FString>& UObjMTLAsset::GetTextureNames() const
+{
+	return TextureNames;
 }

@@ -118,15 +118,26 @@ void UAssetManager::LoadAssets() {
 			if (objMTLAsset != nullptr) {
 				objMTLAsset->SetMetaData(asset.Value);
 				objMTLAsset->Load();
+
 				Assets.Add(objMTLAsset->GetAssetName(), objMTLAsset);
 			}
 			else {
 				cout << "MTL Asset Load Failed: " << asset.Value.GetAssetName().GetData() << endl;
 			}
 
-
 			// Texture 있으면 Array 로 만들어 두기
-
+			if (objMTLAsset->GetTextureNum() > 0)
+			{
+				UTextureAsset* textureAsset = FObjectFactory::ConstructObject<UTextureAsset>();
+				if (textureAsset != nullptr) {
+					textureAsset->SetMetaData(asset.Value);
+					textureAsset->Load();
+					Assets.Add(textureAsset->GetAssetName() + TEXT(".textArray"), textureAsset);
+				}
+				else {
+					cout << "Texture Asset Load Failed about MTL Asset: " << asset.Value.GetAssetName().GetData() << endl;
+				}
+			}
 
 			break;
 		}
