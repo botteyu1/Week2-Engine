@@ -29,6 +29,8 @@
 #include "Debug/DebugDrawManager.h"
 #include "Object/Gizmo/Axis.h"
 
+#include "Core/UObject/UObjectIterator.h"
+
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
 
@@ -162,6 +164,15 @@ void UWorld::Tick(float DeltaTime)
 			Actor->Tick(DeltaTime);
 		}
 	}
+
+	;
+
+	for (TObjectIterator<UPrimitiveComponent> iter; iter; ++iter)
+	{
+		UPrimitiveComponent* comp = *iter;
+		comp->Tick(DeltaTime);
+	}
+
 }
 
 void UWorld::LateTick(float DeltaTime)

@@ -351,6 +351,7 @@
     <ClCompile Include="Source\Object\Light\LightComponent.cpp" />
     <ClCompile Include="Source\Object\Light\SpotLightComponent.cpp" />
     <ClCompile Include="Source\Object\Actor\SpotLight.cpp" />
+    <ClCompile Include="Source\Core\UObject\UObjectIterator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\Font_VS.hlsl">
@@ -559,6 +560,7 @@
     <ClInclude Include="Source\ThirdParty\SimpleJSON\include\SimpleJSON\Json.hpp" />
     <ClCompile Include="Source\Object\SubUVComponent\UParticleSubUVComponent.cpp" />
     <ClInclude Include="Source\ThirdParty\WavefrontOBJ\WavefrontOBJ.h" />
+    <ClInclude Include="Source\Core\UObject\UObjectIterator.h" />
     <FxCompile Include="Shaders\SubUV_PS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='ObjViewerDebug|x64'">Pixel</ShaderType>

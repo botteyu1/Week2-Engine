@@ -97,7 +97,18 @@ public:
 	void SetNum(SizeType Number);
 
 	/** Array의 Capacity를 Number로 설정합니다. */
-    void Reserve(SizeType Number);
+	void Reserve(SizeType Number);
+
+	bool IsValidIndex(SizeType Index) const;
+
+	/**
+ * Tests if index is valid, i.e. greater than or equal to zero, and less than the number of elements in the array.
+ *
+ * @param Index Index to test.
+ * @returns True if index is valid. False otherwise.
+ */
+	
+
 
     void Sort();
     template <typename Compare>
@@ -282,6 +293,14 @@ template <typename T, typename Allocator>
 void TArray<T, Allocator>::SetNum(SizeType Number)
 {
 	PrivateVector.resize(Number);
+}
+
+template<typename T, typename Allocator>
+inline bool TArray<T, Allocator>::IsValidIndex(SizeType Index) const
+{
+
+	return Index >= 0 && Index < PrivateVector.size();
+
 }
 
 template <typename T, typename Allocator>
