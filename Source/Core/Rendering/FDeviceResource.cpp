@@ -178,11 +178,7 @@ void FDevice::InitResource()
 		/*std::shared_ptr<UTexture> DiceImage = UTexture::Load("Dice.png", "DiceTexture");
 		DiceImage->CreateShaderResourceView();*/
 
-		
-
-		TArray<FString> textureFiles;
-		textureFiles.Add(FString("Dice.png"));
-		textureFiles.Add(FString("DiceRed.png"));
+	
 
 		// TODO: FIX
 		//std::shared_ptr<UTexture> DiceImageArray = UTexture::Load(textureFiles, "DiceTextureArray");

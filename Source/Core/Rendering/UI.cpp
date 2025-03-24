@@ -211,7 +211,7 @@ void UI::RenderPrimitiveSelection()
 				World->SpawnActor<ASpotLight>();
 			}
 			else if (strcmp(items[currentItem], "Dice") == 0) {
-				World->SpawnStaticMeshActor("Dice.obj", true);
+				World->SpawnStaticMeshActor("dice.obj", true);
 			}
 			else if (strcmp(items[currentItem], "Mug") == 0) {
 				World->SpawnStaticMeshActor("Mug.obj");

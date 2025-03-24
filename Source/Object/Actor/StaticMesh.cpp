@@ -10,10 +10,12 @@ void AStaticMesh::SetMesh(FString MeshType, bool texture)
 {
 	UTextureComponent* component = AddComponent<UTextureComponent>();
 	objName = MeshType;
+	std::string assetName = MeshType.GetData();
+	assetName = assetName.substr(0, assetName.size() - 4);
 	component->SetMesh(MeshType);
 	if (texture) {
 		component->SetMaterial("TextureMaterial");
-		component->AddTexture(MeshType + ".png");
+		component->AddTexture(assetName + ".textArray");
 		bUseTexture = 1;
 	}
 	else {

@@ -241,7 +241,8 @@ HRESULT UTexture::CreateTexture2DArrayFromFiles(ID3D11Device* device, const std:
 	{
 		std::vector<BYTE> imageData;
 		UINT w = 0, h = 0;
-		HRESULT hr = LoadWICTextureDataFromFile(device, file, imageData, &w, &h);
+
+		HRESULT hr = LoadWICTextureDataFromFile(device, std::wstring(L"Contents\\") + file, imageData, &w, &h);
 		if (FAILED(hr))
 			return hr;
 		if (width == 0 && height == 0)

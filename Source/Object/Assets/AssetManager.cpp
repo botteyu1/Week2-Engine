@@ -125,7 +125,9 @@ void UAssetManager::LoadAssets() {
 				if (textureAsset != nullptr) {
 					textureAsset->SetMetaData(asset.Value);
 					textureAsset->Load();
-					Assets.Add(textureAsset->GetAssetName() + TEXT(".textArray"), textureAsset);
+					std::string assetName = textureAsset->GetAssetName().GetData();
+					assetName = assetName.substr(0, assetName.size() - 4);
+					Assets.Add(assetName + TEXT(".textArray"), textureAsset);
 				}
 				else {
 					cout << "Texture Asset Load Failed about MTL Asset: " << asset.Value.GetAssetName().GetData() << endl;
