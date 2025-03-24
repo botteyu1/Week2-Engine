@@ -53,9 +53,9 @@ public:
 		{
 			Type = EAssetType::FontAtlas;
 		}
-		else if (AssetExtension.Equals(TEXT(".material")))
+		else if (AssetExtension.Equals(TEXT(".mtl")))
 		{
-			Type = EAssetType::Material;
+			Type = EAssetType::Material;	// MTL 파일 단위에서의 Material
 		}
 		else if (AssetExtension.Equals(TEXT(".anim")))
 		{

@@ -6,6 +6,7 @@
 #include "TextureAsset.h"
 #include "FontAtlasAsset.h"
 #include "MeshAsset.h"
+#include "ObjMTLAsset.h"
 #include <fstream>
 #include <string>
 #include "Primitive/PrimitiveVertices.h"
@@ -109,9 +110,31 @@ void UAssetManager::LoadAssets() {
 			}
 			break;
 		}
+
+		case EAssetType::Material:
+		{
+			// ObjMTLAsset 이라는 것이 있어서 거기서 mlt 파일 읽고 ObjMaterial 여러개 생성하여 들고 있을 것임
+			UObjMTLAsset* objMTLAsset = FObjectFactory::ConstructObject<UObjMTLAsset>();
+			if (objMTLAsset != nullptr) {
+				objMTLAsset->SetMetaData(asset.Value);
+				objMTLAsset->Load();
+				Assets.Add(objMTLAsset->GetAssetName(), objMTLAsset);
+			}
+			else {
+				cout << "MTL Asset Load Failed: " << asset.Value.GetAssetName().GetData() << endl;
+			}
+
+
+			// Texture 있으면 Array 로 만들어 두기
+
+
+			break;
+		}
+
 		}
 	}
 }
+
 
 struct VertexKey {
 	int v, vt, vn;
