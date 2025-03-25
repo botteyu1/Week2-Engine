@@ -111,6 +111,11 @@ public:
 private:
 	TMap<FString, FAssetMetaData> AssetMetaDatas;
 	TArray<FAssetMetaData*> ObjMetaDatas;
+	TArray<FAssetMetaData*> MtlMetaDatas;
 	TMap<FString, UAsset*> Assets;
+
+public:
+	TArray<FString> GetObjDataNames();
+	TArray<FString> GetMtlDataNames();
 };
 

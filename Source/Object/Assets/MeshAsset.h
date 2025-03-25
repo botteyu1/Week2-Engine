@@ -3,6 +3,15 @@
 #include "Core/Container/Array.h"
 #include "Primitive/PrimitiveVertices.h"
 
+struct FSubMesh 
+{
+	std::string SubMeshName;
+	std::string MaterialName;
+
+	FSubMesh()
+		:SubMeshName(""), MaterialName("") { }
+};
+
 class UMeshAsset : public UAsset
 {
 	DECLARE_CLASS(UMeshAsset, UAsset)
@@ -16,5 +25,6 @@ public:
 
 private:
 	FGeometryData GeometryData;
+	TArray<FSubMesh> SubMeshes;
 };
 

@@ -100,12 +100,16 @@ void UAssetManager::LoadAssets() {
 
 		case EAssetType::Mesh:
 		{
+			// UI 쪽에서 Mesh 목록 필요하므로 추가
 			ObjMetaDatas.Add(&asset.Value);
 			break;
 		}
 
 		case EAssetType::Material:
 		{
+			// UI 쪽에서 Material 목록 필요하므로 추가
+			MtlMetaDatas.Add(&asset.Value);
+
 			// ObjMTLAsset 이라는 것이 있어서 거기서 mlt 파일 읽고 ObjMaterial 여러개 생성하여 들고 있을 것임
 			UObjMTLAsset* objMTLAsset = FObjectFactory::ConstructObject<UObjMTLAsset>();
 			if (objMTLAsset != nullptr) {
@@ -158,6 +162,26 @@ void UAssetManager::LoadAssets() {
 			cout << "Mesh Asset Load Failed: " << objMetaData->GetAssetName().GetData() << endl;
 		}
 	}
+}
+
+TArray<FString> UAssetManager::GetObjDataNames()
+{
+	TArray<FString> ObjDataNames;
+	for (auto& ObjMetaData : ObjMetaDatas) 
+	{
+		ObjDataNames.Add(ObjMetaData->GetAssetName());
+	}
+	return ObjDataNames;
+}
+
+TArray<FString> UAssetManager::GetMtlDataNames()
+{
+	TArray<FString> MtlDataNames;
+	for (auto& MtlMetaData : MtlMetaDatas) 
+	{
+		MtlDataNames.Add(MtlMetaData->GetAssetName());
+	}
+	return MtlDataNames;
 }
 
 

@@ -25,11 +25,13 @@ public:// UIWindows
     void RenderPrimitiveSelection();
     void RenderCameraSettings() const;
     void RenderPropertyWindow() const;
+	void RenderSettingMeshCombo();
+	void RenderSettingMaterialPopup();
     void RenderSceneManager();
 	void RenderShowFlagsPanel() const;
 	void RenderViewModePanel() const;
 	void RenderGridSettings() const;
-
+	
 private:
 	// Mouse 전용
 	ImVec2 ResizeToScreenByCurrentRatio(const ImVec2& vec2) const
@@ -85,4 +87,6 @@ private:
 	TArray<uint32> UUIDs;
 	uint32 PrevSize = 0;
 	AActor* CurActor = nullptr;
+
+	int CurMesh = 0;
 };

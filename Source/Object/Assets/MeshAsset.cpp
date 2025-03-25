@@ -46,6 +46,9 @@ bool UMeshAsset::Load()
 			for (int i = 0; i < OBJLoader.LoadedMeshes.size(); i++)
 			{
 				objl::Mesh curMesh = OBJLoader.LoadedMeshes[i];
+				FSubMesh curSubMesh;
+				curSubMesh.SubMeshName = curMesh.MeshName;
+
 				
 				int textureIndex = 0;
 				if (ObjMTLAsset == nullptr) 
@@ -60,9 +63,12 @@ bool UMeshAsset::Load()
 						textureIndex = -2;
 					}
 					else {
+						curSubMesh.MaterialName = curMesh.MeshMaterial.name;
 						textureIndex = curMaterial->textureIndex;
 					}
 				}
+
+				SubMeshes.Add(curSubMesh);
 
 
 				for (int j = 0; j < curMesh.Vertices.size(); j++)

@@ -39,6 +39,7 @@
 // #include "Object/World/World.h"
 // #include "Static/UEditorManager.h"
 // #include "Static/FUUIDBillBoard.h"
+#include "Object/Assets/AssetManager.h"
 
 
 void UI::Initialize(HWND hWnd, const FDevice& Device, UINT ScreenWidth, UINT ScreenHeight)
@@ -484,6 +485,42 @@ void UI::RenderPropertyWindow() const
 		}
     }
     ImGui::End();
+}
+
+void UI::RenderSettingMeshCombo()
+{
+	// Mesh 목록 중에 선택하는 Combo
+	TArray<FString> MeshOptions = UAssetManager::Get().GetObjDataNames();
+	
+	std::string CurrentMeshStr = MeshOptions[CurMesh].GetData();
+	const char* CurrentMeshName = CurrentMeshStr.c_str();
+
+	if (ImGui::BeginCombo("Select Mesh", CurrentMeshName)) 
+	{
+		for (int i = 0; i < MeshOptions.Num(); i++) 
+		{
+			bool isSelected = (CurMesh == i);
+			std::string MeshStr = MeshOptions[i].GetData();
+			const char* MeshName = MeshStr.c_str();
+			if (ImGui::Selectable(MeshName, isSelected)) 
+			{
+				CurMesh = i;
+			}
+			if (isSelected)
+			{
+				ImGui::SetItemDefaultFocus();
+			}
+		}
+		ImGui::EndCombo();
+	}
+
+	// 선택한 Mesh의 SubMesh들을 보여주기 + Material 수정 버튼
+
+}
+
+void UI::RenderSettingMaterialPopup()
+{
+
 }
 
 void UI::RenderSceneManager()
