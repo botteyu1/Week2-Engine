@@ -226,7 +226,7 @@ void UI::RenderPrimitiveSelection()
 				World->SpawnStaticMeshActor("Girl.obj", true);
 			}
 			else if (strcmp(items[currentItem], "SpaceShip") == 0) {
-				World->SpawnStaticMeshActor("SpaceShip.obj");
+				World->SpawnStaticMeshActor("SpaceShip.obj", true);
 			}
 			else if (strcmp(items[currentItem], "Pirate") == 0) {
 				World->SpawnStaticMeshActor("Pirate.obj", true);
@@ -687,7 +687,7 @@ void UI::RenderViewerPanel()
 			World->SpawnStaticMeshActor("Girl.obj", true);
 		}
 		else if (strcmp(items[currentItem], "SpaceShip") == 0) {
-			World->SpawnStaticMeshActor("SpaceShip.obj");
+			World->SpawnStaticMeshActor("SpaceShip.obj", true);
 		}
 		else if (strcmp(items[currentItem], "Pirate") == 0) {
 			World->SpawnStaticMeshActor("Pirate.obj", true);
