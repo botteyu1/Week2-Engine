@@ -57,10 +57,6 @@ public:
 		if (IsHover(coord)) bIsDragging = true;
 	}
 
-	virtual void OnMouseDown(FVector2D coord) override {
-		OnResizeUpdate();
-	}
-
 	void OnMouseReleased(FVector2D coord) override {
 		bIsDragging = false;
 	}
@@ -86,13 +82,7 @@ public:
 	}
 	virtual void OnResizeUpdate() override;
 
-	void OnMouseDown(FVector2D coord) override {
-		if ( !bIsDragging )
-			return;
-		SplitPos = (coord.X - Rect.Left) / Rect.Width();
-		SplitPos = std::clamp(SplitPos, 0.05f, 0.95f);
-		SSplitter::OnMouseDown(coord);
-	}
+	void OnMouseDown(FVector2D coord) override;
 private:
 	FRect GetSplitterRect() const {
 		return Rect;
@@ -117,13 +107,7 @@ public:
 		SideRB->OnResizeUpdate();
 	}
 	virtual void OnResizeUpdate() override;
-	void OnMouseDown(FVector2D coord) override {
-		if ( !bIsDragging )
-			return;
-		SplitPos = (coord.Y - Rect.Top) / Rect.Width();
-		SplitPos = std::clamp(SplitPos, 0.05f, 0.95f);
-		SSplitter::OnMouseDown(coord);
-	}
+	void OnMouseDown(FVector2D coord) override;
 private:
 	FRect GetSplitterRect() const {
 		return Rect;
