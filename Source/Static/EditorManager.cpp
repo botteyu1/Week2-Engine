@@ -8,12 +8,15 @@
 #include "Debug/DebugDrawManager.h"
 
 #include "Core/Input/PlayerInput.h"
-#include "Resource/Texture.h"
 #include "Core/Rendering/FDevice.h"
+#include "Core/Utils/JsonSaveHelper.h"
+#include "Resource/Texture.h"
 
 #include <functional>
 
 void UEditorManager::Release() {
+	JsonSaveHelper::SaveLayout(RootWindow.get());
+
 	UUIDTexture.reset();
 	RootWindow.reset();
 	SelectedWindow.reset();
@@ -50,7 +53,6 @@ void UEditorManager::RegisterInputCallbacks() {
 		this->SelectedWindow = this->GetHoveringWindow(mousePos, this->GetRootWindow());
 		if ( this->SelectedWindow == nullptr )
 			return;
-		UE_LOG("%x", this->SelectedWindow.get());
 		mousePosInWindow.X = mousePos.X - this->SelectedWindow->Rect.Left;
 		mousePosInWindow.Y = mousePos.Y - this->SelectedWindow->Rect.Top;
 		this->SelectedWindow->OnMousePressed(mousePosInWindow);
@@ -76,19 +78,37 @@ void UEditorManager::CreateUUIDTexture() {
 }
 
 void UEditorManager::InitMainSWindow() {
-	UWorld* world = UEngine::Get().GetWorld();
-	DXGI_SWAP_CHAIN_DESC SwapChainDesc;
-	FDevice::Get().GetSwapChain()->GetDesc(&SwapChainDesc);
-	FViewportClient* viewportClient = world->AddViewportClient(
-		FRect(
-			0,
-			0,
-			SwapChainDesc.BufferDesc.Width,
-			SwapChainDesc.BufferDesc.Height
-		)
-	);
-	RootWindow = std::make_shared<SWorldWindow>(viewportClient);
-	world->SetFocusCamera(viewportClient->camera);
+	RootWindow = JsonSaveHelper::LoadLayout();
+	if ( RootWindow != nullptr ) {
+		std::function<SWindow* (SWindow*)> findLeftest = [&](SWindow* window)->SWindow* {
+			if ( window->child == nullptr )
+				return window;
+			return findLeftest(window->child->SideLT.get());
+		};
+		SWorldWindow* leftest = dynamic_cast<SWorldWindow*>(
+			findLeftest(RootWindow.get())
+		);
+
+		UWorld* world = UEngine::Get().GetWorld();
+		world->SetFocusCamera(leftest->GetViewportClient()->camera);
+	} else {
+		UWorld* world = UEngine::Get().GetWorld();
+		DXGI_SWAP_CHAIN_DESC SwapChainDesc;
+		FDevice::Get().GetSwapChain()->GetDesc(&SwapChainDesc);
+		FViewportClient* viewportClient = world->AddViewportClient(
+			FRect(
+				0,
+				0,
+				SwapChainDesc.BufferDesc.Width,
+				SwapChainDesc.BufferDesc.Height
+			)
+		);
+		RootWindow = std::make_shared<SWorldWindow>(viewportClient);
+		world->SetFocusCamera(viewportClient->camera);
+	}
+	
+
+	
 }
 
 void UEditorManager::SplitHorizontalSWindow(std::shared_ptr<SWindow>& window) {
@@ -270,12 +290,14 @@ void UEditorManager::SplitVerticalSWindow(std::shared_ptr<SWindow>& window) {
 }
 
 void UEditorManager::RemoveSWindow(std::shared_ptr<SWindow>& window) {
-	if ( window->parent == nullptr )
-		return;
 	if ( window->child != nullptr )
 		return;
 
 	SSplitter* p = dynamic_cast<SSplitter*>(window->parent.get());
+	if ( p == nullptr )
+		return;
+	
+
 	std::shared_ptr<SWindow> sibiling;
 	if (p->SideLT == window)
 		sibiling = p->SideRB;
@@ -447,7 +469,6 @@ void UEditorManager::ResizingSWindow() {
 		return;
 	
 	if (inputManager->GetKeyPress(EKeyCode::LButton)) {
-		UE_LOG("Pressed");
 		window->OnMousePressed(FVector2D(mousePos.X, mousePos.Y));
 		DraggingSplitter = std::dynamic_pointer_cast<SSplitter>(window);
 
@@ -459,7 +480,6 @@ void UEditorManager::ResizingSWindow() {
 		}
 
 	} else if ( inputManager->GetKeyUp(EKeyCode::LButton) ){
-		UE_LOG("Released");
 		window->OnMouseReleased(FVector2D(mousePos.X, mousePos.Y));
 		DraggingSplitter = nullptr;
 

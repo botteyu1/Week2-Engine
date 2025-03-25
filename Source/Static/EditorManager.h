@@ -1,7 +1,6 @@
 #pragma once
 #include <memory>
 
-#include "Core/AbstractClass/Singleton.h"
 #include "Core/Math/Vector.h"
 
 class ACamera;
@@ -28,6 +27,7 @@ public:
 	void SplitHorizontalSWindow(std::shared_ptr<SWindow>& window);
 	void SplitVerticalSWindow(std::shared_ptr<SWindow>& window);
 	void RemoveSWindow(std::shared_ptr<SWindow>& window);
+
     
     inline AActor* GetSelectedActor() const {return SelectedActor;}
     

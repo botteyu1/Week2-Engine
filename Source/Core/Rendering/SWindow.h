@@ -7,7 +7,7 @@ struct FViewportClient;
 class SWindow {
 public:
 	FRect Rect;
-
+	friend class JsonSaveHelper;
 	virtual bool IsHover(FVector2D coord) const {
 		return Rect.Contains(coord);
 	}
@@ -25,9 +25,11 @@ public:
 };
 
 class SWorldWindow: public SWindow {
+	friend class JsonSaveHelper;
 private:
 	FViewportClient* viewportClient;
 public:
+	SWorldWindow() {};
 	SWorldWindow(FViewportClient* viewportClient);
 	~SWorldWindow();
 	inline FViewportClient* GetViewportClient() { return viewportClient; }
@@ -37,14 +39,11 @@ public:
 
 class SSplitter : public SWindow {
 protected:
-
-	float SplitPos = 0.5f; // 분할 비율 (0.0~1.0)
 	bool bIsDragging = false;
-
 public:
 	std::shared_ptr<SWindow> SideLT; // Left/Top 영역
 	std::shared_ptr<SWindow> SideRB; // Right/Bottom 영역
-	
+	float SplitPos = 0.5f; // 분할 비율 (0.0~1.0)
 	virtual void OnResize() = 0;
 	virtual FRect GetSplitterRect() const = 0;
 
@@ -64,13 +63,18 @@ public:
 
 
 class SSplitterH : public SSplitter { // 가로 분할
+	friend class JsonSaveHelper;
+private:
+	float SplitterWidth;
 public:
+	SSplitterH() {
+		SplitterWidth = 5.0f;
+	};
 	SSplitterH(std::shared_ptr<SWindow> Left, std::shared_ptr<SWindow> Right) {
 		SideLT = Left;
 		SideRB = Right;
 		SplitterWidth = 5.0f;
 	}
-	float SplitterWidth;
 	void OnResize() override {
 		const float splitX = Rect.Width() * SplitPos;
 		SideLT->Rect = FRect(Rect.Left, Rect.Top, splitX, Rect.Height());
@@ -90,13 +94,18 @@ private:
 };
 
 class SSplitterV : public SSplitter { // 세로 분할
+	friend class JsonSaveHelper;
+private:
+	float SplitterHeight;
 public:
+	SSplitterV() {
+		SplitterHeight = 5.0f;
+	};
 	SSplitterV(std::shared_ptr<SWindow> Top, std::shared_ptr<SWindow> Bottom) {
 		SideLT = Top;
 		SideRB = Bottom;
 		SplitterHeight = 5.0f;
 	}
-	float SplitterHeight;
 	void OnResize() override {
 		const float splitY = Rect.Height() * SplitPos;
 		SideLT->Rect = FRect(Rect.Left, Rect.Top, Rect.Width(), splitY);

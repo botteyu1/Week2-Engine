@@ -1,0 +1,255 @@
+{
+  "Child" : {
+    "Child" : {
+      "type" : 0
+    },
+    "RectBottom" : 1041.000000,
+    "RectLeft" : 949.500000,
+    "RectRight" : 954.500000,
+    "RectTop" : 0.000000,
+    "SideLT" : {
+      "Child" : {
+        "Child" : {
+          "type" : 0
+        },
+        "RectBottom" : 1041.000000,
+        "RectLeft" : 472.250000,
+        "RectRight" : 477.250000,
+        "RectTop" : 0.000000,
+        "SideLT" : {
+          "Child" : {
+            "Child" : {
+              "type" : 0
+            },
+            "RectBottom" : 523.000000,
+            "RectLeft" : 0.000000,
+            "RectRight" : 472.250000,
+            "RectTop" : 518.000000,
+            "SideLT" : {
+              "Child" : {
+                "Child" : {
+                  "type" : 0
+                },
+                "RectBottom" : 261.500000,
+                "RectLeft" : 0.000000,
+                "RectRight" : 472.250000,
+                "RectTop" : 256.500000,
+                "SideLT" : {
+                  "Child" : {
+                    "type" : 0
+                  },
+                  "Far" : 1000.000000,
+                  "Fov" : 45.000000,
+                  "LocationX" : -8.427206,
+                  "LocationY" : 2.182824,
+                  "LocationZ" : 1.622252,
+                  "Near" : 0.100000,
+                  "RectBottom" : 256.500000,
+                  "RectLeft" : 0.000000,
+                  "RectRight" : 472.250000,
+                  "RectTop" : 0.000000,
+                  "RotationX" : 0.000000,
+                  "RotationY" : 10.950896,
+                  "RotationZ" : -15.882328,
+                  "Scale" : 1000.000000,
+                  "Sensitivity" : 60.000000,
+                  "type" : 4
+                },
+                "SideRB" : {
+                  "Child" : {
+                    "type" : 0
+                  },
+                  "Far" : 1000.000000,
+                  "Fov" : 45.000000,
+                  "LocationX" : -8.427206,
+                  "LocationY" : 2.182824,
+                  "LocationZ" : 1.622252,
+                  "Near" : 0.100000,
+                  "RectBottom" : 518.000000,
+                  "RectLeft" : 0.000000,
+                  "RectRight" : 472.250000,
+                  "RectTop" : 261.500000,
+                  "RotationX" : 0.000000,
+                  "RotationY" : 10.950896,
+                  "RotationZ" : -15.882328,
+                  "Scale" : 1000.000000,
+                  "Sensitivity" : 60.000000,
+                  "type" : 4
+                },
+                "SplitPos" : 0.500000,
+                "type" : 3
+              },
+              "RectBottom" : 518.000000,
+              "RectLeft" : 0.000000,
+              "RectRight" : 472.250000,
+              "RectTop" : 0.000000,
+              "type" : 1
+            },
+            "SideRB" : {
+              "Child" : {
+                "type" : 0
+              },
+              "Far" : 1000.000000,
+              "Fov" : 45.000000,
+              "LocationX" : -8.427206,
+              "LocationY" : 2.182824,
+              "LocationZ" : 1.622252,
+              "Near" : 0.100000,
+              "RectBottom" : 1041.000000,
+              "RectLeft" : 0.000000,
+              "RectRight" : 472.250000,
+              "RectTop" : 523.000000,
+              "RotationX" : 0.000000,
+              "RotationY" : 10.950896,
+              "RotationZ" : -15.882328,
+              "Scale" : 1000.000000,
+              "Sensitivity" : 60.000000,
+              "type" : 4
+            },
+            "SplitPos" : 0.500000,
+            "type" : 3
+          },
+          "RectBottom" : 1041.000000,
+          "RectLeft" : 0.000000,
+          "RectRight" : 472.250000,
+          "RectTop" : 0.000000,
+          "type" : 1
+        },
+        "SideRB" : {
+          "Child" : {
+            "type" : 0
+          },
+          "Far" : 1000.000000,
+          "Fov" : 45.000000,
+          "LocationX" : -8.427206,
+          "LocationY" : 2.182824,
+          "LocationZ" : 1.622252,
+          "Near" : 0.100000,
+          "RectBottom" : 1041.000000,
+          "RectLeft" : 477.250000,
+          "RectRight" : 949.500000,
+          "RectTop" : 0.000000,
+          "RotationX" : 0.000000,
+          "RotationY" : 10.950896,
+          "RotationZ" : -15.882328,
+          "Scale" : 1000.000000,
+          "Sensitivity" : 60.000000,
+          "type" : 4
+        },
+        "SplitPos" : 0.500000,
+        "type" : 2
+      },
+      "RectBottom" : 1041.000000,
+      "RectLeft" : 0.000000,
+      "RectRight" : 949.500000,
+      "RectTop" : 0.000000,
+      "type" : 1
+    },
+    "SideRB" : {
+      "Child" : {
+        "Child" : {
+          "type" : 0
+        },
+        "RectBottom" : 523.000000,
+        "RectLeft" : 954.500000,
+        "RectRight" : 1904.000000,
+        "RectTop" : 518.000000,
+        "SideLT" : {
+          "Child" : {
+            "Child" : {
+              "type" : 0
+            },
+            "RectBottom" : 261.500000,
+            "RectLeft" : 954.500000,
+            "RectRight" : 1904.000000,
+            "RectTop" : 256.500000,
+            "SideLT" : {
+              "Child" : {
+                "type" : 0
+              },
+              "Far" : 1000.000000,
+              "Fov" : 45.000000,
+              "LocationX" : -8.427206,
+              "LocationY" : 2.182824,
+              "LocationZ" : 1.622252,
+              "Near" : 0.100000,
+              "RectBottom" : 256.500000,
+              "RectLeft" : 954.500000,
+              "RectRight" : 1904.000000,
+              "RectTop" : 0.000000,
+              "RotationX" : 0.000000,
+              "RotationY" : 10.950896,
+              "RotationZ" : -15.882328,
+              "Scale" : 1000.000000,
+              "Sensitivity" : 60.000000,
+              "type" : 4
+            },
+            "SideRB" : {
+              "Child" : {
+                "type" : 0
+              },
+              "Far" : 1000.000000,
+              "Fov" : 45.000000,
+              "LocationX" : 3.561162,
+              "LocationY" : 1.239582,
+              "LocationZ" : 1.380548,
+              "Near" : 0.100000,
+              "RectBottom" : 518.000000,
+              "RectLeft" : 954.500000,
+              "RectRight" : 1904.000000,
+              "RectTop" : 261.500000,
+              "RotationX" : 0.000000,
+              "RotationY" : 20.978611,
+              "RotationZ" : -144.892303,
+              "Scale" : 400.000000,
+              "Sensitivity" : 60.000000,
+              "type" : 4
+            },
+            "SplitPos" : 0.500000,
+            "type" : 3
+          },
+          "RectBottom" : 518.000000,
+          "RectLeft" : 954.500000,
+          "RectRight" : 1904.000000,
+          "RectTop" : 0.000000,
+          "type" : 1
+        },
+        "SideRB" : {
+          "Child" : {
+            "type" : 0
+          },
+          "Far" : 1000.000000,
+          "Fov" : 45.000000,
+          "LocationX" : -8.427206,
+          "LocationY" : 2.182824,
+          "LocationZ" : 1.622252,
+          "Near" : 0.100000,
+          "RectBottom" : 1041.000000,
+          "RectLeft" : 954.500000,
+          "RectRight" : 1904.000000,
+          "RectTop" : 523.000000,
+          "RotationX" : 0.000000,
+          "RotationY" : 10.950896,
+          "RotationZ" : -15.882328,
+          "Scale" : 1000.000000,
+          "Sensitivity" : 60.000000,
+          "type" : 4
+        },
+        "SplitPos" : 0.500000,
+        "type" : 3
+      },
+      "RectBottom" : 1041.000000,
+      "RectLeft" : 954.500000,
+      "RectRight" : 1904.000000,
+      "RectTop" : 0.000000,
+      "type" : 1
+    },
+    "SplitPos" : 0.500000,
+    "type" : 2
+  },
+  "RectBottom" : 1041.000000,
+  "RectLeft" : 0.000000,
+  "RectRight" : 1904.000000,
+  "RectTop" : 0.000000,
+  "type" : 1
+}

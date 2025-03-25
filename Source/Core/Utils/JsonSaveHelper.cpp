@@ -5,6 +5,10 @@
 
 #include "Core/EngineStatics.h"
 #include "Debug/DebugConsole.h"
+#include "Core/Config/ConfigManager.h"
+#include "Core/Container/String.h"
+#include "Core/Rendering/SWindow.h"
+#include "Object/World/World.h"
 #include "SimpleJSON/Json.hpp"
 
 using json::JSON;
@@ -102,4 +106,169 @@ void JsonSaveHelper::SaveScene(UWorldInfo WorldInfo)
     {
         Output << Json;
     }
+}
+
+std::shared_ptr<SWindow> JsonSaveHelper::LoadLayout() {
+#ifdef IS_OBJ_VIEWER
+	return nullptr;
+#else
+	//std::string raw = UConfigManager::Get().GetValue("Layout", "SWindow").GetData();
+	std::ifstream Input("Config/viewport.json");
+
+	if ( !Input.is_open() ) {
+		return nullptr;
+	}
+
+	std::string Contents;
+	Input.seekg(0, std::ios::end);
+	Contents.reserve(Input.tellg());
+	Input.seekg(0, std::ios::beg);
+
+	Contents.assign(std::istreambuf_iterator<char>(Input), std::istreambuf_iterator<char>());
+
+	JSON Json = JSON::Load(Contents);
+
+	return CreateSWindowNode(Json, nullptr);
+#endif // IS_OBJ_VIEWER
+}
+
+std::shared_ptr<SWindow> JsonSaveHelper::CreateSWindowNode(
+	json::JSON Json, 
+	std::shared_ptr<SWindow> parent = nullptr 
+) {
+
+	std::shared_ptr<SWindow> window = nullptr;
+	SWindowType type = static_cast<SWindowType>(Json["type"].ToInt());
+
+	if ( type == SWindowType::None ) {
+		return window;
+	} else if ( type == SWindowType::Window ) {
+		window = std::make_shared<SWindow>();
+		window->child = std::dynamic_pointer_cast<SSplitter>(
+			CreateSWindowNode(Json["Child"], window)
+		);
+		
+	} else if ( type == SWindowType::SplitterH ) {
+		std::shared_ptr<SSplitterH> splitter = std::make_shared<SSplitterH>();
+		splitter->SideLT = CreateSWindowNode(Json["SideLT"], splitter);
+		splitter->SideRB = CreateSWindowNode(Json["SideRB"], splitter);
+		splitter->SplitPos = Json["SplitPos"].ToFloat();
+		window = splitter;
+	} else if ( type == SWindowType::SplitterV ) {
+		std::shared_ptr<SSplitterV> splitter = std::make_shared<SSplitterV>();
+		splitter->SideLT = CreateSWindowNode(Json["SideLT"], splitter);
+		splitter->SideRB = CreateSWindowNode(Json["SideRB"], splitter);
+		splitter->SplitPos = Json["SplitPos"].ToFloat();
+		window = splitter;
+	} else if ( type == SWindowType::WorldWindow ) {
+
+		std::shared_ptr<SWorldWindow> worldWindow = std::make_shared<SWorldWindow>();
+		worldWindow->child = nullptr;
+		UWorld* world = UEngine::Get().GetWorld();
+		FViewportClient* viewportClient = world->AddViewportClient(
+			FRect(
+				Json["RectLeft"].ToFloat(),
+				Json["RectTop"].ToFloat(),
+				Json["RectRight"].ToFloat(),
+				Json["RectBottom"].ToFloat()
+			)
+		);
+		worldWindow->viewportClient = viewportClient;
+		worldWindow->viewportClient->camera->SetActorPosition(
+			FVector(
+				Json["LocationX"].ToFloat(),
+				Json["LocationY"].ToFloat(),
+				Json["LocationZ"].ToFloat()
+			)
+		);
+		worldWindow->viewportClient->camera->SetActorRotation(
+			FVector(
+				Json["RotationX"].ToFloat(),
+				Json["RotationY"].ToFloat(),
+				Json["RotationZ"].ToFloat()
+			)
+		);
+		worldWindow->viewportClient->camera->FieldOfView = Json["Fov"].ToFloat();
+		worldWindow->viewportClient->camera->ZoomSize = Json["Scale"].ToFloat();
+		worldWindow->viewportClient->camera->Near = Json["Near"].ToFloat();
+		worldWindow->viewportClient->camera->Far = Json["Far"].ToFloat();
+		worldWindow->viewportClient->camera->Sensitivity = Json["Sensitivity"].ToFloat();
+		window = worldWindow;
+	}
+	window->parent = parent;
+	window->Rect = FRect(
+		Json["RectLeft"].ToFloat(),
+		Json["RectTop"].ToFloat(),
+		Json["RectRight"].ToFloat(),
+		Json["RectBottom"].ToFloat()
+	);
+	return window;
+}
+
+void JsonSaveHelper::SaveLayout(SWindow* InWindow) {
+#ifdef IS_OBJ_VIEWER
+	return;
+#else
+	JSON Json = CreateSWindowJSON(InWindow);
+	//UConfigManager::Get().SetValue("Layout", "SWindow", Json.dump());
+	std::ofstream Output("Config/viewport.json");
+
+	if ( Output.is_open() ) {
+		Output << Json;
+	}
+#endif
+}
+
+json::JSON JsonSaveHelper::CreateSWindowJSON(SWindow* InWindow) {
+	JSON Json;
+	if ( InWindow == nullptr ) {
+		Json["type"] = static_cast<int>(SWindowType::None);
+		return Json;
+	}
+	Json["type"] = static_cast<int>(SWindowType::Window);
+	Json["RectLeft"] = InWindow->Rect.Left;
+	Json["RectTop"] = InWindow->Rect.Top;
+	Json["RectRight"] = InWindow->Rect.Right;
+	Json["RectBottom"] = InWindow->Rect.Bottom;
+	{
+		SSplitterH* splitter = dynamic_cast<SSplitterH*>(InWindow);
+		if (splitter != nullptr) {
+			Json["type"] = static_cast<int>(SWindowType::SplitterH);
+			Json["SideLT"] = CreateSWindowJSON(splitter->SideLT.get());
+			Json["SideRB"] = CreateSWindowJSON(splitter->SideRB.get());
+			Json["SplitPos"] = splitter->SplitPos;
+		}
+	}
+
+	{
+		SSplitterV* splitter = dynamic_cast<SSplitterV*>(InWindow);
+		if ( splitter != nullptr ) {
+			Json["type"] = static_cast<int>(SWindowType::SplitterV);
+			Json["SideLT"] = CreateSWindowJSON(splitter->SideLT.get());
+			Json["SideRB"] = CreateSWindowJSON(splitter->SideRB.get());
+			Json["SplitPos"] = splitter->SplitPos;
+		}
+	}
+
+	{
+		SWorldWindow* worldWindow = dynamic_cast<SWorldWindow*>(InWindow);
+		if ( worldWindow != nullptr ) {
+			ACamera* cam = worldWindow->viewportClient->camera;
+			Json["type"] = static_cast<int>(SWindowType::WorldWindow);
+			Json["LocationX"] = cam->GetActorPosition().X;
+			Json["LocationY"] = cam->GetActorPosition().Y;
+			Json["LocationZ"] = cam->GetActorPosition().Z;
+			Json["RotationX"] = cam->GetActorRotation().X;
+			Json["RotationY"] = cam->GetActorRotation().Y;
+			Json["RotationZ"] = cam->GetActorRotation().Z;
+			Json["Fov"] = cam->FieldOfView;
+			Json["Scale"] = cam->ZoomSize;
+			Json["Near"] = cam->Near;
+			Json["Far"] = cam->Far;
+			Json["Sensitivity"] = cam->Sensitivity;
+		}
+	}
+
+	Json["Child"] = CreateSWindowJSON(InWindow->child.get());
+	return Json;
 }

@@ -19,7 +19,7 @@ namespace ECameraProjectionMode
 class ACamera : public AActor, public IGizmoInterface
 {
 	DECLARE_CLASS(ACamera, AActor)
-    
+	friend class JsonSaveHelper;
 public:
     ACamera();
 
