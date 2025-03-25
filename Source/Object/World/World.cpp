@@ -37,9 +37,11 @@
 
 void UWorld::InitWorld()
 {
+#if IS_OBJ_VIEWER
+#else
 	//TODO : 
 	GridSize = FString::ToFloat(UConfigManager::Get().GetValue(TEXT("World"), TEXT("GridSize")));
-
+#endif
 
 	SetCamera(EViewPortSplitter::TopLeft, SpawnActor<ACamera>());
 	SetCamera(EViewPortSplitter::TopRight, SpawnActor<ACamera>());
@@ -129,23 +131,26 @@ void UWorld::BeginPlay()
 		Actor->BeginPlay();
 	}
 
+#if IS_OBJ_VIEWER
+#else
 	UEngine::Get().GetInput()->RegisterMouseDownCallback(EKeyCode::LButton, [this](const FVector& MouseNDCPos)
-	{
-		UInputManager* inputManager = UEngine::Get().GetInput();
-		FVector mousePos = inputManager->GetMousePos();
-		TMap<EViewPortSplitter, FViewport> viewports;
-		FVector mousePosInWindowedNDC;
-		EViewPortSplitter viewportIndex;
+		{
+			UInputManager* inputManager = UEngine::Get().GetInput();
+			FVector mousePos = inputManager->GetMousePos();
+			TMap<EViewPortSplitter, FViewport> viewports;
+			FVector mousePosInWindowedNDC;
+			EViewPortSplitter viewportIndex;
 
-		for ( auto& pair : this->GetCameraMap() ) {
-			ACamera* cam = pair.Value;
-			viewports[pair.Key] = cam->GetViewPort();
-		}
-		UEngine::Get().GetInput()->GetNDCPosWithSplitViewPort(mousePos, viewports, mousePosInWindowedNDC, viewportIndex);
-		this->SetFocusCamera(viewportIndex);
+			for (auto& pair : this->GetCameraMap()) {
+				ACamera* cam = pair.Value;
+				viewports[pair.Key] = cam->GetViewPort();
+			}
+			UEngine::Get().GetInput()->GetNDCPosWithSplitViewPort(mousePos, viewports, mousePosInWindowedNDC, viewportIndex);
+			this->SetFocusCamera(viewportIndex);
 
-		RayCasting(mousePosInWindowedNDC);
-	}, GetUUID());
+			RayCasting(mousePosInWindowedNDC);
+		}, GetUUID());
+#endif
 }
 
 void UWorld::Tick(float DeltaTime)
@@ -231,12 +236,18 @@ void UWorld::Render()
 			//[[maybe_unused]] FVector WorldMin = SelectedActor->GetActorWorldBoundsMin();
 
 
+#if IS_OBJ_VIEWER
+#else
 			// 렌더 큐 안에 넣어야 하긴 함
 			UDebugDrawManager::Get().DrawBoundingBox(LocalMin, LocalMax, SelectedActor->GetActorTransform(), FVector4::RED);
 			UEngine::Get().GetRenderer()->GetUUIDBillBoard()->Render();
+#endif
 		}
+#if IS_OBJ_VIEWER
+#else
 		UEngine::Get().GetRenderer()->GetBatchManager()->Render();
 		UDebugDrawManager::Get().Render();
+#endif
 	}
 	CameraRenderFocused = nullptr;
 	//ACamera* cam = FEditorManager::Get().GetCamera();

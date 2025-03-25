@@ -79,7 +79,7 @@ void UI::Update()
         ImGui::GetIO().MousePos = CalculatedMousePos;
         //UE_LOG("MousePos: (%.1f, %.1f), DisplaySize: (%.1f, %.1f)\n",CalculatedMousePos.x, CalculatedMousePos.y, GetRatio().x, GetRatio().y);
     }
-
+	  
     
     // ImGui Frame 생성
     ImGui_ImplDX11_NewFrame();
@@ -93,13 +93,17 @@ void UI::Update()
         UE_LOG("Current Ratio: %f, %f", CurRatio.x, CurRatio.y);
     }
 
+#if IS_OBJ_VIEWER
+	RenderViewerPanel();
+#else
 	RenderSceneManager();
-    RenderControlPanel();
-    RenderPropertyWindow();
+	RenderControlPanel();
+	RenderPropertyWindow();
 	RenderShowFlagsPanel();
 	RenderViewModePanel();
 
-    Debug::ShowConsole(bWasWindowSizeUpdated, PreRatio, CurRatio);
+	Debug::ShowConsole(bWasWindowSizeUpdated, PreRatio, CurRatio);
+#endif
 
     // ImGui 렌더링
     ImGui::Render();
@@ -142,6 +146,8 @@ void UI::RenderControlPanel()
         ImGui::SetWindowSize(ResizeToScreen(Window->Size));
     }
     
+#if IS_OBJ_VIEWER
+#else
     ImGui::Text("Hello, Jungle World!");
     ImGui::Text("FPS: %.3f (%.2f ms)", ImGui::GetIO().Framerate , 1000.0f / ImGui::GetIO().Framerate);
 
@@ -149,7 +155,7 @@ void UI::RenderControlPanel()
     RenderPrimitiveSelection();
     RenderCameraSettings();
 	RenderGridSettings();
-    
+#endif
     ImGui::End();
 }
 
@@ -627,5 +633,40 @@ void UI::RenderGridSettings() const
 	if(ImGui::SliderFloat("Grid Size", &World->GetGridSizePtr(), 100.f, 1000.f, "%.2f"))
 	{
 		World->OnChangedGridSize();
+	}
+}
+
+void UI::RenderViewerPanel()
+{
+	const char* items[] = {"Dice", "Mug",
+	"Girl", "SpaceShip", "Pirate", "AVLSuitJerry" };
+
+	ImGui::Combo("Obj", &currentItem, items, IM_ARRAYSIZE(items));
+
+	if (ImGui::Button("Spawn"))
+	{
+		UWorld* World = UEngine::Get().GetWorld();
+		if (NumOfSpawn == 1) {
+			World->ClearWorld();
+		}
+		if (strcmp(items[currentItem], "Dice") == 0) {
+			World->SpawnStaticMeshActor("dice.obj", true);
+		}
+		else if (strcmp(items[currentItem], "Mug") == 0) {
+			World->SpawnStaticMeshActor("Mug.obj");
+		}
+		else if (strcmp(items[currentItem], "Girl") == 0) {
+			World->SpawnStaticMeshActor("Girl.obj", true);
+		}
+		else if (strcmp(items[currentItem], "SpaceShip") == 0) {
+			World->SpawnStaticMeshActor("SpaceShip.obj");
+		}
+		else if (strcmp(items[currentItem], "Pirate") == 0) {
+			World->SpawnStaticMeshActor("Pirate.obj", true);
+		}
+		else if (strcmp(items[currentItem], "AVLSuitJerry") == 0) {
+			World->SpawnStaticMeshActor("AVLSuitJerry.obj", true);
+		}
+		NumOfSpawn = 1;
 	}
 }

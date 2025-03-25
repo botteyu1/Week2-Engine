@@ -88,7 +88,10 @@ void UEngine::Initialize(
 	UE_LOG("Init Renderer...");
 	InitRenderer(); // require FDevice, World
 
+#if IS_OBJ_VIEWER
+#else
 	UDebugDrawManager::Get().Initialize();
+#endif
 
 	UE_LOG("Init UI...");
 	InitializedScreenWidth = ScreenWidth;

@@ -43,6 +43,26 @@ bool UMeshAsset::Load()
 		if (loadout)
 		{
 			uint32 indexStart = 0;
+			FVector min(FLT_MAX, FLT_MAX, FLT_MAX);
+			FVector max = -min;
+			for (int i = 0; i < OBJLoader.LoadedVertices.size(); i++) {
+				FVector4 color((float)rand() / (float)RAND_MAX, (float)rand() / (float)RAND_MAX,
+					(float)rand() / (float)RAND_MAX, 1.0f);
+				FVertexTextureArray  inVertex = {
+					-OBJLoader.LoadedVertices[i].Position.Z, -OBJLoader.LoadedVertices[i].Position.X, OBJLoader.LoadedVertices[i].Position.Y,
+					color.X, color.Y, color.Z, color.W ,
+					OBJLoader.LoadedVertices[i].TextureCoordinate.X, OBJLoader.LoadedVertices[i].TextureCoordinate.Y,
+					OBJLoader.LoadedVertices[i].Normal.X, OBJLoader.LoadedVertices[i].Normal.Y, OBJLoader.LoadedVertices[i].Normal.Z,
+					0
+				};
+				vertices.Add(inVertex);
+				max.X = FMath::Max(max.X, vertices[i].X);
+				max.Y = FMath::Max(max.Y, vertices[i].Y);
+				max.Z = FMath::Max(max.Z, vertices[i].Z);
+				min.X = FMath::Min(min.X, vertices[i].X);
+				min.Y = FMath::Min(min.Y, vertices[i].Y);
+				min.Z = FMath::Min(min.Z, vertices[i].Z);
+			}
 			for (int i = 0; i < OBJLoader.LoadedMeshes.size(); i++)
 			{
 				objl::Mesh curMesh = OBJLoader.LoadedMeshes[i];
@@ -67,16 +87,7 @@ bool UMeshAsset::Load()
 
 				for (int j = 0; j < curMesh.Vertices.size(); j++)
 				{
-					FVector4 color((float)rand() / (float)RAND_MAX, (float)rand() / (float)RAND_MAX,
-						(float)rand() / (float)RAND_MAX, 1.0f);
-					FVertexTextureArray  inVertex = {
-						curMesh.Vertices[j].Position.X, curMesh.Vertices[j].Position.Y, curMesh.Vertices[j].Position.Z,
-						color.X, color.Y, color.Z, color.W ,
-						curMesh.Vertices[j].TextureCoordinate.X, curMesh.Vertices[j].TextureCoordinate.Y,
-						curMesh.Vertices[j].Normal.X, curMesh.Vertices[j].Normal.Y, curMesh.Vertices[j].Normal.Z,
-						textureIndex
-					};
-					vertices.Add(inVertex);
+					vertices[j + indexStart].TI = textureIndex;
 				}
 
 				// 인덱스를 추가할 때, 반드시 메시의 정점 오프셋(indexStart)을 고려해야 함
@@ -89,6 +100,19 @@ bool UMeshAsset::Load()
 					}
 				}
 				indexStart += curMesh.Vertices.size();
+			}
+			float xDist = max.X - min.X;
+			float yDist = max.Y - min.Y;
+			float zDist = max.Z - min.Z;
+			float size = FMath::Max(xDist, yDist);
+			size = FMath::Max(size, zDist);
+			if (size > 2.0f) {
+				float scale = FMath::Max(2.0f / size, 0.0075f);
+				for (int i = 0; i < vertices.Num(); i++) {
+					vertices[i].X *= scale;
+					vertices[i].Y *= scale;
+					vertices[i].Z *= scale;
+				}
 			}
 			FObjArchive::ObjToBinary(binaryFile, vertices, indices);
 		}
