@@ -26,5 +26,12 @@ public:
 private:
 	FGeometryData GeometryData;
 	TArray<FSubMesh> SubMeshes;
+	TArray<FString> UsedTextureNames;
+
+private:
+	int GetTextureIndex(FString textureName);
+
+public:
+	TArray<FString> GetUsedTextureNames() const { return UsedTextureNames; }
 };
 

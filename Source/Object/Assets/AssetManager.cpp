@@ -122,22 +122,6 @@ void UAssetManager::LoadAssets() {
 				cout << "MTL Asset Load Failed: " << asset.Value.GetAssetName().GetData() << endl;
 			}
 
-			// Texture 있으면 Array 로 만들어 두기
-			if (objMTLAsset->GetTextureNum() > 0)
-			{
-				UTextureAsset* textureAsset = FObjectFactory::ConstructObject<UTextureAsset>();
-				if (textureAsset != nullptr) {
-					textureAsset->SetMetaData(asset.Value);
-					textureAsset->Load();
-					std::string assetName = textureAsset->GetAssetName().GetData();
-					assetName = assetName.substr(0, assetName.size() - 4);
-					Assets.Add(assetName + TEXT(".textArray"), textureAsset);
-				}
-				else {
-					cout << "Texture Asset Load Failed about MTL Asset: " << asset.Value.GetAssetName().GetData() << endl;
-				}
-			}
-
 			break;
 		}
 
@@ -157,6 +141,21 @@ void UAssetManager::LoadAssets() {
 			meshAsset->SetMetaData(*objMetaData);
 			meshAsset->Load();
 			Assets.Add(meshAsset->GetAssetName(), meshAsset);
+
+			//  사용하는 Texture의 Names 목록을 가지고 Texture2DArray 생성
+			TArray<FString> textureNames = meshAsset->GetUsedTextureNames();
+
+			if (textureNames.Num() > 0) {
+				UTextureAsset* textureAsset = FObjectFactory::ConstructObject<UTextureAsset>();
+				if (textureAsset != nullptr) {
+					textureAsset->SetMetaData(*objMetaData);
+					textureAsset->LoadForTextureArray(textureNames);
+					Assets.Add(textureAsset->GetAssetName() + TEXT(".textArray"), textureAsset);
+				}
+				else {
+					cout << "Texture Asset Load Failed about MTL Asset: " << objMetaData->GetAssetName().GetData() << endl;
+				}
+			}
 		}
 		else {
 			cout << "Mesh Asset Load Failed: " << objMetaData->GetAssetName().GetData() << endl;
@@ -182,6 +181,16 @@ TArray<FString> UAssetManager::GetMtlDataNames()
 		MtlDataNames.Add(MtlMetaData->GetAssetName());
 	}
 	return MtlDataNames;
+}
+
+FObjMaterial* UAssetManager::GetObjMaterial(const FString InName)
+{
+	return *ObjMaterialMap.Find(InName);
+}
+
+void UAssetManager::AddObjMaterial(const FString InName, FObjMaterial* ObjMat)
+{
+	ObjMaterialMap.Add(InName, ObjMat);
 }
 
 

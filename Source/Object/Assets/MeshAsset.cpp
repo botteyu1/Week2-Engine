@@ -8,7 +8,6 @@
 #include <iostream>
 #include <string>
 #include "Object/Assets/AssetManager.h"
-#include "Object/Assets/ObjMTLAsset.h"
 
 
 bool UMeshAsset::RegisterAsset()
@@ -37,11 +36,29 @@ bool UMeshAsset::Load()
 	if (!FObjArchive::ReadBinary(binaryFile, vertices, indices)) {
 		objl::Loader OBJLoader;
 		bool loadout = OBJLoader.LoadFile(MetaData.GetAssetPath().GetData());
-		UObjMTLAsset* ObjMTLAsset = UAssetManager::Get().FindAsset<UObjMTLAsset>(OBJLoader.LoadedMTL);
 		
-
 		if (loadout)
 		{
+			// 아래 부분에서 TextureArray로 만들 Texture들을 보내줌,  겹치지 않도록
+			for (int i = 0; i < OBJLoader.LoadedMaterials.size(); i++) {
+				if (OBJLoader.LoadedMaterials[i].map_Kd == "") 
+				{
+					continue;
+				}
+
+				bool bContained = false;
+				for(int j = 0 ; j < UsedTextureNames.Num(); j++)
+				{
+					if (UsedTextureNames[j] == OBJLoader.LoadedMaterials[i].map_Kd) 
+					{
+						bContained = true;
+					}
+				}
+				if (!bContained) {
+					UsedTextureNames.Add(OBJLoader.LoadedMaterials[i].map_Kd);
+				}
+			}
+
 			uint32 indexStart = 0;
 			for (int i = 0; i < OBJLoader.LoadedMeshes.size(); i++)
 			{
@@ -50,23 +67,7 @@ bool UMeshAsset::Load()
 				curSubMesh.SubMeshName = curMesh.MeshName;
 
 				
-				int textureIndex = 0;
-				if (ObjMTLAsset == nullptr) 
-				{
-					textureIndex = -1;
-				}
-				else 
-				{
-					FObjMaterial* curMaterial = ObjMTLAsset->GetMaterialByName(FName(curMesh.MeshMaterial.name));
-					if (curMaterial == nullptr) 
-					{
-						textureIndex = -2;
-					}
-					else {
-						curSubMesh.MaterialName = curMesh.MeshMaterial.name;
-						textureIndex = curMaterial->textureIndex;
-					}
-				}
+				int textureIndex = GetTextureIndex(curMesh.MeshMaterial.map_Kd);
 
 				SubMeshes.Add(curSubMesh);
 
@@ -118,4 +119,16 @@ bool UMeshAsset::Save(FString path)
 bool UMeshAsset::Unload()
 {
 	return true;
+}
+
+int UMeshAsset::GetTextureIndex(FString textureName)
+{
+	for (int i = 0; i < UsedTextureNames.Num(); i++)
+	{
+		if (UsedTextureNames[i] == textureName)
+		{
+			return i;
+		}
+	}
+	return -1;
 }

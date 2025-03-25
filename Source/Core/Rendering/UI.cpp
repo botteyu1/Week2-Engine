@@ -224,7 +224,7 @@ void UI::RenderPrimitiveSelection()
 				World->SpawnStaticMeshActor("SpaceShip.obj");
 			}
 			else if (strcmp(items[currentItem], "Pirate") == 0) {
-				World->SpawnStaticMeshActor("Pirate.obj", true);
+				World->SpawnStaticMeshActor("pirate.obj", true);
 			}
 			else if (strcmp(items[currentItem], "AVLSuitJerry") == 0) {
 				World->SpawnStaticMeshActor("AVLSuitJerry.obj", true);

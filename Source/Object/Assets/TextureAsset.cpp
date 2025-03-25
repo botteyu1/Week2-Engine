@@ -49,6 +49,23 @@ bool UTextureAsset::Load() {
 	return true;
 }
 
+bool UTextureAsset::LoadForTextureArray(TArray<FString> TextureNames)
+{
+	Texture = UTexture::LoadForTextureArray(TextureNames, MetaData.GetAssetName());
+	if (Texture == nullptr)
+	{
+		MsgBoxAssert("텍스처 Load 실패");
+	}
+	Sampler = USampler::Find("LinearSamplerState");
+	if (Sampler == nullptr)
+	{
+		MsgBoxAssert("Sampler Load 실패");
+	}
+	Texture->CreateShaderResourceView();
+
+	return true;
+}
+
 bool UTextureAsset::Save(FString path) {
 	return false;
 }

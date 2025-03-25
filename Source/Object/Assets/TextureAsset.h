@@ -1,5 +1,6 @@
 #pragma once
 #include "Asset.h"
+#include "Core/Container/Array.h"
 
 class UTexture;
 class USampler;
@@ -12,6 +13,7 @@ public:
 	// UAsset을(를) 통해 상속됨
 	bool RegisterAsset() override;
 	bool Load() override;
+	bool LoadForTextureArray(TArray<FString> TextureNames);
 	bool Save(FString path = "") override;
 	bool Unload() override;
 	inline std::shared_ptr<UTexture> GetResource() { return Texture; }
