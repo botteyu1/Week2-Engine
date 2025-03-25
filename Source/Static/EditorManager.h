@@ -8,6 +8,7 @@ class ACamera;
 class AActor;
 class AGizmoActor;
 class SWindow;
+class SSplitter;
 
 class UEditorManager
 {
@@ -68,6 +69,7 @@ private:
     AActor* SelectedActor = nullptr;
 	AGizmoActor* Gizmo = nullptr;
 	std::shared_ptr<SWindow> RootWindow;
+	std::shared_ptr<SSplitter> DraggingSplitter = nullptr;
 	
 
 	std::shared_ptr<class UTexture> UUIDTexture = nullptr;

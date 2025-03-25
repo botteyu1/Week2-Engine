@@ -51,11 +51,11 @@ void UInputManager::UpdateKeyDown(FKey& key) const
 {
 	if (key.bPressed == true)
 	{
-		key.KeyState = EKeyState::Press;
+		key.KeyState = EKeyState::Down;
 	}
 	else
 	{
-		key.KeyState = EKeyState::Down;
+		key.KeyState = EKeyState::Press;
 	}
 
 	key.bPressed = true;
@@ -210,7 +210,7 @@ void UInputManager::Update(HWND hWnd, uint32 FramaeBufferWidth, uint32 FramaeBuf
 		{
 			for (const auto& Callback : Callbacks)
 			{
-				Callback(MouseNDCPos);
+				Callback(GetMouseDeltaPos());
 			}
 		}
 	}
@@ -221,7 +221,7 @@ void UInputManager::Update(HWND hWnd, uint32 FramaeBufferWidth, uint32 FramaeBuf
 		{
 			for (const auto& Callback : Callbacks)
 			{
-				Callback(GetMouseDeltaPos());
+				Callback(MouseNDCPos);
 			}
 		}
 	}

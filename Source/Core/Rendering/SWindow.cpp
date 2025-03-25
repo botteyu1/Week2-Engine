@@ -61,6 +61,15 @@ void SSplitterH::OnResizeUpdate() {
 	);
 }
 
+void SSplitterH::OnMouseDown(FVector2D coord) {
+	if ( !bIsDragging )
+		return;
+	FRect parentRect = parent->Rect;
+	SplitPos = (coord.X - parentRect.Left) / parentRect.Width();
+	SplitPos = std::clamp(SplitPos, 0.05f, 0.95f);
+	OnResizeUpdate();
+}
+
 void SSplitterV::OnResizeUpdate() {
 	FRect parentRect = parent->Rect;
 	SideLT->Rect = FRect(
@@ -83,4 +92,13 @@ void SSplitterV::OnResizeUpdate() {
 		parentRect.Right,
 		parentRect.Top + (parentRect.Bottom - parentRect.Top) * SplitPos + SplitterHeight / 2
 	);
+}
+
+void SSplitterV::OnMouseDown(FVector2D coord) {
+	if ( !bIsDragging )
+		return;
+	FRect parentRect = parent->Rect;
+	SplitPos = (coord.Y - parentRect.Top) / parentRect.Height();
+	SplitPos = std::clamp(SplitPos, 0.05f, 0.95f);
+	OnResizeUpdate();
 }

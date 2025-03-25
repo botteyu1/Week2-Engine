@@ -42,7 +42,7 @@ void UEditorManager::Init()
 }
 
 void UEditorManager::RegisterInputCallbacks() {
-	UEngine::Get().GetInput()->RegisterMouseDownCallback(EKeyCode::LButton, [this](const FVector& MouseNDCPos) {
+	UEngine::Get().GetInput()->RegisterMousePressCallback(EKeyCode::LButton, [this](const FVector& MouseNDCPos) {
 		UInputManager* inputManager = UEngine::Get().GetInput();
 		FVector mousePos = inputManager->GetMousePos();
 		FVector2D mousePosInWindow;
@@ -443,19 +443,28 @@ void UEditorManager::ResizingSWindow() {
 	UInputManager* inputManager = UEngine::Get().GetInput();
 	FVector mousePos = inputManager->GetMousePos();
 	std::shared_ptr<SWindow> window = GetHoveringWindow(mousePos, RootWindow);
-	if (window) {
-		if (inputManager->GetKeyPress(EKeyCode::LButton)) {
-			window->OnMousePressed(FVector2D(mousePos.X, mousePos.Y));
-		}
-		else if (inputManager->GetKeyDown(EKeyCode::LButton)) {
+	if ( window == nullptr )
+		return;
+	
+	if (inputManager->GetKeyPress(EKeyCode::LButton)) {
+		UE_LOG("Pressed");
+		window->OnMousePressed(FVector2D(mousePos.X, mousePos.Y));
+		DraggingSplitter = std::dynamic_pointer_cast<SSplitter>(window);
+
+	} else if ( inputManager->GetKeyDown(EKeyCode::LButton) ) {
+		if (DraggingSplitter != nullptr) {
+			DraggingSplitter->OnMouseDown(FVector2D(mousePos.X, mousePos.Y));
+		} else {
 			window->OnMouseDown(FVector2D(mousePos.X, mousePos.Y));
 		}
-		else if (inputManager->GetKeyUp(EKeyCode::LButton)) {
-			window->OnMouseReleased(FVector2D(mousePos.X, mousePos.Y));
-		}
-		else {
-			window->OnMouseUp(FVector2D(mousePos.X, mousePos.Y));
-		}
+
+	} else if ( inputManager->GetKeyUp(EKeyCode::LButton) ){
+		UE_LOG("Released");
+		window->OnMouseReleased(FVector2D(mousePos.X, mousePos.Y));
+		DraggingSplitter = nullptr;
+
+	} else {
+		window->OnMouseUp(FVector2D(mousePos.X, mousePos.Y));
 	}
 }
 
@@ -475,7 +484,7 @@ void UEditorManager::SetCursorWithSWindow() {
 }
 
 void UEditorManager::PixelPicking() {
-	if ( UEngine::Get().GetInput()->GetKeyDown(EKeyCode::LButton) ) {
+	if ( UEngine::Get().GetInput()->GetKeyPress(EKeyCode::LButton) ) {
 		POINT pt;
 		GetCursorPos(&pt);
 		ScreenToClient(UEngine::Get().GetWindowHandle(), &pt);
