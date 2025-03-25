@@ -19,7 +19,10 @@
 #include "Static/FUUIDBillBoard.h"
 #include "Resource/DirectResource/ViewMode.h"
 #include "Object/Actor/StaticMesh.h"
+#include "Resource/Mesh.h"
 #include "Core/UObject/UObjectIterator.h"
+#include "Object/Assets/TextureAsset.h"
+#include <Object/PrimitiveComponent/TextureComponent.h>
 // #include "FDevice.h"
 // #include "FViewModeManager.h"
 // #include "Core/Engine.h"
@@ -367,10 +370,8 @@ void UI::RenderCameraSettings() const
 	ImGui::Separator();
 }
 
-void UI::RenderPropertyWindow() const
+void UI::RenderPropertyWindow()
 {
-
-
 
 	ImVec2 DisplaySize = ImGui::GetIO().DisplaySize;
 
@@ -386,8 +387,6 @@ void UI::RenderPropertyWindow() const
 		ImGui::SetWindowPos(ImVec2(DisplaySize.x * 0.8f, DisplaySize.y * 0.6f));
 		ImGui::SetWindowSize(ImVec2(DisplaySize.x * 0.2f, DisplaySize.y * 0.4f));
 	}
-
-
 
 
     AActor* selectedActor = UEngine::Get().GetEditor()->GetSelectedActor();
@@ -418,22 +417,10 @@ void UI::RenderPropertyWindow() const
             selectedTransform.SetScale(scale[0], scale[1], scale[2]);
             selectedActor->SetActorTransform(selectedTransform);
         }
-		/*if (UEditorManager::Get().GetGizmoHandle() != nullptr)
-		{
-			AGizmoHandle* Gizmo = UEditorManager::Get().GetGizmoHandle();
-            if(Gizmo->GetGizmoType() == EGizmoType::Translate)
-			{
-				ImGui::Text("GizmoType: Translate");
-			}
-			else if (Gizmo->GetGizmoType() == EGizmoType::Rotate)
-			{
-				ImGui::Text("GizmoType: Rotate");
-			}
-			else if (Gizmo->GetGizmoType() == EGizmoType::Scale)
-			{
-				ImGui::Text("GizmoType: Scale");
-			}
-		}*/
+
+		AStaticMesh* selectMesh = Cast<AStaticMesh>(selectedActor);
+
+		PropertyStaticMesh(selectMesh);
 
 		// SpotLight 속성 표시
 		ASpotLight* spotLight = dynamic_cast<ASpotLight*>(selectedActor);
@@ -553,14 +540,13 @@ void UI::RenderOutLiner()
 
 		// 사용 전에 항상 비우기
 		UUIDNames.Empty();
-		//cUUIDNames.Empty();
+		cUUIDNames.Empty();
 		UUIDs.Empty();
 		UUIDNames.Reserve(Actors.Num());
-		//cUUIDNames.Reserve(Actors.Num());
+		cUUIDNames.Reserve(Actors.Num());
 		UUIDs.Reserve(Actors.Num());
 
 
-		int Cnt = 0;
 		for (int i = 0; i < Actors.Num(); i++) {
 
 			FString UUIDName = Actors[i]->GetClass()->GetName();
@@ -570,10 +556,10 @@ void UI::RenderOutLiner()
 			UUIDs.Add(Actors[i]->GetUUID());
 		}
 
-		// 모든 문자열이 추가된 후에 포인터 설정
-		//for (const auto& str : UUIDNames) {
-		//	cUUIDNames.Add(*str);
-		//}
+		 //모든 문자열이 추가된 후에 포인터 설정
+		for (const auto& str : UUIDNames) {
+			cUUIDNames.Add(*str);
+		}
 	}
 
 	PrevSize = Actors.Num();
@@ -586,106 +572,58 @@ void UI::RenderOutLiner()
 	/*if (ImGui::ListBox("StaticMeshList", &SelectUUIDIndex, StringGetter,
 		static_cast<void*>(&UUIDNames), static_cast<int>(UUIDNames.Num())))*/
 
-	if (ImGui::BeginCombo("StaticMeshList", "Select Static Mesh"))
+
+	if (ImGui::ListBox("ActorList", &SelectUUIDIndex, &cUUIDNames[0], static_cast<int>(cUUIDNames.Num())))
 	{
-		for (int i = 0; i < UUIDNames.Num(); i++)
+		uint32 UUID = UUIDs[SelectUUIDIndex];
+
+		for (int i = 0; i < Actors.Num(); i++)
 		{
-			bool is_selected = (SelectUUIDIndex == i);
-			if (ImGui::Selectable((*UUIDNames[i]), is_selected))
+			AActor* Actor = Actors[i];
+			if (Actor->GetUUID() == UUID)
 			{
-				SelectUUIDIndex = i;
-				uint32 UUID = UUIDs[SelectUUIDIndex];
-
-				for (AActor* Actor : Actors)
-				{
-					if (Actor->GetUUID() == UUID)
-					{
-						CurActor = Actor;
-						UEngine::Get().GetEditor()->SelectActor(CurActor);
-						UEngine::Get().GetRenderer()->GetUUIDBillBoard()->SetTarget(CurActor);
-						break;
-					}
-				}
-			}
-
-			if (is_selected)
-			{
-				ImGui::SetItemDefaultFocus();
+				//if (CurActor != nullptr)
+					//CurActor->IsHighlightValue = false;
+				CurActor = Actor;
+				UEngine::Get().GetEditor()->SelectActor(CurActor);
+				UEngine::Get().GetRenderer()->GetUUIDBillBoard()->SetTarget(CurActor);
 			}
 		}
-		ImGui::EndCombo();
 	}
 
-	//if (ImGui::CollapsingHeader("Transform"))
+
+
+	//if (ImGui::BeginCombo("StaticMeshList", "Select Static Mesh"))
 	//{
-	//	ImGui::Text("Position");
-	//	// Position 관련 위젯들
+	//	for (int i = 0; i < UUIDNames.Num(); i++)
+	//	{
+	//		bool is_selected = (SelectUUIDIndex == i);
+	//		if (ImGui::Selectable((*UUIDNames[i]), is_selected))
+	//		{
+	//			SelectUUIDIndex = i;
+	//			uint32 UUID = UUIDs[SelectUUIDIndex];
 
-	//	ImGui::Text("Rotation");
-	//	// Rotation 관련 위젯들
+	//			for (AActor* Actor : Actors)
+	//			{
+	//				if (Actor->GetUUID() == UUID)
+	//				{
+	//					CurActor = Actor;
+	//					UEngine::Get().GetEditor()->SelectActor(CurActor);
+	//					UEngine::Get().GetRenderer()->GetUUIDBillBoard()->SetTarget(CurActor);
+	//					break;
+	//				}
+	//			}
+	//		}
 
-	//	ImGui::Text("Scale");
-	//	// Scale 관련 위젯들
+	//		if (is_selected)
+	//		{
+	//			ImGui::SetItemDefaultFocus();
+	//		}
+	//	}
+	//	ImGui::EndCombo();
 	//}
 
-	AStaticMesh* selectedStaticMesh = Cast<AStaticMesh>(UEngine::Get().GetEditor()->GetSelectedActor());
-	static bool isFirstSelection = true;
-
-	//메쉬 트랜스폼
-	if (selectedStaticMesh != nullptr)
-	{
-		ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnArrow;
-
-		if (isFirstSelection)
-		{
-			flags |= ImGuiTreeNodeFlags_DefaultOpen;
-			isFirstSelection = false;
-		}
-
-		if (ImGui::TreeNodeEx("Selected Static Mesh", flags))
-		{
-			FTransform selectedTransform = selectedStaticMesh->GetActorTransform();
-			float position[] = { selectedTransform.GetPosition().X, selectedTransform.GetPosition().Y, selectedTransform.GetPosition().Z };
-			float scale[] = { selectedTransform.GetScale().X, selectedTransform.GetScale().Y, selectedTransform.GetScale().Z };
-
-			if (ImGui::DragFloat3("Translation", position, 0.1f))
-			{
-				selectedTransform.SetPosition(position[0], position[1], position[2]);
-				selectedStaticMesh->SetActorTransform(selectedTransform);
-			}
-
-			FVector PrevEulerAngle = selectedTransform.GetRotation().GetEuler();
-			FVector UIEulerAngle = PrevEulerAngle;
-			if (ImGui::DragFloat3("Rotation", reinterpret_cast<float*>(&UIEulerAngle), 0.1f))
-			{
-				FVector DeltaEulerAngle = UIEulerAngle - PrevEulerAngle;
-
-				selectedTransform.Rotate(DeltaEulerAngle);
-				UE_LOG("Rotation: %.2f, %.2f, %.2f", DeltaEulerAngle.X, DeltaEulerAngle.Y, DeltaEulerAngle.Z);
-				selectedStaticMesh->SetActorTransform(selectedTransform);
-			}
-			if (ImGui::DragFloat3("Scale", scale, 0.1f))
-			{
-				selectedTransform.SetScale(scale[0], scale[1], scale[2]);
-				selectedStaticMesh->SetActorTransform(selectedTransform);
-			}
-
-			ImGui::TreePop();
-		}
-	}
-	else
-	{
-		isFirstSelection = true;
-	}
-
-
-
-
-
-
-
-
-	// if (CurActor != nullptr)
+	//if (CurActor != nullptr)
 	// {
 	// 	// 선택된 오브젝트의 정보를 출력
 	// 	FVector Location = CurActor->RelativeLocation();
@@ -708,6 +646,68 @@ void UI::RenderOutLiner()
 	// 	}
 	// 	CurObject->IsHighlightValue = true;
 	// }
+
+	//if (ImGui::CollapsingHeader("Transform"))
+	//{
+	//	ImGui::Text("Position");
+	//	// Position 관련 위젯들
+
+	//	ImGui::Text("Rotation");
+	//	// Rotation 관련 위젯들
+
+	//	ImGui::Text("Scale");
+	//	// Scale 관련 위젯들
+	//}
+
+	AStaticMesh* selectedStaticMesh = Cast<AStaticMesh>(UEngine::Get().GetEditor()->GetSelectedActor());
+	static bool isFirstSelection = true;
+
+	////메쉬 트랜스폼
+	//if (selectedStaticMesh != nullptr)
+	//{
+	//	ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnArrow;
+
+	//	if (isFirstSelection)
+	//	{
+	//		flags |= ImGuiTreeNodeFlags_DefaultOpen;
+	//		isFirstSelection = false;
+	//	}
+
+	//	if (ImGui::TreeNodeEx("Selected Static Mesh", flags))
+	//	{
+	//		FTransform selectedTransform = selectedStaticMesh->GetActorTransform();
+	//		float position[] = { selectedTransform.GetPosition().X, selectedTransform.GetPosition().Y, selectedTransform.GetPosition().Z };
+	//		float scale[] = { selectedTransform.GetScale().X, selectedTransform.GetScale().Y, selectedTransform.GetScale().Z };
+
+	//		if (ImGui::DragFloat3("Translation", position, 0.1f))
+	//		{
+	//			selectedTransform.SetPosition(position[0], position[1], position[2]);
+	//			selectedStaticMesh->SetActorTransform(selectedTransform);
+	//		}
+
+	//		FVector PrevEulerAngle = selectedTransform.GetRotation().GetEuler();
+	//		FVector UIEulerAngle = PrevEulerAngle;
+	//		if (ImGui::DragFloat3("Rotation", reinterpret_cast<float*>(&UIEulerAngle), 0.1f))
+	//		{
+	//			FVector DeltaEulerAngle = UIEulerAngle - PrevEulerAngle;
+
+	//			selectedTransform.Rotate(DeltaEulerAngle);
+	//			UE_LOG("Rotation: %.2f, %.2f, %.2f", DeltaEulerAngle.X, DeltaEulerAngle.Y, DeltaEulerAngle.Z);
+	//			selectedStaticMesh->SetActorTransform(selectedTransform);
+	//		}
+	//		if (ImGui::DragFloat3("Scale", scale, 0.1f))
+	//		{
+	//			selectedTransform.SetScale(scale[0], scale[1], scale[2]);
+	//			selectedStaticMesh->SetActorTransform(selectedTransform);
+	//		}
+
+	//		ImGui::TreePop();
+	//	}
+	//}
+	//else
+	//{
+	//	isFirstSelection = true;
+	//}
 
 	ImGui::End();
 }
@@ -788,5 +788,73 @@ void UI::RenderGridSettings() const
 	if(ImGui::SliderFloat("Grid Size", &World->GetGridSizePtr(), 100.f, 1000.f, "%.2f"))
 	{
 		World->OnChangedGridSize();
+	}
+}
+
+void UI::PropertyStaticMesh(AStaticMesh* InAStaticMesh)
+{
+	if (InAStaticMesh != nullptr)
+	{
+		const TMap < FName, std::shared_ptr<UMesh> >& Meshes = UMesh::GetAllResources();
+
+		StaticMeshNames.Empty();
+		StaticMeshNames.Reserve(Meshes.Num());
+		
+		cStaticMeshNames.Empty();
+		cStaticMeshNames.Reserve(Meshes.Num());
+
+
+		for (const auto& Pair : Meshes)
+		{
+			StaticMeshNames.Add(*Pair.Key.ToString());
+		}
+
+		//모든 문자열이 추가된 후에 포인터 설정
+		for (const auto& str : StaticMeshNames) {
+			cStaticMeshNames.Add(*str);
+		}
+
+
+		UTextureComponent* RootStaticMeshComponent = Cast<UTextureComponent>(InAStaticMesh->GetRootComponent());
+
+		if(RootStaticMeshComponent == nullptr)
+		{
+			return;
+		}
+
+
+		// Get the current mesh name
+		FName currentMeshName = RootStaticMeshComponent->GetMesh()->GetFName();
+		const char* currentItemName = (*currentMeshName.ToString());
+
+
+		// 드롭다운 UI 생성
+		if (ImGui::BeginCombo("Static Mesh", currentItemName))
+		{
+			for (int i = 0; i < cStaticMeshNames.Num(); i++)
+			{
+				bool isSelected = (currentItemName == cStaticMeshNames[i]);
+				if (ImGui::Selectable(cStaticMeshNames[i], isSelected))
+				{
+					// 새 메시 설정
+					FName newMeshName = FName(cStaticMeshNames[i]);
+					if (Meshes.Contains(newMeshName))
+					{
+						RootStaticMeshComponent->SetMesh(newMeshName.ToString());
+						//UStaticMesh* newMesh = Meshes[newMeshName]->GetMesh();
+						//if (newMesh)
+						//{
+						//	StaticMeshComponent->SetStaticMesh(newMesh);
+						//}
+					}
+				}
+
+				if (isSelected)
+				{
+					ImGui::SetItemDefaultFocus(); // 기본 포커스 설정
+				}
+			}
+			ImGui::EndCombo();
+		}
 	}
 }

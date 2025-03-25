@@ -24,11 +24,13 @@ public:// UIWindows
 	void RenderMemoryUsage() const;
     void RenderPrimitiveSelection();
     void RenderCameraSettings() const;
-    void RenderPropertyWindow() const;
+    void RenderPropertyWindow();
     void RenderOutLiner();
 	void RenderShowFlagsPanel() const;
 	void RenderViewModePanel() const;
 	void RenderGridSettings() const;
+
+	void PropertyStaticMesh(class AStaticMesh* StaticMeshComponent);
 
 private:
 	// Mouse 전용
@@ -81,8 +83,12 @@ private:
 	ImVec2 CurRatio;
 
 	TArray<FString> UUIDNames;
-	//TArray<const char*> cUUIDNames;
+	TArray<const char*> cUUIDNames;
 	TArray<uint32> UUIDs;
 	uint32 PrevSize = 0;
 	AActor* CurActor = nullptr;
+
+
+	TArray<FString> StaticMeshNames;
+	TArray<const char*> cStaticMeshNames;
 };
