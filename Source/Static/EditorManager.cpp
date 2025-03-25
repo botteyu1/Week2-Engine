@@ -443,14 +443,19 @@ void UEditorManager::ResizingSWindow() {
 	UInputManager* inputManager = UEngine::Get().GetInput();
 	FVector mousePos = inputManager->GetMousePos();
 	std::shared_ptr<SWindow> window = GetHoveringWindow(mousePos, RootWindow);
-	if (inputManager->GetKeyPress(EKeyCode::LButton)) {
-		window->OnMousePressed(FVector2D(mousePos.X, mousePos.Y));
-	} else if ( inputManager->GetKeyDown(EKeyCode::LButton) ) {
-		window->OnMouseDown(FVector2D(mousePos.X, mousePos.Y));
-	} else if ( inputManager->GetKeyUp(EKeyCode::LButton) ){
-		window->OnMouseReleased(FVector2D(mousePos.X, mousePos.Y));
-	} else {
-		window->OnMouseUp(FVector2D(mousePos.X, mousePos.Y));
+	if (window) {
+		if (inputManager->GetKeyPress(EKeyCode::LButton)) {
+			window->OnMousePressed(FVector2D(mousePos.X, mousePos.Y));
+		}
+		else if (inputManager->GetKeyDown(EKeyCode::LButton)) {
+			window->OnMouseDown(FVector2D(mousePos.X, mousePos.Y));
+		}
+		else if (inputManager->GetKeyUp(EKeyCode::LButton)) {
+			window->OnMouseReleased(FVector2D(mousePos.X, mousePos.Y));
+		}
+		else {
+			window->OnMouseUp(FVector2D(mousePos.X, mousePos.Y));
+		}
 	}
 }
 

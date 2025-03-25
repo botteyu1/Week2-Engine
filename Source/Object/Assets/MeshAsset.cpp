@@ -45,7 +45,7 @@ bool UMeshAsset::Load()
 			uint32 indexStart = 0;
 			FVector min(FLT_MAX, FLT_MAX, FLT_MAX);
 			FVector max = -min;
-			for (int i = 0; i < OBJLoader.LoadedVertices.size(); i++) {
+			/*for (int i = 0; i < OBJLoader.LoadedVertices.size(); i++) {
 				FVector4 color((float)rand() / (float)RAND_MAX, (float)rand() / (float)RAND_MAX,
 					(float)rand() / (float)RAND_MAX, 1.0f);
 				FVertexTextureArray  inVertex = {
@@ -62,7 +62,7 @@ bool UMeshAsset::Load()
 				min.X = FMath::Min(min.X, vertices[i].X);
 				min.Y = FMath::Min(min.Y, vertices[i].Y);
 				min.Z = FMath::Min(min.Z, vertices[i].Z);
-			}
+			}*/
 			for (int i = 0; i < OBJLoader.LoadedMeshes.size(); i++)
 			{
 				objl::Mesh curMesh = OBJLoader.LoadedMeshes[i];
@@ -87,7 +87,20 @@ bool UMeshAsset::Load()
 
 				for (int j = 0; j < curMesh.Vertices.size(); j++)
 				{
-					vertices[j + indexStart].TI = textureIndex;
+					FVertexTextureArray  inVertex = {
+						-curMesh.Vertices[j].Position.Z, -curMesh.Vertices[j].Position.X, curMesh.Vertices[j].Position.Y,
+						0.4f, 0.4f, 0.4f, 1.0f,
+						curMesh.Vertices[j].TextureCoordinate.X, curMesh.Vertices[j].TextureCoordinate.Y,
+						curMesh.Vertices[j].Normal.X, curMesh.Vertices[j].Normal.Y, curMesh.Vertices[j].Normal.Z,
+						textureIndex
+					};
+					max.X = FMath::Max(max.X, inVertex.X);
+					max.Y = FMath::Max(max.Y, inVertex.Y);
+					max.Z = FMath::Max(max.Z, inVertex.Z);
+					min.X = FMath::Min(min.X, inVertex.X);
+					min.Y = FMath::Min(min.Y, inVertex.Y);
+					min.Z = FMath::Min(min.Z, inVertex.Z);
+					vertices.Add(inVertex);
 				}
 
 				// 인덱스를 추가할 때, 반드시 메시의 정점 오프셋(indexStart)을 고려해야 함
@@ -106,13 +119,20 @@ bool UMeshAsset::Load()
 			float zDist = max.Z - min.Z;
 			float size = FMath::Max(xDist, yDist);
 			size = FMath::Max(size, zDist);
+			float scale = 1;
 			if (size > 2.0f) {
-				float scale = FMath::Max(2.0f / size, 0.0075f);
-				for (int i = 0; i < vertices.Num(); i++) {
+				scale = FMath::Max(2.0f / size, 0.005f);
+			}
+			FVector center = (max + min) / 2.0f * scale;
+			for (int i = 0; i < vertices.Num(); i++) {
+				if (size > 2.0f) {
 					vertices[i].X *= scale;
 					vertices[i].Y *= scale;
 					vertices[i].Z *= scale;
 				}
+				vertices[i].X -= center.X;
+				vertices[i].Y -= center.Y;
+				vertices[i].Z -= center.Z;
 			}
 			FObjArchive::ObjToBinary(binaryFile, vertices, indices);
 		}
