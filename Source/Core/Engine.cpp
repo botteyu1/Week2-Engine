@@ -48,8 +48,16 @@ LRESULT UEngine::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		float curZoomSize = UEngine::Get().GetWorld()->GetCameraFocused()->GetZoomSize();
 		UEngine::Get().GetWorld()->GetCameraFocused()->SetZoomSize(curZoomSize + zDelta);
 		break;
-
 	}
+	//case WM_SETCURSOR:
+	//{
+	//	if (UEngine::Get().GetEditor() == nullptr)
+	//		return DefWindowProc(hWnd, uMsg, wParam, lParam);
+	//	if (UEngine::Get().GetEditor()->cursorShape == nullptr)
+	//		return DefWindowProc(hWnd, uMsg, wParam, lParam);
+	//	//SetCursor(UEngine::Get().GetEditor()->cursorShape);
+	//	break;
+	//}
 	default:
 		return DefWindowProc(hWnd, uMsg, wParam, lParam);
 	}

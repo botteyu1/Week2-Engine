@@ -396,6 +396,9 @@
     <ClCompile Include="Source\Core\UObject\UObjectIterator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Object\Assets\ObjMTLAsset.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\ShaderW0.hlsl">
@@ -854,12 +857,21 @@
     <ClInclude Include="Source\Core\UObject\UObjectIterator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Object\Assets\ObjMTLAsset.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
     <None Include=".editorconfig" />
     <None Include="imgui.ini" />
     <None Include="README.md" />
+    <None Include="NODROP.cur">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="font_atlas.png">
@@ -876,5 +888,10 @@
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="JungleEngine.natvis" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="JungleEngine.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

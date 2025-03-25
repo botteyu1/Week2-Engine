@@ -53,11 +53,15 @@ public:
 		return splitterRect.Contains(coord);
 	}
 
-	void OnMouseDown(FVector2D coord) override {
+	void OnMousePressed(FVector2D coord) override {
 		if (IsHover(coord)) bIsDragging = true;
 	}
 
-	void OnMouseUp(FVector2D coord) override {
+	virtual void OnMouseDown(FVector2D coord) override {
+		OnResizeUpdate();
+	}
+
+	void OnMouseReleased(FVector2D coord) override {
 		bIsDragging = false;
 	}
 };
@@ -81,14 +85,17 @@ public:
 		SideRB->OnResizeUpdate();
 	}
 	virtual void OnResizeUpdate() override;
+
+	void OnMouseDown(FVector2D coord) override {
+		if ( !bIsDragging )
+			return;
+		SplitPos = (coord.X - Rect.Left) / Rect.Width();
+		SplitPos = std::clamp(SplitPos, 0.05f, 0.95f);
+		SSplitter::OnMouseDown(coord);
+	}
 private:
 	FRect GetSplitterRect() const {
-		return FRect(
-			Rect.Left + Rect.Width() * SplitPos - SplitterWidth / 2.0f, 
-			Rect.Top,
-			SplitterWidth,
-			Rect.Height()
-		);
+		return Rect;
 	}
 };
 
@@ -110,13 +117,15 @@ public:
 		SideRB->OnResizeUpdate();
 	}
 	virtual void OnResizeUpdate() override;
+	void OnMouseDown(FVector2D coord) override {
+		if ( !bIsDragging )
+			return;
+		SplitPos = (coord.Y - Rect.Top) / Rect.Width();
+		SplitPos = std::clamp(SplitPos, 0.05f, 0.95f);
+		SSplitter::OnMouseDown(coord);
+	}
 private:
 	FRect GetSplitterRect() const {
-		return FRect(
-			Rect.Left, 
-			Rect.Top + Rect.Height() * SplitPos - SplitterHeight / 2.0f,
-			Rect.Width(),
-			SplitterHeight
-		);
+		return Rect;
 	}
 };

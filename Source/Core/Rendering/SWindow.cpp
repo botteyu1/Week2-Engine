@@ -39,17 +39,23 @@ void SSplitterH::OnResizeUpdate() {
 	SideLT->Rect = FRect(
 		parentRect.Left,
 		parentRect.Top,
-		parentRect.Left + (parentRect.Right - parentRect.Left) * SplitPos,
+		parentRect.Left + (parentRect.Right - parentRect.Left) * SplitPos - SplitterWidth / 2,
 		parentRect.Bottom
 	);
 	SideLT->OnResizeUpdate();
 	SideRB->Rect = FRect(
-		parentRect.Left + (parentRect.Right - parentRect.Left) * SplitPos,
+		parentRect.Left + (parentRect.Right - parentRect.Left) * SplitPos + SplitterWidth / 2,
 		parentRect.Top,
 		parentRect.Right,
 		parentRect.Bottom
 	);
 	SideRB->OnResizeUpdate();
+	this->Rect = FRect(
+		parentRect.Left + (parentRect.Right - parentRect.Left) * SplitPos - SplitterWidth / 2,
+		parentRect.Top,
+		parentRect.Left + (parentRect.Right - parentRect.Left) * SplitPos + SplitterWidth / 2,
+		parentRect.Bottom
+	);
 }
 
 void SSplitterV::OnResizeUpdate() {
@@ -58,14 +64,20 @@ void SSplitterV::OnResizeUpdate() {
 		parentRect.Left,
 		parentRect.Top,
 		parentRect.Right,
-		parentRect.Top + (parentRect.Bottom - parentRect.Top) * SplitPos
+		parentRect.Top + (parentRect.Bottom - parentRect.Top) * SplitPos - SplitterHeight / 2
 	);
 	SideLT->OnResizeUpdate();
 	SideRB->Rect = FRect(
 		parentRect.Left,
-		parentRect.Top + (parentRect.Bottom - parentRect.Top) * SplitPos,
+		parentRect.Top + (parentRect.Bottom - parentRect.Top) * SplitPos + SplitterHeight / 2,
 		parentRect.Right,
 		parentRect.Bottom
 	);
 	SideRB->OnResizeUpdate();
+	this->Rect = FRect(
+		parentRect.Left,
+		parentRect.Top + (parentRect.Bottom - parentRect.Top) * SplitPos - SplitterHeight / 2,
+		parentRect.Right,
+		parentRect.Top + (parentRect.Bottom - parentRect.Top) * SplitPos + SplitterHeight / 2
+	);
 }

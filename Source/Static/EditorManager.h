@@ -32,7 +32,7 @@ public:
     
     void SelectActor(AActor* NewActor);
 
-	std::shared_ptr<SWindow> GetClickedWindow(
+	std::shared_ptr<SWindow> GetHoveringWindow(
 		const FVector& InMouseScreenPos, 
 		const std::shared_ptr<SWindow> InSWindow
 	);
@@ -49,12 +49,20 @@ public:
 
 	void LateTick(float DeltaTime);
 
+	void ResizingSWindow();
+
+	void SetCursorWithSWindow();
+
+	void PixelPicking();
+
 	void OnUpdateWindowSize(uint32 Width, uint32 Height);
 
 	void OnResizeComplete();
 	FVector4 GetPixel(FVector MPos) const;
 	std::shared_ptr<SWindow> SelectedWindow;
 	std::shared_ptr<SWindow> GetRootWindow() { return RootWindow; }
+
+	HCURSOR cursorShape;
 private:
     ACamera* Camera = nullptr;
     AActor* SelectedActor = nullptr;

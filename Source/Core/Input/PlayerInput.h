@@ -187,6 +187,8 @@ public:
 
 	inline bool GetKeyUp(EKeyCode key) const { return Keys[static_cast<uint8>(key)].KeyState == EKeyState::Up; }
 
+	inline bool GetKeyNone(EKeyCode key) const { return Keys[static_cast<uint8>(key)].KeyState == EKeyState::None; }
+
 	void Update(HWND hWnd, uint32 FramaeBufferHeight, uint32 FramaeBufferWidth);
     
     FVector GetMousePos() const { return MousePos;}
