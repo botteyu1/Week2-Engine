@@ -19,6 +19,7 @@
 #include "Static/FUUIDBillBoard.h"
 #include "Resource/DirectResource/ViewMode.h"
 #include "Object/Actor/StaticMesh.h"
+#include "Core/UObject/UObjectIterator.h"
 // #include "FDevice.h"
 // #include "FViewModeManager.h"
 // #include "Core/Engine.h"
@@ -93,7 +94,7 @@ void UI::Update()
         UE_LOG("Current Ratio: %f, %f", CurRatio.x, CurRatio.y);
     }
 
-	RenderSceneManager();
+	RenderOutLiner();
     RenderControlPanel();
     RenderPropertyWindow();
 	RenderShowFlagsPanel();
@@ -132,15 +133,19 @@ void UI::OnUpdateWindowSize(UINT InScreenWidth, UINT InScreenHeight)
 
 void UI::RenderControlPanel()
 {
-    ImGui::Begin("Jungle Control Panel");
+	ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoMove;
 
-    if (bWasWindowSizeUpdated)
-    {
-        auto* Window = ImGui::GetCurrentWindow();
+	ImGui::Begin("Jungle Control Panel", nullptr, window_flags);
 
-        ImGui::SetWindowPos(ResizeToScreen(Window->Pos));
-        ImGui::SetWindowSize(ResizeToScreen(Window->Size));
-    }
+	if (bWasWindowSizeUpdated)
+	{
+		auto* Window = ImGui::GetCurrentWindow();
+		ImVec2 DisplaySize = ImGui::GetIO().DisplaySize;
+
+		ImGui::SetWindowPos(ImVec2(0.0f, 0.0f));
+		ImGui::SetWindowSize(ImVec2(DisplaySize.x * 0.25f, DisplaySize.y * 0.4f));
+	}
+
     
     ImGui::Text("Hello, Jungle World!");
     ImGui::Text("FPS: %.3f (%.2f ms)", ImGui::GetIO().Framerate , 1000.0f / ImGui::GetIO().Framerate);
@@ -365,16 +370,26 @@ void UI::RenderCameraSettings() const
 void UI::RenderPropertyWindow() const
 {
 
-    ImGui::Begin("Properties");
 
-    if (bWasWindowSizeUpdated)
-    {
-        auto* Window = ImGui::GetCurrentWindow();
 
-        ImGui::SetWindowPos(ResizeToScreen(Window->Pos));
-        ImGui::SetWindowSize(ResizeToScreen(Window->Size));
-    }
-    
+	ImVec2 DisplaySize = ImGui::GetIO().DisplaySize;
+
+	ImGui::SetNextWindowPos(ImVec2(DisplaySize.x * 0.8f, DisplaySize.y * 0.6f), ImGuiCond_Once);
+	ImGui::SetNextWindowSize(ImVec2(DisplaySize.x * 0.2f, DisplaySize.y * 0.4f), ImGuiCond_Once);
+
+	ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoMove ;
+
+	ImGui::Begin("Properties", nullptr, window_flags);
+
+	if (bWasWindowSizeUpdated)
+	{
+		ImGui::SetWindowPos(ImVec2(DisplaySize.x * 0.8f, DisplaySize.y * 0.6f));
+		ImGui::SetWindowSize(ImVec2(DisplaySize.x * 0.2f, DisplaySize.y * 0.4f));
+	}
+
+
+
+
     AActor* selectedActor = UEngine::Get().GetEditor()->GetSelectedActor();
     if (selectedActor != nullptr)
     {
@@ -486,13 +501,48 @@ void UI::RenderPropertyWindow() const
     ImGui::End();
 }
 
-void UI::RenderSceneManager()
+static bool StringGetter(void* data, int idx, const char** out_text)
 {
-	ImGui::Begin("SceneManager");
-	TArray<AActor*>& Actors = UEngine::Get().GetWorld()->GetActors();
+	const std::vector<std::string>* v = static_cast<std::vector<std::string>*>(data);
+	if (idx < 0 || idx >= static_cast<int>(v->size())) return false;
+	*out_text = (*v)[idx].c_str();
+	return true;
+}
+
+void UI::RenderOutLiner()
+{
+
+	ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x * 0.8f, 0), ImGuiCond_Once);
+	ImGui::SetNextWindowSize(ImVec2(ImGui::GetIO().DisplaySize.x * 0.2f, 
+			ImGui::GetIO().DisplaySize.y * 0.4f), ImGuiCond_Once);
+
+	ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoMove;
+
+	ImGui::Begin("OutLiner", nullptr, window_flags);
+
+	if (bWasWindowSizeUpdated)
+	{
+		auto* Window = ImGui::GetCurrentWindow();
+		ImVec2 DisplaySize = ImGui::GetIO().DisplaySize;
+
+		ImGui::SetWindowPos(ImVec2(DisplaySize.x *0.8f, 0));
+		ImGui::SetWindowSize(ImVec2(DisplaySize.x * 0.2f, DisplaySize.y * 0.4f));
+	}
+
+	TArray<AStaticMesh*> Actors;
+	for (TObjectIterator<AStaticMesh> It; It; ++It)
+	{
+		if (It->GetWorld() == UEngine::Get().GetWorld())
+		{
+			Actors.Add(*It);
+		}
+	}
 
 	if (Actors.Num() == 0)
+	{
+		ImGui::End();
 		return;
+	}
 
 	if (PrevSize != Actors.Num())
 	{
@@ -503,10 +553,10 @@ void UI::RenderSceneManager()
 
 		// 사용 전에 항상 비우기
 		UUIDNames.Empty();
-		cUUIDNames.Empty();
+		//cUUIDNames.Empty();
 		UUIDs.Empty();
 		UUIDNames.Reserve(Actors.Num());
-		cUUIDNames.Reserve(Actors.Num());
+		//cUUIDNames.Reserve(Actors.Num());
 		UUIDs.Reserve(Actors.Num());
 
 
@@ -521,32 +571,115 @@ void UI::RenderSceneManager()
 		}
 
 		// 모든 문자열이 추가된 후에 포인터 설정
-		for (const auto& str : UUIDNames) {
-			cUUIDNames.Add(*str);
-		}
+		//for (const auto& str : UUIDNames) {
+		//	cUUIDNames.Add(*str);
+		//}
 	}
 
 	PrevSize = Actors.Num();
 
 	static int SelectUUIDIndex = 0;
 
-	if (ImGui::ListBox("ActorList", &SelectUUIDIndex, &cUUIDNames[0], static_cast<int>(cUUIDNames.Num())))
-	{
-		uint32 UUID = UUIDs[SelectUUIDIndex];
+	const char* preview = SelectUUIDIndex < UUIDNames.Num() ? (*UUIDNames[SelectUUIDIndex]) : "Select Static Mesh";
 
-		for (int i = 0; i < Actors.Num(); i++)
+	// ListBox 사용
+	/*if (ImGui::ListBox("StaticMeshList", &SelectUUIDIndex, StringGetter,
+		static_cast<void*>(&UUIDNames), static_cast<int>(UUIDNames.Num())))*/
+
+	if (ImGui::BeginCombo("StaticMeshList", "Select Static Mesh"))
+	{
+		for (int i = 0; i < UUIDNames.Num(); i++)
 		{
-			AActor* Actor = Actors[i];
-			if (Actor->GetUUID() == UUID)
+			bool is_selected = (SelectUUIDIndex == i);
+			if (ImGui::Selectable((*UUIDNames[i]), is_selected))
 			{
-				//if (CurActor != nullptr)
-					//CurActor->IsHighlightValue = false;
-				CurActor = Actor;
-				UEngine::Get().GetEditor()->SelectActor(CurActor);
-				UEngine::Get().GetRenderer()->GetUUIDBillBoard()->SetTarget(CurActor);
+				SelectUUIDIndex = i;
+				uint32 UUID = UUIDs[SelectUUIDIndex];
+
+				for (AActor* Actor : Actors)
+				{
+					if (Actor->GetUUID() == UUID)
+					{
+						CurActor = Actor;
+						UEngine::Get().GetEditor()->SelectActor(CurActor);
+						UEngine::Get().GetRenderer()->GetUUIDBillBoard()->SetTarget(CurActor);
+						break;
+					}
+				}
+			}
+
+			if (is_selected)
+			{
+				ImGui::SetItemDefaultFocus();
 			}
 		}
+		ImGui::EndCombo();
 	}
+
+	//if (ImGui::CollapsingHeader("Transform"))
+	//{
+	//	ImGui::Text("Position");
+	//	// Position 관련 위젯들
+
+	//	ImGui::Text("Rotation");
+	//	// Rotation 관련 위젯들
+
+	//	ImGui::Text("Scale");
+	//	// Scale 관련 위젯들
+	//}
+
+	AStaticMesh* selectedStaticMesh = Cast<AStaticMesh>(UEngine::Get().GetEditor()->GetSelectedActor());
+	static bool isFirstSelection = true;
+
+	//메쉬 트랜스폼
+	if (selectedStaticMesh != nullptr)
+	{
+		ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnArrow;
+
+		if (isFirstSelection)
+		{
+			flags |= ImGuiTreeNodeFlags_DefaultOpen;
+			isFirstSelection = false;
+		}
+
+		if (ImGui::TreeNodeEx("Selected Static Mesh", flags))
+		{
+			FTransform selectedTransform = selectedStaticMesh->GetActorTransform();
+			float position[] = { selectedTransform.GetPosition().X, selectedTransform.GetPosition().Y, selectedTransform.GetPosition().Z };
+			float scale[] = { selectedTransform.GetScale().X, selectedTransform.GetScale().Y, selectedTransform.GetScale().Z };
+
+			if (ImGui::DragFloat3("Translation", position, 0.1f))
+			{
+				selectedTransform.SetPosition(position[0], position[1], position[2]);
+				selectedStaticMesh->SetActorTransform(selectedTransform);
+			}
+
+			FVector PrevEulerAngle = selectedTransform.GetRotation().GetEuler();
+			FVector UIEulerAngle = PrevEulerAngle;
+			if (ImGui::DragFloat3("Rotation", reinterpret_cast<float*>(&UIEulerAngle), 0.1f))
+			{
+				FVector DeltaEulerAngle = UIEulerAngle - PrevEulerAngle;
+
+				selectedTransform.Rotate(DeltaEulerAngle);
+				UE_LOG("Rotation: %.2f, %.2f, %.2f", DeltaEulerAngle.X, DeltaEulerAngle.Y, DeltaEulerAngle.Z);
+				selectedStaticMesh->SetActorTransform(selectedTransform);
+			}
+			if (ImGui::DragFloat3("Scale", scale, 0.1f))
+			{
+				selectedTransform.SetScale(scale[0], scale[1], scale[2]);
+				selectedStaticMesh->SetActorTransform(selectedTransform);
+			}
+
+			ImGui::TreePop();
+		}
+	}
+	else
+	{
+		isFirstSelection = true;
+	}
+
+
+
 
 
 
@@ -581,8 +714,23 @@ void UI::RenderSceneManager()
 
 void UI::RenderShowFlagsPanel() const
 {
-	if (ImGui::Begin("Show Flags"))
+
+
+	ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoMove;
+
+
+	if (ImGui::Begin("Show Flags", nullptr, window_flags))
 	{
+		if (bWasWindowSizeUpdated)
+		{
+
+			auto* Window = ImGui::GetCurrentWindow();
+			ImVec2 DisplaySize = ImGui::GetIO().DisplaySize;
+
+			ImGui::SetWindowPos(ImVec2(DisplaySize.x * 0.25f, 0.0f));
+			ImGui::SetWindowSize(ImVec2(DisplaySize.x * 0.08f, DisplaySize.y * 0.1f));
+		}
+
 		bool bPrimitives = FEngineShowFlags::Get().GetSingleFlag(EEngineShowFlags::SF_Primitives);
 		if (ImGui::Checkbox("Primitives", &bPrimitives))
 		{
@@ -600,13 +748,26 @@ void UI::RenderShowFlagsPanel() const
 
 void UI::RenderViewModePanel() const
 {
-	if (ImGui::Begin("View Mode"))
+	ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoMove;
+
+
+	if (ImGui::Begin("View Mode", nullptr, window_flags))
 	{
+		if (bWasWindowSizeUpdated)
+		{
+
+			auto* Window = ImGui::GetCurrentWindow();
+			ImVec2 DisplaySize = ImGui::GetIO().DisplaySize;
+
+			ImGui::SetWindowPos(ImVec2(DisplaySize.x * (0.8f - 0.08f), 0.0f));
+			ImGui::SetWindowSize(ImVec2(DisplaySize.x * 0.08f, DisplaySize.y * 0.1f));
+		}
+
 		FViewModeManager* viewMode = UEngine::Get().GetRenderer()->GetViewMode();
 		static const char* viewModeNames[] = { "Default", "Solid", "Wireframe" };
 		int currentViewMode = static_cast<int>(viewMode->GetCurrentViewMode());
 
-		if (ImGui::Combo("View Mode", &currentViewMode, viewModeNames, IM_ARRAYSIZE(viewModeNames)))
+		if (ImGui::Combo(" ", &currentViewMode, viewModeNames, IM_ARRAYSIZE(viewModeNames)))
 		{
 			viewMode->SetViewMode((static_cast<EViewModeIndex>(currentViewMode)));
 		}

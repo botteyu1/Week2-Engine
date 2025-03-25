@@ -7,6 +7,7 @@ class USampler;
 class UTextureAsset: public UAsset {
 	DECLARE_CLASS(UTextureAsset, UAsset)
 
+
 public:
 	UTextureAsset() = default;
 	// UAsset을(를) 통해 상속됨
