@@ -6,6 +6,8 @@
 
 #include "Object/Actor/Camera.h"
 #include "Core/Input/PlayerInput.h"
+#include "Core/Rendering/SWindow.h"
+#include "Debug/DebugConsole.h"
 
 AGizmoActor::AGizmoActor()
 {
@@ -128,14 +130,16 @@ void AGizmoActor::Tick(float DeltaTime)
 
 			/// To Do 뷰포트 이부분 변경해야할 듯
 
+			FVector2D NDCPos = UEngine::Get().GetEditor()->SelectedWindow->GetNDCPosInWindow(FVector2D(pt.x, pt.y));
 
-			// 커서 위치를 NDC로 변경
-			float PosX = 2.0f * pt.x / ScreenWidth - 1.0f;
-			float PosY = -2.0f * pt.y / ScreenHeight + 1.0f;
+
+			//// 커서 위치를 NDC로 변경
+			//float PosX = 2.0f * pt.x / ScreenWidth - 1.0f;
+			//float PosY = -2.0f * pt.y / ScreenHeight + 1.0f;
 
 			// Projection 공간으로 변환
-			FVector4 RayOrigin{ PosX, PosY, 0.0f, 1.0f };
-			FVector4 RayEnd{ PosX, PosY, 1.0f, 1.0f };
+			FVector4 RayOrigin{ NDCPos.X, NDCPos.Y, 0.0f, 1.0f };
+			FVector4 RayEnd{ NDCPos.X, NDCPos.Y, 1.0f, 1.0f };
 
 			// View 공간으로 변환
 			FMatrix InvProjMat = UEngine::Get().GetWorld()->GetCameraFocused()->GetProjectionMatrix().Inverse();
@@ -172,7 +176,7 @@ void AGizmoActor::Tick(float DeltaTime)
 		}
 	}
 	
-	if (SelectedAxis != ESelectedAxis::None and UEngine::Get().GetInput()->GetKeyPress(EKeyCode::Space))
+	if (SelectedAxis != ESelectedAxis::None and UEngine::Get().GetInput()->GetKeyDown(EKeyCode::Space))
 	{
 		// 현재 GizmoType을 가져옴 (CurrentGizmoType이 현재 타입을 저장하는 변수라고 가정)
 		EGizmoType& CurrentGizmoType = GizmoType; // 이 부분은 실제 구현에 맞게 수정해야 함
@@ -202,6 +206,8 @@ void AGizmoActor::Tick(float DeltaTime)
 void AGizmoActor::DoTransform(FTransform& AT, FVector Result, AActor* Actor)
 {
 	const FVector& AP = AT.GetPosition();
+
+
 
  	if (SelectedAxis == ESelectedAxis::X)
  	{

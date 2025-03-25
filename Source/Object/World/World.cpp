@@ -274,7 +274,7 @@ void UWorld::RenderMainTexture(URenderer& Renderer)
 		//임시로 여기서 플래그 처리
 		ERenderFlags PrevRenderer = Renderer.renderFlags;
 
-		if (RenderQueue.Key == ERenderQueue::EditorPrimitives)
+		if (RenderQueue.first == ERenderQueue::EditorPrimitives)
 		{
 			FDevice::Get().SetEditorPrimitiveRenderTarget();
 
@@ -285,7 +285,7 @@ void UWorld::RenderMainTexture(URenderer& Renderer)
 			FDevice::Get().SetMainRenderTarget();
 		}
 
-		for (auto& RenderComponent : RenderQueue.Value)
+		for (auto& RenderComponent : RenderQueue.second)
 		{
 			AActor* Owner = RenderComponent->GetOwner();
 			if (Owner->IsHidden() == true)
@@ -501,7 +501,7 @@ void UWorld::RayCasting(const FVector& MouseNDCPos)
 					std::shared_ptr<UMesh> CurMesh = PrimitiveComponent->GetMesh();
 					FVector vertexMin = CurMesh->GetVertexBuffer().get()->GetMin();
 					FVector vertexMax = CurMesh->GetVertexBuffer().get()->GetMax();
-
+					int a = 0;
 
 					switch (PrimitiveComponent->GetType())
 					{
@@ -534,7 +534,11 @@ void UWorld::RayCasting(const FVector& MouseNDCPos)
 						}
 
 					}
-
+					case EPrimitiveType::EPT_Gizmo:
+					{
+						a = 0;
+						break;
+					}
 					default:
 					{
 						bHit = FRayCast::IntersectRayAABB(worldRay,
@@ -548,7 +552,6 @@ void UWorld::RayCasting(const FVector& MouseNDCPos)
 						}
 						break;
 					}
-
 					}
 				}
 			}

@@ -95,6 +95,7 @@ void UI::Update()
     }
 #if IS_OBJ_VIEWER
 	RenderViewerPanel();
+#else
 	RenderOutLiner();
 	RenderControlPanel();
 	RenderPropertyWindow();
@@ -391,8 +392,8 @@ void UI::RenderCameraSettings() const
     ImGui::Text("Camera GetForward(): (%.2f %.2f %.2f)", Forward.X, Forward.Y, Forward.Z);
     ImGui::Text("Camera GetUp(): (%.2f %.2f %.2f)", Up.X, Up.Y, Up.Z);
     ImGui::Text("Camera GetRight(): (%.2f %.2f %.2f)", Right.X, Right.Y, Right.Z);
-	ImGui::Text("MouseLeftDown: %s", UEngine::Get().GetInput()->GetKeyDown(EKeyCode::LButton) ? "True" : "False");
-	ImGui::Text("MousePress : %s", UEngine::Get().GetInput()->GetKeyPress(EKeyCode::LButton) ? "True" : "False");
+	ImGui::Text("MouseLeftDown: %s", UEngine::Get().GetInput()->GetKeyPress(EKeyCode::LButton) ? "True" : "False");
+	ImGui::Text("MousePress : %s", UEngine::Get().GetInput()->GetKeyDown(EKeyCode::LButton) ? "True" : "False");
 	ImGui::Text("MosueLeftUp: %s", UEngine::Get().GetInput()->GetKeyUp(EKeyCode::LButton) ? "True" : "False");
 	ImGui::Separator();
 }
