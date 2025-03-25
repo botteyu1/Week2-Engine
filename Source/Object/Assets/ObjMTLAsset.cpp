@@ -93,8 +93,20 @@ bool UObjMTLAsset::Load()
 		else if (keyword == "map_Kd")
 		{
 			iss >> currentMat.map_Kd;
-			TextureNames.Add(currentMat.map_Kd);
-			currentMat.textureIndex = TextureNames.Num() - 1;
+			bool hasEqualName = false;
+			for (int i = 0; i < TextureNames.Num(); i++)
+			{
+				if (TextureNames[i].Equals(currentMat.map_Kd, ESearchCase::IgnoreCase)) {
+					currentMat.textureIndex = i;
+					hasEqualName = true;
+					break;
+				}
+			}
+			if (!hasEqualName)
+			{
+				TextureNames.Add(currentMat.map_Kd);
+				currentMat.textureIndex = TextureNames.Num() - 1;
+			}
 		}
 		else if (keyword == "map_Ks")
 		{
@@ -103,8 +115,20 @@ bool UObjMTLAsset::Load()
 		else if (keyword == "map_d")
 		{
 			iss >> currentMat.map_d;
-			TextureNames.Add(currentMat.map_d);
-			currentMat.textureIndex = TextureNames.Num() - 1;
+			bool hasEqualName = false;
+			for (int i = 0; i < TextureNames.Num(); i++) 
+			{
+				if (TextureNames[i].Equals(currentMat.map_d, ESearchCase::IgnoreCase)) {
+					currentMat.textureIndex = i;
+					hasEqualName = true;
+					break;
+				}
+			}
+			if (!hasEqualName)
+			{
+				TextureNames.Add(currentMat.map_d);
+				currentMat.textureIndex = TextureNames.Num() - 1;
+			}
 			// Obj Loarder에서 Vertex에 TextureIndex 넣어줄 때 TextureIndex 바로 넣어줄 수 있도록하기 위해
 
 		}
