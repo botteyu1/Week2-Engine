@@ -25,8 +25,8 @@ ACamera::ACamera()
 	
 #if IS_OBJ_VIEWER
 	CameraSpeed = 3.0f;
-	StartPos.SetRotation(FVector(0, 30, 0));
-	StartPos.SetPosition(FVector(-5, 0, 5*tanf(30*PI/180.0f)));
+	StartPos.SetRotation(FVector(0, 10, 0));
+	StartPos.SetPosition(FVector(-5, 0, 5*tanf(10*PI/180.0f)));
 #else
 	CameraSpeed = 1.0f;
 	StartPos.SetPosition(FVector(-5, 0, 0));
