@@ -10,7 +10,7 @@ void FObjArchive::ObjToBinary(const FString& filePath, const TArray<FVertexTextu
 		MsgBoxAssert("can't open file");
 		return;
 	}
-	// 정점 개수 저장 (int32)
+	// 정점 개수 저장 (uint32)
 	uint32 vertexCount = vertices.Num();
 	objBinary.write(reinterpret_cast<const char*>(&vertexCount), sizeof(uint32));
 

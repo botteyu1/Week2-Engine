@@ -22,8 +22,12 @@ void AStaticMesh::SetMesh(FString MeshType, bool texture)
 		component->SetMaterial("DefaultMaterial");
 		bUseTexture = 0;  
 	}
+#if IS_OBJ_VIEWER
+	component->SetUseVertexColor(false);
+#endif
 	RootComponent = component;
 	component->SetRelativeTransform(FTransform());
+	AssetName = assetName;
 }
 
 void AStaticMesh::BeginPlay()
@@ -39,4 +43,17 @@ void AStaticMesh::Tick(float DeltaTime)
 const char* AStaticMesh::GetTypeName()
 {
 	return "StaticMesh";
+}
+
+void AStaticMesh::SetbUseTexture(bool value)
+{
+	if (value != bUseTexture) {
+		if (value) {
+			Cast<UPrimitiveComponent>(RootComponent)->SetMaterial("TextureMaterial");
+		}
+		else {
+			Cast<UPrimitiveComponent>(RootComponent)->SetMaterial("DefaultMaterial");
+		}
+	}
+	bUseTexture = value;
 }

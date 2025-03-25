@@ -825,7 +825,8 @@ void UI::RenderGridSettings() const
 void UI::RenderViewerPanel()
 {
 	const char* items[] = {"Dice", "Mug",
-	"Girl", "SpaceShip", "Pirate", "AVLSuitJerry" };
+	"Girl", "SpaceShip", "Pirate", "AVLSuitJerry",
+	"SteroidMinion"};
 
 	ImGui::Combo("Obj", &currentItem, items, IM_ARRAYSIZE(items));
 
@@ -853,6 +854,40 @@ void UI::RenderViewerPanel()
 		else if (strcmp(items[currentItem], "AVLSuitJerry") == 0) {
 			World->SpawnStaticMeshActor("AVLSuitJerry.obj", true);
 		}
+		else if (strcmp(items[currentItem], "SteroidMinion") == 0) {
+			World->SpawnStaticMeshActor("SteroidMinion.obj", true);
+		}
 		NumOfSpawn = 1;
+	}
+	ImGui::Separator();
+	UPrimitiveComponent* comp = nullptr;
+	for (TObjectIterator<UPrimitiveComponent> iter; iter; ++iter)
+	{
+		comp = *iter;
+		if (comp != nullptr) {
+			break;
+		}
+	}
+	float color[] = {
+		1.0f,
+		1.0f,
+		1.0f
+	};
+	bool bUseTexture = true;
+	if (comp != nullptr) {
+		color[0] = comp->GetCustomColor().X;
+		color[1] = comp->GetCustomColor().Y;
+		color[2] = comp->GetCustomColor().Z;
+		bUseTexture = Cast<AStaticMesh>(comp->GetOwner())->GetbUseTexture();
+	}
+	if (ImGui::ColorEdit3("RGB Color", color)) {
+		if (comp != nullptr) {
+			comp->SetCustomColor(FVector4(color[0], color[1], color[2], 1.0f));
+		}
+	}
+	ImGui::Separator();
+	
+	if (ImGui::Checkbox("Use Texture", &bUseTexture)) {
+		Cast<AStaticMesh>(comp->GetOwner())->SetbUseTexture(bUseTexture);
 	}
 }
