@@ -28,10 +28,13 @@ void SWorldWindow::OnResizeUpdate() {
 }
 
 void SWorldWindow::OnMousePressed(FVector2D InCoord) {
+#if IS_OBJ_VIEWER
+#else
 	ACamera* cam = viewportClient->camera;
 	UWorld* world = UEngine::Get().GetWorld();
 	world->SetFocusCamera(cam);
 	world->RayCasting(UInputManager::GetNDCPosInWindow(InCoord, Rect.Width(), Rect.Height()));
+#endif
 }
 
 void SSplitterH::OnResizeUpdate() {

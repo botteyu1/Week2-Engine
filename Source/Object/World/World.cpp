@@ -37,8 +37,11 @@
 
 void UWorld::InitWorld()
 {
+#if IS_OBJ_VIEWER
+#else
 	//TODO : 
 	GridSize = FString::ToFloat(UConfigManager::Get().GetValue(TEXT("World"), TEXT("GridSize")));
+#endif
 
 	DXGI_SWAP_CHAIN_DESC SwapChainDesc;
 	FDevice::Get().GetSwapChain()->GetDesc(&SwapChainDesc);
@@ -221,12 +224,18 @@ void UWorld::Render()
 			//[[maybe_unused]] FVector WorldMin = SelectedActor->GetActorWorldBoundsMin();
 
 
+#if IS_OBJ_VIEWER
+#else
 			// 렌더 큐 안에 넣어야 하긴 함
 			UDebugDrawManager::Get().DrawBoundingBox(LocalMin, LocalMax, SelectedActor->GetActorTransform(), FVector4::RED);
 			UEngine::Get().GetRenderer()->GetUUIDBillBoard()->Render();
+#endif
 		}
+#if IS_OBJ_VIEWER
+#else
 		UEngine::Get().GetRenderer()->GetBatchManager()->Render();
 		UDebugDrawManager::Get().Render();
+#endif
 	}
 
 	CameraRenderFocused = nullptr;

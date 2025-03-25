@@ -60,8 +60,6 @@ void FLineBatchManager::MakeWorldGrid(float GridSize, float GridSpacing, const F
 	VertexBuffer.Empty();
 	IndexBuffer.Empty();
 
-
-
 	VertexBuffer.Reserve(MaxVerticesPerBatch);
 	IndexBuffer.Reserve(MaxIndicesPerBatch);
 
