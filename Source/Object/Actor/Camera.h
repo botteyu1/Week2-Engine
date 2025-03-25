@@ -42,10 +42,7 @@ private:
 	FMatrix ProjectionMatrix;
 	FMatrix ViewProjectionMatrix;
 
-
-	FViewport Viewport;
-
-	float ZoomSize = 1000.f;
+	float ZoomSize;
 public:
     const float MaxYDegree = 89.8f;
     //카메라 스피드 IMGui용 나중에 Velocity로 관리하면 없어질애라 편하게 public에서 관리
@@ -54,7 +51,7 @@ public:
     
     // 투영 타입 - Perspective, Orthographic
     ECameraProjectionMode::Type ProjectionMode;
-
+	FViewport* Viewport;
 
 
 	virtual void BeginPlay() override;
@@ -66,7 +63,6 @@ public:
     float GetFieldOfView() const;
     float GetNear() const;
     float GetFar() const;
-	inline const FViewport GetViewPort() const { return Viewport; }
 
 	void SetZoomSize(float InZoomSize) { ZoomSize = FMath::Clamp(InZoomSize, 100.f, 1000.f); }
 	float GetZoomSize() const { return ZoomSize; }

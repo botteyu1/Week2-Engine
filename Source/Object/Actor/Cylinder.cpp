@@ -71,15 +71,15 @@ void ACylinder::Tick(float DeltaTime)
 	}
 
 
-	if (UEngine::Get().GetInput()->GetKeyPress(EKeyCode::Z))
+	if (UEngine::Get().GetInput()->GetKeyDown(EKeyCode::Z))
 	{
 		NewTransform.Rotate(FVector(1, 0, 0));
 	}
-	if (UEngine::Get().GetInput()->GetKeyPress(EKeyCode::X))
+	if (UEngine::Get().GetInput()->GetKeyDown(EKeyCode::X))
 	{
 		NewTransform.Rotate(FVector(0, 1, 0));
 	}
-	if (UEngine::Get().GetInput()->GetKeyPress(EKeyCode::C))
+	if (UEngine::Get().GetInput()->GetKeyDown(EKeyCode::C))
 	{
 		NewTransform.Rotate(FVector(0, 0, 1));
 	}

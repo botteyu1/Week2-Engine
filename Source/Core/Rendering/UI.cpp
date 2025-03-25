@@ -271,7 +271,7 @@ void UI::RenderCameraSettings() const
 {
     ImGui::Text("Camera");
 
-	ACamera* Camera = UEngine::Get().GetWorld()->GetCamera(EViewPortSplitter::TopLeft);
+	ACamera* Camera = UEngine::Get().GetWorld()->GetCameraFocused();
 
     bool IsOrthogonal;
     if (Camera->ProjectionMode == ECameraProjectionMode::Orthographic)
@@ -295,13 +295,20 @@ void UI::RenderCameraSettings() const
         }
     }
 
-    float FOV = Camera->GetFieldOfView();
-    if (ImGui::DragFloat("FOV", &FOV, 0.1f))
-    {
-        FOV = std::clamp(FOV, 0.01f, 179.99f);
-        Camera->SetFieldOfVew(FOV);
-    }
-
+	if (IsOrthogonal) {
+		float Scale = Camera->GetZoomSize();
+		if ( ImGui::DragFloat("Scale", &Scale, 5.0f) ) {
+			Scale = std::clamp(Scale, 100.f, 10000.f);
+			Camera->SetZoomSize(Scale);
+		}
+	} else {
+		float FOV = Camera->GetFieldOfView();
+		if ( ImGui::DragFloat("FOV", &FOV, 0.1f) ) {
+			FOV = std::clamp(FOV, 0.01f, 179.99f);
+			Camera->SetFieldOfVew(FOV);
+		}
+	}
+	
     float NearFar[2] = { Camera->GetNear(), Camera->GetFar() };
     if (ImGui::DragFloat2("Near, Far", NearFar, 0.1f))
     {
@@ -349,6 +356,27 @@ void UI::RenderCameraSettings() const
     }
     ImGui::DragFloat("Camera Speed", &Camera->CameraSpeed, 0.1f);
 	ImGui::DragFloat("Camera Sensitivity", &Camera->Sensitivity, 0.1f);
+
+	UEditorManager* editor = UEngine::Get().GetEditor();
+
+	if ( ImGui::Button("Split Horizontal") ) {
+		if ( editor->SelectedWindow != nullptr )
+			editor->SplitHorizontalSWindow(editor->SelectedWindow);
+			
+	}
+	ImGui::SameLine(0.f, 3.0f);
+	if ( ImGui::Button("Split Vertical") ) {
+		if ( editor->SelectedWindow != nullptr )
+			editor->SplitVerticalSWindow(editor->SelectedWindow);
+	}
+	ImGui::SameLine(0.f, 3.0f);
+	if ( ImGui::Button("Remove") ) {
+		if ( editor->SelectedWindow != nullptr )
+			editor->RemoveSWindow(editor->SelectedWindow);
+	}
+
+	ImGui::Separator();
+
 
     FVector Forward = Camera->GetActorTransform().GetForward();
     FVector Up = Camera->GetActorTransform().GetUp();

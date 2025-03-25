@@ -170,7 +170,6 @@ private:
 
 
 class FViewport;
-enum class EViewPortSplitter;
 class UInputManager
 {
 public:
@@ -187,6 +186,8 @@ public:
 	inline bool GetKeyPress(EKeyCode key) const { return Keys[static_cast<uint8>(key)].KeyState == EKeyState::Press; }
 
 	inline bool GetKeyUp(EKeyCode key) const { return Keys[static_cast<uint8>(key)].KeyState == EKeyState::Up; }
+
+	inline bool GetKeyNone(EKeyCode key) const { return Keys[static_cast<uint8>(key)].KeyState == EKeyState::None; }
 
 	void Update(HWND hWnd, uint32 FramaeBufferHeight, uint32 FramaeBufferWidth);
     
@@ -210,12 +211,16 @@ public:
 	template <typename Fn>
 	void RegisterMouseUpCallback(EKeyCode Button, const Fn& Callback, uint32 uuid);
 
-	void GetNDCPosWithSplitViewPort(
+	static FVector GetNDCPosInWindow(
 		const FVector InMousePos,
-		const TMap<EViewPortSplitter, FViewport> InViewPorts,
-		FVector& OutMouseNDCPos,
-		EViewPortSplitter& OutSelectedViewPortIndex
-	) const;
+		const float InWidth,
+		const float InHeight
+	);
+	static FVector GetNDCPosInWindow(
+		const FVector2D InMousePos, 
+		const float InWidth, 
+		const float InHeight
+	);
 private:
 	void CreateKeys();
 	void ClearKeys();
