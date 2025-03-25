@@ -33,7 +33,7 @@ bool UMeshAsset::Load()
 		std::string Name = name.GetData();
 		name = Name.substr(0, Name.size() - 10);
 	}
-	if (!FObjArchive::ReadBinary(binaryFile, vertices, indices)) {
+	if (!FObjArchive::ReadBinary(binaryFile, vertices, indices, UsedTextureNames)) {
 		objl::Loader OBJLoader;
 		bool loadout = OBJLoader.LoadFile(MetaData.GetAssetPath().GetData());
 		
@@ -141,7 +141,7 @@ bool UMeshAsset::Load()
 				vertices[i].Y -= center.Y;
 				vertices[i].Z -= center.Z;
 			}
-			FObjArchive::ObjToBinary(binaryFile, vertices, indices);
+			FObjArchive::ObjToBinary(binaryFile, vertices, indices, UsedTextureNames);
 		}
 	}
 	

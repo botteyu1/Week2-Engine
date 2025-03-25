@@ -150,7 +150,24 @@ void UAssetManager::LoadAssets() {
 				if (textureAsset != nullptr) {
 					textureAsset->SetMetaData(*objMetaData);
 					textureAsset->LoadForTextureArray(textureNames);
-					Assets.Add(textureAsset->GetAssetName() + TEXT(".textArray"), textureAsset);
+					std::string assetName = textureAsset->GetAssetName().GetData();
+					std::string suffixObj = ".obj";
+					std::string suffixObjBinary = ".obj.objbinary";
+
+					if (assetName.size() >= suffixObjBinary.size() &&
+						assetName.compare(assetName.size() - suffixObjBinary.size(), suffixObjBinary.size(), suffixObjBinary) == 0)
+					{
+						// ".obj.objbinary"로 끝나면 마지막 14글자를 제거
+						assetName = assetName.substr(0, assetName.size() - suffixObjBinary.size());
+					}
+					else if (assetName.size() >= suffixObj.size() &&
+						assetName.compare(assetName.size() - suffixObj.size(), suffixObj.size(), suffixObj) == 0)
+					{
+						// ".obj"로 끝나면 마지막 4글자를 제거
+						assetName = assetName.substr(0, assetName.size() - suffixObj.size());
+					}
+
+					Assets.Add(assetName + TEXT(".textArray"), textureAsset);
 				}
 				else {
 					cout << "Texture Asset Load Failed about MTL Asset: " << objMetaData->GetAssetName().GetData() << endl;
