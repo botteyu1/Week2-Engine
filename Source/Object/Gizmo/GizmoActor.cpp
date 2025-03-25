@@ -6,6 +6,8 @@
 
 #include "Object/Actor/Camera.h"
 #include "Core/Input/PlayerInput.h"
+#include "Core/Rendering/SWindow.h"
+#include "Debug/DebugConsole.h"
 
 AGizmoActor::AGizmoActor()
 {
@@ -111,16 +113,20 @@ void AGizmoActor::Tick(float DeltaTime)
 {
 	AActor::Tick(DeltaTime);
 
+	static POINT PrevPt;
+
+	// 마우스의 커서 위치를 가져오기
+	POINT pt;
+	GetCursorPos(&pt);
+	ScreenToClient(UEngine::Get().GetWindowHandle(), &pt);
+
+	POINT deltaCursor = { pt.x - PrevPt.x, pt.y - PrevPt.y };
+	PrevPt = pt;
 
 	if (SelectedAxis != ESelectedAxis::None and UEngine::Get().GetInput()->GetKeyPress(EKeyCode::LButton))
 	{
 		if (AActor* Actor = UEngine::Get().GetEditor()->GetSelectedActor())
 		{
-			// 마우스의 커서 위치를 가져오기
-			POINT pt;
-			GetCursorPos(&pt);
-			ScreenToClient(UEngine::Get().GetWindowHandle(), &pt);
-
 			RECT Rect;
 			GetClientRect(UEngine::Get().GetWindowHandle(), &Rect);
 			int ScreenWidth = Rect.right - Rect.left;
@@ -128,14 +134,16 @@ void AGizmoActor::Tick(float DeltaTime)
 
 			/// To Do 뷰포트 이부분 변경해야할 듯
 
+			FVector2D NDCPos = UEngine::Get().GetEditor()->SelectedWindow->GetNDCPosInWindow(FVector2D(pt.x, pt.y));
 
-			// 커서 위치를 NDC로 변경
-			float PosX = 2.0f * pt.x / ScreenWidth - 1.0f;
-			float PosY = -2.0f * pt.y / ScreenHeight + 1.0f;
+
+			//// 커서 위치를 NDC로 변경
+			//float PosX = 2.0f * pt.x / ScreenWidth - 1.0f;
+			//float PosY = -2.0f * pt.y / ScreenHeight + 1.0f;
 
 			// Projection 공간으로 변환
-			FVector4 RayOrigin{ PosX, PosY, 0.0f, 1.0f };
-			FVector4 RayEnd{ PosX, PosY, 1.0f, 1.0f };
+			FVector4 RayOrigin{ NDCPos.X, NDCPos.Y, 0.0f, 1.0f };
+			FVector4 RayEnd{ NDCPos.X, NDCPos.Y, 1.0f, 1.0f };
 
 			// View 공간으로 변환
 			FMatrix InvProjMat = UEngine::Get().GetWorld()->GetCameraFocused()->GetProjectionMatrix().Inverse();
@@ -165,14 +173,15 @@ void AGizmoActor::Tick(float DeltaTime)
 			// 액터의 월드 위
 			FTransform AT = Actor->GetActorTransform();
 
-			DoTransform(AT, Result, Actor);
+			DoTransform(AT, Result, Actor, deltaCursor);
 
-
-			SetActorTransform(Actor->GetActorTransform());
+			FTransform newActorTransform = Actor->GetActorTransform();
+			newActorTransform.SetRotation({ 0.0f,0.0f,0.0f });
+			SetActorTransform(newActorTransform);
 		}
 	}
 	
-	if (SelectedAxis != ESelectedAxis::None and UEngine::Get().GetInput()->GetKeyPress(EKeyCode::Space))
+	if (/*SelectedAxis != ESelectedAxis::None and */UEngine::Get().GetInput()->GetKeyDown(EKeyCode::Space))
 	{
 		// 현재 GizmoType을 가져옴 (CurrentGizmoType이 현재 타입을 저장하는 변수라고 가정)
 		EGizmoType& CurrentGizmoType = GizmoType; // 이 부분은 실제 구현에 맞게 수정해야 함
@@ -199,9 +208,11 @@ void AGizmoActor::Tick(float DeltaTime)
 	SetScaleByDistance();
 }
 
-void AGizmoActor::DoTransform(FTransform& AT, FVector Result, AActor* Actor)
+void AGizmoActor::DoTransform(FTransform& AT, FVector Result, AActor* Actor, POINT IndeltaCursor)
 {
 	const FVector& AP = AT.GetPosition();
+
+	float DeltaCursorDegree = IndeltaCursor.x + IndeltaCursor.y;
 
  	if (SelectedAxis == ESelectedAxis::X)
  	{
@@ -211,10 +222,10 @@ void AGizmoActor::DoTransform(FTransform& AT, FVector Result, AActor* Actor)
  			AT.SetPosition({ Result.X, AP.Y, AP.Z });
  			break;
  		case EGizmoType::Rotate:
- 			AT.RotatePitch(Result.X);
+ 			AT.RotateRoll(DeltaCursorDegree);
  			break;
  		case EGizmoType::Scale:
- 			AT.AddScale({ Result.X * .01f, 0, 0 });
+ 			AT.AddScale({ DeltaCursorDegree * .01f, 0, 0 });
  			break;
  		}
  	}
@@ -226,10 +237,10 @@ void AGizmoActor::DoTransform(FTransform& AT, FVector Result, AActor* Actor)
  			AT.SetPosition({ AP.X, Result.Y, AP.Z });
  			break;
  		case EGizmoType::Rotate:
- 			AT.RotateRoll(Result.Y);
+ 			AT.RotatePitch(DeltaCursorDegree);
  			break;
  		case EGizmoType::Scale:
- 			AT.AddScale({ 0, Result.Y * .01f, 0 });
+ 			AT.AddScale({ 0, DeltaCursorDegree * .01f, 0 });
  			break;
  		}
  	}
@@ -241,10 +252,10 @@ void AGizmoActor::DoTransform(FTransform& AT, FVector Result, AActor* Actor)
  			AT.SetPosition({ AP.X, AP.Y, Result.Z });
  			break;
  		case EGizmoType::Rotate:
- 			AT.RotatePitch(-Result.Z);
+ 			AT.RotateYaw(-DeltaCursorDegree);
  			break;
  		case EGizmoType::Scale:
- 			AT.AddScale({0, 0, Result.Z * .01f });
+ 			AT.AddScale({0, 0, DeltaCursorDegree * .01f });
  			break;
  		}
  	}

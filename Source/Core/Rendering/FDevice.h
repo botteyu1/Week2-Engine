@@ -22,12 +22,12 @@ public:
 
 	inline ID3D11Device* GetDevice() const { return Device; }
 	inline ID3D11DeviceContext* GetDeviceContext() const { return DeviceContext; }
-	inline const D3D11_VIEWPORT& GetViewPortInfo() const { return ViewportInfo; }
 	inline ID3D11DepthStencilView* GetDepthStencilView() const { return DepthStencilView; }
 	inline IDXGISwapChain* GetSwapChain() const { return SwapChain; }
 
 
 public:
+
 	FVector GetFrameBufferWindowSize() const;
 
 	/** Renderer에 사용된 모든 리소스를 해제합니다. */
@@ -77,12 +77,14 @@ private:
 	IDXGISwapChain* SwapChain = nullptr;                    // 프레임 버퍼를 교체하는 데 사용되는 스왑 체인
 
 
+#if IS_OBJ_VIEWER
+	FLOAT ClearColor[4] = { 0.8f, 0.8f, 0.8f, 1.0f }; // 화면(스왑버퍼)을 초기화(clear)할 때 사용할 색상 (RGBA)
+#else
 	FLOAT ClearColor[4] = { 0.025f, 0.025f, 0.025f, 1.0f }; // 화면(스왑버퍼)을 초기화(clear)할 때 사용할 색상 (RGBA)
+#endif
 
 	FLOAT PickingClearColor[4] = { 0.0f, 0.0f, 0.0f, 0.0f }; //
 	
-    D3D11_VIEWPORT ViewportInfo = {};       // To Do 날려야됨 반드시
-	// 렌더링 영역을 정의하는 뷰포트 정보
 
 
 

@@ -47,6 +47,12 @@ LRESULT UEngine::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		short zDelta = GET_WHEEL_DELTA_WPARAM(wParam);
 		float curZoomSize = UEngine::Get().GetWorld()->GetCameraFocused()->GetZoomSize();
 		UEngine::Get().GetWorld()->GetCameraFocused()->SetZoomSize(curZoomSize + zDelta);
+		/*if (zDelta > 0) {
+			UEngine::Get().GetWorld()->GetCameraFocused()->MoveForward();
+		}
+		else {
+			UEngine::Get().GetWorld()->GetCameraFocused()->MoveBackward();
+		}*/
 		break;
 	}
 	//case WM_SETCURSOR:
@@ -98,7 +104,10 @@ void UEngine::Initialize(
 	UE_LOG("Init Renderer...");
 	InitRenderer(); // require FDevice, World
 
+#if IS_OBJ_VIEWER
+#else
 	UDebugDrawManager::Get().Initialize();
+#endif
 
 	UE_LOG("Init UI...");
 	InitializedScreenWidth = ScreenWidth;

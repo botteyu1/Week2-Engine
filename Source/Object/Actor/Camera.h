@@ -29,6 +29,8 @@ public:
 
 	void UpdateViewport(FRect InRect);
 	void SettingViewport();
+	const FViewport& GetViewport() const { return *Viewport; }
+
 
 
 private:    
@@ -71,7 +73,7 @@ public:
 	const FMatrix& GetProjectionMatrix() const { return ProjectionMatrix; }
 	const FMatrix& GetViewProjectionMatrix() const { return ViewProjectionMatrix; }
 	const FMatrix& GetViewMatrix() const { return ViewMatrix; }
-	
+
 	
 	void InitMatrix();
 

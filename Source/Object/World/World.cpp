@@ -37,8 +37,11 @@
 
 void UWorld::InitWorld()
 {
+#if IS_OBJ_VIEWER
+#else
 	//TODO : 
 	GridSize = FString::ToFloat(UConfigManager::Get().GetValue(TEXT("World"), TEXT("GridSize")));
+#endif
 
 	DXGI_SWAP_CHAIN_DESC SwapChainDesc;
 	FDevice::Get().GetSwapChain()->GetDesc(&SwapChainDesc);
@@ -221,12 +224,18 @@ void UWorld::Render()
 			//[[maybe_unused]] FVector WorldMin = SelectedActor->GetActorWorldBoundsMin();
 
 
+#if IS_OBJ_VIEWER
+#else
 			// 렌더 큐 안에 넣어야 하긴 함
 			UDebugDrawManager::Get().DrawBoundingBox(LocalMin, LocalMax, SelectedActor->GetActorTransform(), FVector4::RED);
 			UEngine::Get().GetRenderer()->GetUUIDBillBoard()->Render();
+#endif
 		}
+#if IS_OBJ_VIEWER
+#else
 		UEngine::Get().GetRenderer()->GetBatchManager()->Render();
 		UDebugDrawManager::Get().Render();
+#endif
 	}
 
 	CameraRenderFocused = nullptr;
@@ -265,7 +274,7 @@ void UWorld::RenderMainTexture(URenderer& Renderer)
 		//임시로 여기서 플래그 처리
 		ERenderFlags PrevRenderer = Renderer.renderFlags;
 
-		if (RenderQueue.Key == ERenderQueue::EditorPrimitives)
+		if (RenderQueue.first == ERenderQueue::EditorPrimitives)
 		{
 			FDevice::Get().SetEditorPrimitiveRenderTarget();
 
@@ -276,7 +285,7 @@ void UWorld::RenderMainTexture(URenderer& Renderer)
 			FDevice::Get().SetMainRenderTarget();
 		}
 
-		for (auto& RenderComponent : RenderQueue.Value)
+		for (auto& RenderComponent : RenderQueue.second)
 		{
 			AActor* Owner = RenderComponent->GetOwner();
 			if (Owner->IsHidden() == true)
@@ -492,7 +501,7 @@ void UWorld::RayCasting(const FVector& MouseNDCPos)
 					std::shared_ptr<UMesh> CurMesh = PrimitiveComponent->GetMesh();
 					FVector vertexMin = CurMesh->GetVertexBuffer().get()->GetMin();
 					FVector vertexMax = CurMesh->GetVertexBuffer().get()->GetMax();
-
+					int a = 0;
 
 					switch (PrimitiveComponent->GetType())
 					{
@@ -525,7 +534,11 @@ void UWorld::RayCasting(const FVector& MouseNDCPos)
 						}
 
 					}
-
+					case EPrimitiveType::EPT_Gizmo:
+					{
+						a = 0;
+						break;
+					}
 					default:
 					{
 						bHit = FRayCast::IntersectRayAABB(worldRay,
@@ -539,7 +552,6 @@ void UWorld::RayCasting(const FVector& MouseNDCPos)
 						}
 						break;
 					}
-
 					}
 				}
 			}

@@ -136,8 +136,8 @@ enum class EKeyCode : uint8
 enum class EKeyState : uint8
 {
 	None,
-	Down,  // 버튼이 눌린 경우 (매 틱마다)
-	Press, // 버튼이 눌린 경우 (1틱만)
+	Press,  // 버튼이 눌린 경우 (매 틱마다)
+	Down, // 버튼이 눌린 경우 (1틱만)
 	Up,    // 버튼이 때진 경우 (매 틱마다)
 };
 
@@ -181,9 +181,9 @@ public:
 	};
     UInputManager();
 
-	inline bool GetKeyDown(EKeyCode key) const { return Keys[static_cast<uint8>(key)].KeyState == EKeyState::Down; }
-
 	inline bool GetKeyPress(EKeyCode key) const { return Keys[static_cast<uint8>(key)].KeyState == EKeyState::Press; }
+
+	inline bool GetKeyDown(EKeyCode key) const { return Keys[static_cast<uint8>(key)].KeyState == EKeyState::Down; }
 
 	inline bool GetKeyUp(EKeyCode key) const { return Keys[static_cast<uint8>(key)].KeyState == EKeyState::Up; }
 

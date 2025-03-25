@@ -360,7 +360,7 @@ void UEditorManager::SelectActor(AActor* NewActor)
     {
         SelectedActor->Pick();
 		    const FTransform newActorTransform = NewActor->GetActorTransform();
-		    Gizmo->SetActorTransform(newActorTransform);
+		 Gizmo->SetActorTransform(newActorTransform);
 	}
 
 }
@@ -437,6 +437,13 @@ void UEditorManager::LateTick([[maybe_unused]] float DeltaTime)
 	ResizingSWindow();
 	SetCursorWithSWindow();
 	PixelPicking();
+
+	if (SelectedActor != nullptr and Gizmo != nullptr)
+	{
+		FTransform newActorTransform = SelectedActor->GetActorTransform();
+		newActorTransform.SetRotation({0.0f,0.0f,0.0f});
+		Gizmo->SetActorTransform(newActorTransform);
+	}
 }
 
 void UEditorManager::ResizingSWindow() {
@@ -446,12 +453,12 @@ void UEditorManager::ResizingSWindow() {
 	if ( window == nullptr )
 		return;
 	
-	if (inputManager->GetKeyPress(EKeyCode::LButton)) {
+	if (inputManager->GetKeyDown(EKeyCode::LButton)) {
 		UE_LOG("Pressed");
 		window->OnMousePressed(FVector2D(mousePos.X, mousePos.Y));
 		DraggingSplitter = std::dynamic_pointer_cast<SSplitter>(window);
 
-	} else if ( inputManager->GetKeyDown(EKeyCode::LButton) ) {
+	} else if ( inputManager->GetKeyPress(EKeyCode::LButton) ) {
 		if (DraggingSplitter != nullptr) {
 			DraggingSplitter->OnMouseDown(FVector2D(mousePos.X, mousePos.Y));
 		} else {
@@ -484,7 +491,7 @@ void UEditorManager::SetCursorWithSWindow() {
 }
 
 void UEditorManager::PixelPicking() {
-	if ( UEngine::Get().GetInput()->GetKeyPress(EKeyCode::LButton) ) {
+	if ( UEngine::Get().GetInput()->GetKeyDown(EKeyCode::LButton) ) {
 		POINT pt;
 		GetCursorPos(&pt);
 		ScreenToClient(UEngine::Get().GetWindowHandle(), &pt);
@@ -519,8 +526,9 @@ void UEditorManager::PixelPicking() {
 			if ( const UGizmoComponent* GizmoCom = Cast<UGizmoComponent>(PickedComponent) ) {
 				Gizmo->SetSelectedAxis(GizmoCom->GetSelectedAxis());
 			}
-		} else {
-			//SelectActor(nullptr);
+		} 
+		else {
+			SelectActor(nullptr);
 		}
 	}
 
@@ -611,10 +619,11 @@ void UEditorManager::OnResizeComplete()
 FVector4 UEditorManager::GetPixel(FVector MPos) const
 {
 
-	// 선택된 카메라의 뷰포트 가져오기
+	// 여기는 카메라가 아니라 그려진 텍스쳐 기준
+	FVector WindowSize = FDevice::Get().GetFrameBufferWindowSize();
 
-	const float Width = FDevice::Get().GetViewPortInfo().Width; 
-	const float Height = FDevice::Get().GetViewPortInfo().Height;
+	const float Width = WindowSize.X;
+	const float Height = WindowSize.Y;
     MPos.X = FMath::Clamp(MPos.X, 0.0f, Width);
     MPos.Y = FMath::Clamp(MPos.Y, 0.0f, Height);
     // 1. Staging 텍스처 생성 (1x1 픽셀)

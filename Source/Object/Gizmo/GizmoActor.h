@@ -23,7 +23,7 @@ public:
 	EGizmoType GetGizmoType() const { return GizmoType; }
 
 	void SetScaleByDistance();
-	void DoTransform(FTransform& AT, FVector Result, AActor* Actor);
+	void DoTransform(FTransform& AT, FVector Result, AActor* Actor, POINT IndeltaCursor);
 
 private:
 	ESelectedAxis SelectedAxis = ESelectedAxis::None;

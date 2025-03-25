@@ -11,6 +11,7 @@
 #include "Object/Actor/StaticMesh.h"
 #include "Object/Actor/Camera.h"
 #include "Core/EngineEnum.h"
+#include <map>
 
 class UPrimitiveComponent;
 
@@ -78,7 +79,7 @@ public:
 	
 	// render
 	void AddRenderComponent(class UPrimitiveComponent* Component); 
-	void RemoveRenderComponent(UPrimitiveComponent* Component); 
+	void RemoveRenderComponent(UPrimitiveComponent* Component);
 
 	// camera
 	//inline ACamera* GetCamera(EViewPortSplitter InType) const { return CameraMap[InType]; }
@@ -140,7 +141,7 @@ protected:
 	//TArray<UPrimitiveComponent*> ZIgnoreRenderComponents;
 	TArray<AActor*> ActorsToSpawn;
 	TArray<AActor*> PendingDestroyActors; // TODO: 추후에 TQueue로 변경
-	TMap<ERenderQueue,TSet<UPrimitiveComponent*>> RenderQueueComponents;
+	std::map<ERenderQueue,TSet<UPrimitiveComponent*>> RenderQueueComponents;
 
 // Editor Only
 public:

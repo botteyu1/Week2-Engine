@@ -7,6 +7,17 @@ void SWindow::OnResizeUpdate() {
 	child->OnResizeUpdate();
 }
 
+FVector2D SWindow::GetNDCPosInWindow(FVector2D InCoord)
+{
+
+	FVector2D CoodPos = FVector2D(InCoord.X - Rect.Left, InCoord.Y - Rect.Top);
+
+	FVector Pos = UInputManager::GetNDCPosInWindow(CoodPos, Rect.Width(), Rect.Height());
+
+	return FVector2D(Pos.X, Pos.Y);
+	
+}
+
 
 SWorldWindow::SWorldWindow(FViewportClient* viewportClient): viewportClient(viewportClient) {
 	D3D11_VIEWPORT viewport = viewportClient->viewport.GetViewportInfo();
@@ -28,10 +39,13 @@ void SWorldWindow::OnResizeUpdate() {
 }
 
 void SWorldWindow::OnMousePressed(FVector2D InCoord) {
+#if IS_OBJ_VIEWER
+#else
 	ACamera* cam = viewportClient->camera;
 	UWorld* world = UEngine::Get().GetWorld();
 	world->SetFocusCamera(cam);
-	world->RayCasting(UInputManager::GetNDCPosInWindow(InCoord, Rect.Width(), Rect.Height()));
+	//world->RayCasting(UInputManager::GetNDCPosInWindow(InCoord, Rect.Width(), Rect.Height()));
+#endif
 }
 
 void SSplitterH::OnResizeUpdate() {

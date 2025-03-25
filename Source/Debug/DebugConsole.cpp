@@ -1,4 +1,4 @@
-﻿#include "Debug/DebugConsole.h"
+#include "Debug/DebugConsole.h"
 
 #include <cstdarg>
 #include <algorithm>
@@ -16,13 +16,18 @@ void Debug::ShowConsole(bool bWasWindowSizeUpdated, ImVec2 PreRatio, ImVec2 CurR
     static int historyPos = -1;
     bool reclaimFocus = false;
 
-    ImGui::Begin("Console");
-    if (bWasWindowSizeUpdated)
-    {
-        auto* Window = ImGui::GetCurrentWindow();
-        ImGui::SetWindowPos(ResizeToScreen(Window->Pos, PreRatio, CurRatio));
-        ImGui::SetWindowSize(ResizeToScreen(Window->Size, PreRatio, CurRatio));
-    }
+	ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoMove;
+
+	ImGui::Begin("Console", nullptr, window_flags);
+
+	if (bWasWindowSizeUpdated)
+	{
+		auto* Window = ImGui::GetCurrentWindow();
+		ImVec2 DisplaySize = ImGui::GetIO().DisplaySize;
+
+		ImGui::SetWindowPos(ImVec2(0.0f, DisplaySize.y * 0.6f));
+		ImGui::SetWindowSize(ImVec2(DisplaySize.x * 0.25f, DisplaySize.y * 0.4f));
+	}
 
      if (ImGui::BeginChild("ScrollingRegion", ImVec2(0, -ImGui::GetFrameHeightWithSpacing()), true, ImGuiWindowFlags_HorizontalScrollbar))
      {

@@ -34,9 +34,13 @@ void URenderer::Create(HWND hWindow, UWorld* world)
 
 	ViewMode = std::make_unique<FViewModeManager>();
 	ViewMode->Initialize(); // require resource
+#if IS_OBJ_VIEWER
+
+#else
 	LineBatchManager = std::make_unique<FLineBatchManager>();
 	LineBatchManager->MakeWorldGrid(world->GetGridSize(), world->GetGridSize() / 100.f); // create vertex
 	LineBatchManager->Create(); // require device, vertex
+#endif
 
 	//FUUIDBillBoard::Get().Create(); // require device
 
