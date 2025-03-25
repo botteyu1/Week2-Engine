@@ -253,6 +253,7 @@ HRESULT UTexture::CreateTexture2DArrayFromFiles(ID3D11Device* device, const std:
 		else if (w != width || h != height)
 		{
 			// 모든 텍스처의 크기가 동일해야 Texture2DArray로 생성할 수 있습니다.
+			MsgBoxAssert("Texture Image 크기 각각 다름 Size Error.");
 			return E_FAIL;
 		}
 		imageDatas.push_back(std::move(imageData));

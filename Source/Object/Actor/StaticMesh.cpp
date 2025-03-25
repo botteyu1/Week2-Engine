@@ -20,7 +20,7 @@ void AStaticMesh::SetMesh(FString MeshType, bool texture)
 	}
 	else {
 		component->SetMaterial("DefaultMaterial");
-		bUseTexture = 0;
+		bUseTexture = 0;  
 	}
 	RootComponent = component;
 	component->SetRelativeTransform(FTransform());
