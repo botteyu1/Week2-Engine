@@ -172,7 +172,7 @@ void AGizmoActor::Tick(float DeltaTime)
 		}
 	}
 	
-	if (SelectedAxis != ESelectedAxis::None and UEngine::Get().GetInput()->GetKeyDown(EKeyCode::Space))
+	if (SelectedAxis != ESelectedAxis::None and UEngine::Get().GetInput()->GetKeyPress(EKeyCode::Space))
 	{
 		// 현재 GizmoType을 가져옴 (CurrentGizmoType이 현재 타입을 저장하는 변수라고 가정)
 		EGizmoType& CurrentGizmoType = GizmoType; // 이 부분은 실제 구현에 맞게 수정해야 함

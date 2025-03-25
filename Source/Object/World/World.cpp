@@ -37,23 +37,35 @@
 
 void UWorld::InitWorld()
 {
+#if IS_OBJ_VIEWER
+#else
 	//TODO : 
 	GridSize = FString::ToFloat(UConfigManager::Get().GetValue(TEXT("World"), TEXT("GridSize")));
+#endif
 
+	DXGI_SWAP_CHAIN_DESC SwapChainDesc;
+	FDevice::Get().GetSwapChain()->GetDesc(&SwapChainDesc);
 
-	SetCamera(EViewPortSplitter::TopLeft, SpawnActor<ACamera>());
-	SetCamera(EViewPortSplitter::TopRight, SpawnActor<ACamera>());
-	SetCamera(EViewPortSplitter::BottomLeft, SpawnActor<ACamera>());
-	SetCamera(EViewPortSplitter::BottomRight, SpawnActor<ACamera>());
+	//RootWindow = std::make_shared<SWorldWindow>();
+	//RootWindow->Rect = FRect(
+	//	0,
+	//	0,
+	//	SwapChainDesc.BufferDesc.Width,
+	//	SwapChainDesc.BufferDesc.Height
+	//)
+	//SetCamera(EViewPortSplitter::TopLeft, SpawnActor<ACamera>());
+	//SetCamera(EViewPortSplitter::TopRight, SpawnActor<ACamera>());
+	//SetCamera(EViewPortSplitter::BottomLeft, SpawnActor<ACamera>());
+	//SetCamera(EViewPortSplitter::BottomRight, SpawnActor<ACamera>());
 
-	ACamera* TopLeftCamera = GetCamera(EViewPortSplitter::TopLeft);
-	ACamera* TopRightCamera = GetCamera(EViewPortSplitter::TopRight);
-	ACamera* BottomLeftCamera = GetCamera(EViewPortSplitter::BottomLeft);
-	ACamera* BottomRightCamera = GetCamera(EViewPortSplitter::BottomRight);
-	UpdateViewPorts();
+	//ACamera* TopLeftCamera = GetCamera(EViewPortSplitter::TopLeft);
+	//ACamera* TopRightCamera = GetCamera(EViewPortSplitter::TopRight);
+	//ACamera* BottomLeftCamera = GetCamera(EViewPortSplitter::BottomLeft);
+	//ACamera* BottomRightCamera = GetCamera(EViewPortSplitter::BottomRight);
+	//InitSplitViewports();
 
-	BottomRightCamera->Rotate(FVector(30, 30, 30));
-	CameraFocused = TopLeftCamera;
+	//BottomRightCamera->Rotate(FVector(30, 30, 30));
+	//CameraFocused = TopLeftCamera;
 
 	//스플리터 주석처리
 
@@ -81,46 +93,44 @@ void UWorld::InitWorld()
 
 }
 
-void UWorld::UpdateViewPorts() {
-
-	DXGI_SWAP_CHAIN_DESC SwapChainDesc;
-	FDevice::Get().GetSwapChain()->GetDesc(&SwapChainDesc);
-
-	CameraMap[EViewPortSplitter::TopLeft]->UpdateViewport(
-		FRect(
-			0,
-			0,
-			static_cast<float>(SwapChainDesc.BufferDesc.Width) * 0.5f,
-			static_cast<float>(SwapChainDesc.BufferDesc.Height) * 0.5f
-		)
-	);
-	CameraMap[EViewPortSplitter::TopRight]->UpdateViewport(
-		FRect(
-			static_cast<float>(SwapChainDesc.BufferDesc.Width) * 0.5f,
-			0,
-			SwapChainDesc.BufferDesc.Width,
-			static_cast<float>(SwapChainDesc.BufferDesc.Height) * 0.5f
-		)
-	);
-	CameraMap[EViewPortSplitter::BottomLeft]->UpdateViewport(
-		FRect(
-			0,
-			static_cast<float>(SwapChainDesc.BufferDesc.Height) * 0.5f,
-			static_cast<float>(SwapChainDesc.BufferDesc.Width) * 0.5f,
-			SwapChainDesc.BufferDesc.Height
-		)
-	);
-	CameraMap[EViewPortSplitter::BottomRight]->UpdateViewport(
-		FRect(
-			static_cast<float>(SwapChainDesc.BufferDesc.Width) * 0.5f,
-			static_cast<float>(SwapChainDesc.BufferDesc.Height) * 0.5f,
-			SwapChainDesc.BufferDesc.Width,
-			SwapChainDesc.BufferDesc.Height
-		)
-	);
-
-
-}
+//void UWorld::InitSplitViewports() {
+//
+//	DXGI_SWAP_CHAIN_DESC SwapChainDesc;
+//	FDevice::Get().GetSwapChain()->GetDesc(&SwapChainDesc);
+//
+//	CameraMap[EViewPortSplitter::TopLeft]->UpdateViewport(
+//		FRect(
+//			0,
+//			0,
+//			static_cast<float>(SwapChainDesc.BufferDesc.Width) * 0.5f,
+//			static_cast<float>(SwapChainDesc.BufferDesc.Height) * 0.5f
+//		)
+//	);
+//	CameraMap[EViewPortSplitter::TopRight]->UpdateViewport(
+//		FRect(
+//			static_cast<float>(SwapChainDesc.BufferDesc.Width) * 0.5f,
+//			0,
+//			SwapChainDesc.BufferDesc.Width,
+//			static_cast<float>(SwapChainDesc.BufferDesc.Height) * 0.5f
+//		)
+//	);
+//	CameraMap[EViewPortSplitter::BottomLeft]->UpdateViewport(
+//		FRect(
+//			0,
+//			static_cast<float>(SwapChainDesc.BufferDesc.Height) * 0.5f,
+//			static_cast<float>(SwapChainDesc.BufferDesc.Width) * 0.5f,
+//			SwapChainDesc.BufferDesc.Height
+//		)
+//	);
+//	CameraMap[EViewPortSplitter::BottomRight]->UpdateViewport(
+//		FRect(
+//			static_cast<float>(SwapChainDesc.BufferDesc.Width) * 0.5f,
+//			static_cast<float>(SwapChainDesc.BufferDesc.Height) * 0.5f,
+//			SwapChainDesc.BufferDesc.Width,
+//			SwapChainDesc.BufferDesc.Height
+//		)
+//	);
+//}
 
 void UWorld::BeginPlay()
 {
@@ -128,24 +138,6 @@ void UWorld::BeginPlay()
 	{
 		Actor->BeginPlay();
 	}
-
-	UEngine::Get().GetInput()->RegisterMouseDownCallback(EKeyCode::LButton, [this](const FVector& MouseNDCPos)
-	{
-		UInputManager* inputManager = UEngine::Get().GetInput();
-		FVector mousePos = inputManager->GetMousePos();
-		TMap<EViewPortSplitter, FViewport> viewports;
-		FVector mousePosInWindowedNDC;
-		EViewPortSplitter viewportIndex;
-
-		for ( auto& pair : this->GetCameraMap() ) {
-			ACamera* cam = pair.Value;
-			viewports[pair.Key] = cam->GetViewPort();
-		}
-		UEngine::Get().GetInput()->GetNDCPosWithSplitViewPort(mousePos, viewports, mousePosInWindowedNDC, viewportIndex);
-		this->SetFocusCamera(viewportIndex);
-
-		RayCasting(mousePosInWindowedNDC);
-	}, GetUUID());
 }
 
 void UWorld::Tick(float DeltaTime)
@@ -209,16 +201,17 @@ void UWorld::Render()
 	}
 
 
-	for (auto& cam : CameraMap)
+	for (auto& viewportClient: ViewportClients)
 	{
-		CameraRenderFocused = cam.Value;
-		cam.Value->UpdateCameraMatrix();
-		cam.Value->SettingViewport();
+		//CameraRenderFocused = cam.Value;
+		//cam.Value->UpdateCameraMatrix();
+		//cam.Value->SettingViewport();
+
+		CameraRenderFocused = viewportClient->camera;
+		
+		viewportClient->PrepareRender();
 
 		RenderMainTexture(*Renderer);
-
-
-
 
 		FDevice::Get().SetMainRenderTarget();
 		AActor* SelectedActor = UEngine::Get().GetEditor()->GetSelectedActor();
@@ -231,14 +224,22 @@ void UWorld::Render()
 			//[[maybe_unused]] FVector WorldMin = SelectedActor->GetActorWorldBoundsMin();
 
 
+#if IS_OBJ_VIEWER
+#else
 			// 렌더 큐 안에 넣어야 하긴 함
 			UDebugDrawManager::Get().DrawBoundingBox(LocalMin, LocalMax, SelectedActor->GetActorTransform(), FVector4::RED);
 			UEngine::Get().GetRenderer()->GetUUIDBillBoard()->Render();
+#endif
 		}
+#if IS_OBJ_VIEWER
+#else
 		UEngine::Get().GetRenderer()->GetBatchManager()->Render();
 		UDebugDrawManager::Get().Render();
+#endif
 	}
+
 	CameraRenderFocused = nullptr;
+
 	//ACamera* cam = FEditorManager::Get().GetCamera();
 	//cam->UpdateCameraMatrix();
 
@@ -624,3 +625,7 @@ UWorldInfo UWorld::GetWorldInfo() const
 	return WorldInfo;
 }
 
+void FViewportClient::PrepareRender() {
+	viewport.Setting();
+	camera->UpdateCameraMatrix();
+}

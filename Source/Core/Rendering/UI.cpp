@@ -80,7 +80,7 @@ void UI::Update()
         ImGui::GetIO().MousePos = CalculatedMousePos;
         //UE_LOG("MousePos: (%.1f, %.1f), DisplaySize: (%.1f, %.1f)\n",CalculatedMousePos.x, CalculatedMousePos.y, GetRatio().x, GetRatio().y);
     }
-
+	  
     
     // ImGui Frame 생성
     ImGui_ImplDX11_NewFrame();
@@ -93,14 +93,16 @@ void UI::Update()
         CurRatio = GetRatio();
         UE_LOG("Current Ratio: %f, %f", CurRatio.x, CurRatio.y);
     }
-
+#if IS_OBJ_VIEWER
+	RenderViewerPanel();
 	RenderOutLiner();
-    RenderControlPanel();
-    RenderPropertyWindow();
+	RenderControlPanel();
+	RenderPropertyWindow();
 	RenderShowFlagsPanel();
 	RenderViewModePanel();
 
-    Debug::ShowConsole(bWasWindowSizeUpdated, PreRatio, CurRatio);
+	Debug::ShowConsole(bWasWindowSizeUpdated, PreRatio, CurRatio);
+#endif
 
     // ImGui 렌더링
     ImGui::Render();
@@ -145,8 +147,8 @@ void UI::RenderControlPanel()
 		ImGui::SetWindowPos(ImVec2(0.0f, 0.0f));
 		ImGui::SetWindowSize(ImVec2(DisplaySize.x * 0.25f, DisplaySize.y * 0.4f));
 	}
-
-    
+#if IS_OBJ_VIEWER
+#else
     ImGui::Text("Hello, Jungle World!");
     ImGui::Text("FPS: %.3f (%.2f ms)", ImGui::GetIO().Framerate , 1000.0f / ImGui::GetIO().Framerate);
 
@@ -154,7 +156,7 @@ void UI::RenderControlPanel()
     RenderPrimitiveSelection();
     RenderCameraSettings();
 	RenderGridSettings();
-    
+#endif
     ImGui::End();
 }
 
@@ -225,7 +227,7 @@ void UI::RenderPrimitiveSelection()
 				World->SpawnStaticMeshActor("Girl.obj", true);
 			}
 			else if (strcmp(items[currentItem], "SpaceShip") == 0) {
-				World->SpawnStaticMeshActor("SpaceShip.obj");
+				World->SpawnStaticMeshActor("SpaceShip.obj", true);
 			}
 			else if (strcmp(items[currentItem], "Pirate") == 0) {
 				World->SpawnStaticMeshActor("Pirate.obj", true);
@@ -275,7 +277,7 @@ void UI::RenderCameraSettings() const
 {
     ImGui::Text("Camera");
 
-	ACamera* Camera = UEngine::Get().GetWorld()->GetCamera(EViewPortSplitter::TopLeft);
+	ACamera* Camera = UEngine::Get().GetWorld()->GetCameraFocused();
 
     bool IsOrthogonal;
     if (Camera->ProjectionMode == ECameraProjectionMode::Orthographic)
@@ -299,13 +301,20 @@ void UI::RenderCameraSettings() const
         }
     }
 
-    float FOV = Camera->GetFieldOfView();
-    if (ImGui::DragFloat("FOV", &FOV, 0.1f))
-    {
-        FOV = std::clamp(FOV, 0.01f, 179.99f);
-        Camera->SetFieldOfVew(FOV);
-    }
-
+	if (IsOrthogonal) {
+		float Scale = Camera->GetZoomSize();
+		if ( ImGui::DragFloat("Scale", &Scale, 5.0f) ) {
+			Scale = std::clamp(Scale, 100.f, 10000.f);
+			Camera->SetZoomSize(Scale);
+		}
+	} else {
+		float FOV = Camera->GetFieldOfView();
+		if ( ImGui::DragFloat("FOV", &FOV, 0.1f) ) {
+			FOV = std::clamp(FOV, 0.01f, 179.99f);
+			Camera->SetFieldOfVew(FOV);
+		}
+	}
+	
     float NearFar[2] = { Camera->GetNear(), Camera->GetFar() };
     if (ImGui::DragFloat2("Near, Far", NearFar, 0.1f))
     {
@@ -353,6 +362,27 @@ void UI::RenderCameraSettings() const
     }
     ImGui::DragFloat("Camera Speed", &Camera->CameraSpeed, 0.1f);
 	ImGui::DragFloat("Camera Sensitivity", &Camera->Sensitivity, 0.1f);
+
+	UEditorManager* editor = UEngine::Get().GetEditor();
+
+	if ( ImGui::Button("Split Horizontal") ) {
+		if ( editor->SelectedWindow != nullptr )
+			editor->SplitHorizontalSWindow(editor->SelectedWindow);
+			
+	}
+	ImGui::SameLine(0.f, 3.0f);
+	if ( ImGui::Button("Split Vertical") ) {
+		if ( editor->SelectedWindow != nullptr )
+			editor->SplitVerticalSWindow(editor->SelectedWindow);
+	}
+	ImGui::SameLine(0.f, 3.0f);
+	if ( ImGui::Button("Remove") ) {
+		if ( editor->SelectedWindow != nullptr )
+			editor->RemoveSWindow(editor->SelectedWindow);
+	}
+
+	ImGui::Separator();
+
 
     FVector Forward = Camera->GetActorTransform().GetForward();
     FVector Up = Camera->GetActorTransform().GetUp();
@@ -788,5 +818,40 @@ void UI::RenderGridSettings() const
 	if(ImGui::SliderFloat("Grid Size", &World->GetGridSizePtr(), 100.f, 1000.f, "%.2f"))
 	{
 		World->OnChangedGridSize();
+	}
+}
+
+void UI::RenderViewerPanel()
+{
+	const char* items[] = {"Dice", "Mug",
+	"Girl", "SpaceShip", "Pirate", "AVLSuitJerry" };
+
+	ImGui::Combo("Obj", &currentItem, items, IM_ARRAYSIZE(items));
+
+	if (ImGui::Button("Spawn"))
+	{
+		UWorld* World = UEngine::Get().GetWorld();
+		if (NumOfSpawn == 1) {
+			World->ClearWorld();
+		}
+		if (strcmp(items[currentItem], "Dice") == 0) {
+			World->SpawnStaticMeshActor("dice.obj", true);
+		}
+		else if (strcmp(items[currentItem], "Mug") == 0) {
+			World->SpawnStaticMeshActor("Mug.obj");
+		}
+		else if (strcmp(items[currentItem], "Girl") == 0) {
+			World->SpawnStaticMeshActor("Girl.obj", true);
+		}
+		else if (strcmp(items[currentItem], "SpaceShip") == 0) {
+			World->SpawnStaticMeshActor("SpaceShip.obj", true);
+		}
+		else if (strcmp(items[currentItem], "Pirate") == 0) {
+			World->SpawnStaticMeshActor("Pirate.obj", true);
+		}
+		else if (strcmp(items[currentItem], "AVLSuitJerry") == 0) {
+			World->SpawnStaticMeshActor("AVLSuitJerry.obj", true);
+		}
+		NumOfSpawn = 1;
 	}
 }
