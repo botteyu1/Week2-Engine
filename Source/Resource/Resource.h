@@ -105,6 +105,10 @@ public:
 	{
 		return Name;
 	}
+	static const TMap<FName, std::shared_ptr<ResourcesType>>& GetAllResources()
+	{
+		return NameRes;
+	}
 
 protected:
 	static std::shared_ptr<ResourcesType> CreateRes(const FString& InName)
