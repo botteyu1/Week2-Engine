@@ -51,11 +51,11 @@ void UInputManager::UpdateKeyDown(FKey& key) const
 {
 	if (key.bPressed == true)
 	{
-		key.KeyState = EKeyState::Down;
+		key.KeyState = EKeyState::Press;
 	}
 	else
 	{
-		key.KeyState = EKeyState::Press;
+		key.KeyState = EKeyState::Down;
 	}
 
 	key.bPressed = true;
@@ -130,7 +130,7 @@ void UInputManager::ClearKeys()
 {
 	for (FKey& Key : Keys)
 	{
-		if (Key.KeyState == EKeyState::Down || Key.KeyState == EKeyState::Press)
+		if (Key.KeyState == EKeyState::Press || Key.KeyState == EKeyState::Down)
 		{
 			Key.KeyState = EKeyState::Up;
 
@@ -173,7 +173,7 @@ void UInputManager::Update(HWND hWnd, uint32 FramaeBufferWidth, uint32 FramaeBuf
 
 	for (const auto& [Key, Callbacks] : KeyDownCallbacks)
 	{
-		if (GetKeyDown(Key))
+		if (GetKeyPress(Key))
 		{
 			for (const auto& Callback : Callbacks)
 			{
@@ -184,7 +184,7 @@ void UInputManager::Update(HWND hWnd, uint32 FramaeBufferWidth, uint32 FramaeBuf
 
 	for (const auto& [Key,Callbacks] : KeyPressCallbacks)
 	{
-		if (GetKeyPress(Key))
+		if (GetKeyDown(Key))
 		{
 			for (const auto& Callback : Callbacks)
 			{
@@ -206,7 +206,7 @@ void UInputManager::Update(HWND hWnd, uint32 FramaeBufferWidth, uint32 FramaeBuf
 
 	for (const auto& [button, Callbacks] : MouseDownCallbacks)
 	{
-		if (GetKeyDown(button))
+		if (GetKeyPress(button))
 		{
 			for (const auto& Callback : Callbacks)
 			{
@@ -217,7 +217,7 @@ void UInputManager::Update(HWND hWnd, uint32 FramaeBufferWidth, uint32 FramaeBuf
 
 	for (const auto& [button, Callbacks] : MousePressCallbacks)
 	{
-		if (GetKeyPress(button))
+		if (GetKeyDown(button))
 		{
 			for (const auto& Callback : Callbacks)
 			{

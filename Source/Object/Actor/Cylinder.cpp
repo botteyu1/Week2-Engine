@@ -40,46 +40,46 @@ void ACylinder::Tick(float DeltaTime)
     [[maybe_unused]] FVector NewRotation = NewTransform.GetRotation().GetEuler();
 	FVector NewScale = NewTransform.GetScale();
 
-	if (UEngine::Get().GetInput()->GetKeyDown(EKeyCode::Up))
+	if (UEngine::Get().GetInput()->GetKeyPress(EKeyCode::Up))
 	{
 		NewPosition += FVector(0.0f, 0.0f, 1.0f);
 	}
-	if (UEngine::Get().GetInput()->GetKeyDown(EKeyCode::Down))
+	if (UEngine::Get().GetInput()->GetKeyPress(EKeyCode::Down))
 	{
 		NewPosition += FVector(0.0f, 0.0f, -1.0f);
 	}
-	if (UEngine::Get().GetInput()->GetKeyDown(EKeyCode::Left))
+	if (UEngine::Get().GetInput()->GetKeyPress(EKeyCode::Left))
 	{
 		NewPosition += FVector(0.0f, 1.0f, 0.0f);
 	}    
-	if (UEngine::Get().GetInput()->GetKeyDown(EKeyCode::Right))
+	if (UEngine::Get().GetInput()->GetKeyPress(EKeyCode::Right))
 	{
 		NewPosition += FVector(0.0f, -1.0f, 0.0f);
 	}
 
-	if (UEngine::Get().GetInput()->GetKeyDown(EKeyCode::J))
+	if (UEngine::Get().GetInput()->GetKeyPress(EKeyCode::J))
 	{
 		NewScale += FVector(0.1f, 0.0f, 0.0f);
 	}
-	if (UEngine::Get().GetInput()->GetKeyDown(EKeyCode::K))
+	if (UEngine::Get().GetInput()->GetKeyPress(EKeyCode::K))
 	{
 		NewScale += FVector(0.0f, 0.1f, 0.0f);
 	}
-	if (UEngine::Get().GetInput()->GetKeyDown(EKeyCode::L))
+	if (UEngine::Get().GetInput()->GetKeyPress(EKeyCode::L))
 	{
 		NewScale += FVector(0.0f, 0.0f, 0.1f);
 	}
 
 
-	if (UEngine::Get().GetInput()->GetKeyDown(EKeyCode::Z))
+	if (UEngine::Get().GetInput()->GetKeyPress(EKeyCode::Z))
 	{
 		NewTransform.Rotate(FVector(1, 0, 0));
 	}
-	if (UEngine::Get().GetInput()->GetKeyDown(EKeyCode::X))
+	if (UEngine::Get().GetInput()->GetKeyPress(EKeyCode::X))
 	{
 		NewTransform.Rotate(FVector(0, 1, 0));
 	}
-	if (UEngine::Get().GetInput()->GetKeyDown(EKeyCode::C))
+	if (UEngine::Get().GetInput()->GetKeyPress(EKeyCode::C))
 	{
 		NewTransform.Rotate(FVector(0, 0, 1));
 	}

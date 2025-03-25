@@ -17,6 +17,10 @@ public:
 		return static_cast<float>(ViewportInfo.Width) / static_cast<float>(ViewportInfo.Height);
 	}
 
+	inline const FVector2D GetViewportSize() const {
+		return FVector2D(ViewportInfo.Width, ViewportInfo.Height);
+	}
+
 private:
 	D3D11_VIEWPORT ViewportInfo = {};
 };

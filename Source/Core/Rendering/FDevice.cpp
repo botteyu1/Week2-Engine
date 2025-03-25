@@ -92,12 +92,7 @@ void FDevice::CreateDeviceAndSwapChain(HWND hWindow)
     
 
 
-    // 뷰포트 정보 설정
-    ViewportInfo = {
-        0.0f, 0.0f,
-        static_cast<float>(SwapChainDesc.BufferDesc.Width * 0.5f), static_cast<float>(SwapChainDesc.BufferDesc.Height * 0.5f),
-        0.0f, 1.0f
-    };
+
 }
 
 void FDevice::ReleaseDeviceAndSwapChain()
@@ -151,16 +146,8 @@ void FDevice::OnUpdateWindowSize(int Width, int Height)
 	if (SwapChain)
 	{
 		SwapChain->ResizeBuffers(0, Width, Height, DXGI_FORMAT_UNKNOWN, 0);
-
 		DXGI_SWAP_CHAIN_DESC SwapChainDesc;
 		SwapChain->GetDesc(&SwapChainDesc);
-		// 뷰포트 정보 갱신
-		ViewportInfo = {
-			0.0f, 0.0f,
-			static_cast<float>(SwapChainDesc.BufferDesc.Width) * 0.5f,
-			static_cast<float>(SwapChainDesc.BufferDesc.Height) * 0.5f,
-			0.0f, 1.0f
-		};
 	}
 }
 

@@ -19,6 +19,8 @@ public:
 	virtual void OnMousePressed(FVector2D) {}
 	virtual void OnMouseReleased(FVector2D) {}
 
+	FVector2D GetNDCPosInWindow(FVector2D InCoord);
+
 	std::shared_ptr<SSplitter> child = nullptr;
 	std::shared_ptr<SWindow> parent = nullptr;
 	//virtual void OnDraw() = 0;

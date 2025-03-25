@@ -19,6 +19,10 @@
 #include "Static/FUUIDBillBoard.h"
 #include "Resource/DirectResource/ViewMode.h"
 #include "Object/Actor/StaticMesh.h"
+#include "Resource/Mesh.h"
+#include "Core/UObject/UObjectIterator.h"
+#include "Object/Assets/TextureAsset.h"
+#include <Object/PrimitiveComponent/TextureComponent.h>
 // #include "FDevice.h"
 // #include "FViewModeManager.h"
 // #include "Core/Engine.h"
@@ -92,11 +96,10 @@ void UI::Update()
         CurRatio = GetRatio();
         UE_LOG("Current Ratio: %f, %f", CurRatio.x, CurRatio.y);
     }
-
 #if IS_OBJ_VIEWER
 	RenderViewerPanel();
 #else
-	RenderSceneManager();
+	RenderOutLiner();
 	RenderControlPanel();
 	RenderPropertyWindow();
 	RenderShowFlagsPanel();
@@ -136,16 +139,18 @@ void UI::OnUpdateWindowSize(UINT InScreenWidth, UINT InScreenHeight)
 
 void UI::RenderControlPanel()
 {
-    ImGui::Begin("Jungle Control Panel");
+	ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoMove;
 
-    if (bWasWindowSizeUpdated)
-    {
-        auto* Window = ImGui::GetCurrentWindow();
+	ImGui::Begin("Jungle Control Panel", nullptr, window_flags);
 
-        ImGui::SetWindowPos(ResizeToScreen(Window->Pos));
-        ImGui::SetWindowSize(ResizeToScreen(Window->Size));
-    }
-    
+	if (bWasWindowSizeUpdated)
+	{
+		auto* Window = ImGui::GetCurrentWindow();
+		ImVec2 DisplaySize = ImGui::GetIO().DisplaySize;
+
+		ImGui::SetWindowPos(ImVec2(0.0f, 0.0f));
+		ImGui::SetWindowSize(ImVec2(DisplaySize.x * 0.25f, DisplaySize.y * 0.4f));
+	}
 #if IS_OBJ_VIEWER
 #else
     ImGui::Text("Hello, Jungle World!");
@@ -390,25 +395,31 @@ void UI::RenderCameraSettings() const
     ImGui::Text("Camera GetForward(): (%.2f %.2f %.2f)", Forward.X, Forward.Y, Forward.Z);
     ImGui::Text("Camera GetUp(): (%.2f %.2f %.2f)", Up.X, Up.Y, Up.Z);
     ImGui::Text("Camera GetRight(): (%.2f %.2f %.2f)", Right.X, Right.Y, Right.Z);
-	ImGui::Text("MouseLeftDown: %s", UEngine::Get().GetInput()->GetKeyDown(EKeyCode::LButton) ? "True" : "False");
-	ImGui::Text("MousePress : %s", UEngine::Get().GetInput()->GetKeyPress(EKeyCode::LButton) ? "True" : "False");
+	ImGui::Text("MouseLeftDown: %s", UEngine::Get().GetInput()->GetKeyPress(EKeyCode::LButton) ? "True" : "False");
+	ImGui::Text("MousePress : %s", UEngine::Get().GetInput()->GetKeyDown(EKeyCode::LButton) ? "True" : "False");
 	ImGui::Text("MosueLeftUp: %s", UEngine::Get().GetInput()->GetKeyUp(EKeyCode::LButton) ? "True" : "False");
 	ImGui::Separator();
 }
 
-void UI::RenderPropertyWindow() const
+void UI::RenderPropertyWindow()
 {
 
-    ImGui::Begin("Properties");
+	ImVec2 DisplaySize = ImGui::GetIO().DisplaySize;
 
-    if (bWasWindowSizeUpdated)
-    {
-        auto* Window = ImGui::GetCurrentWindow();
+	ImGui::SetNextWindowPos(ImVec2(DisplaySize.x * 0.8f, DisplaySize.y * 0.6f), ImGuiCond_Once);
+	ImGui::SetNextWindowSize(ImVec2(DisplaySize.x * 0.2f, DisplaySize.y * 0.4f), ImGuiCond_Once);
 
-        ImGui::SetWindowPos(ResizeToScreen(Window->Pos));
-        ImGui::SetWindowSize(ResizeToScreen(Window->Size));
-    }
-    
+	ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoMove ;
+
+	ImGui::Begin("Properties", nullptr, window_flags);
+
+	if (bWasWindowSizeUpdated)
+	{
+		ImGui::SetWindowPos(ImVec2(DisplaySize.x * 0.8f, DisplaySize.y * 0.6f));
+		ImGui::SetWindowSize(ImVec2(DisplaySize.x * 0.2f, DisplaySize.y * 0.4f));
+	}
+
+
     AActor* selectedActor = UEngine::Get().GetEditor()->GetSelectedActor();
     if (selectedActor != nullptr)
     {
@@ -437,22 +448,10 @@ void UI::RenderPropertyWindow() const
             selectedTransform.SetScale(scale[0], scale[1], scale[2]);
             selectedActor->SetActorTransform(selectedTransform);
         }
-		/*if (UEditorManager::Get().GetGizmoHandle() != nullptr)
-		{
-			AGizmoHandle* Gizmo = UEditorManager::Get().GetGizmoHandle();
-            if(Gizmo->GetGizmoType() == EGizmoType::Translate)
-			{
-				ImGui::Text("GizmoType: Translate");
-			}
-			else if (Gizmo->GetGizmoType() == EGizmoType::Rotate)
-			{
-				ImGui::Text("GizmoType: Rotate");
-			}
-			else if (Gizmo->GetGizmoType() == EGizmoType::Scale)
-			{
-				ImGui::Text("GizmoType: Scale");
-			}
-		}*/
+
+		AStaticMesh* selectMesh = Cast<AStaticMesh>(selectedActor);
+
+		PropertyStaticMesh(selectMesh);
 
 		// SpotLight 속성 표시
 		ASpotLight* spotLight = dynamic_cast<ASpotLight*>(selectedActor);
@@ -520,13 +519,48 @@ void UI::RenderPropertyWindow() const
     ImGui::End();
 }
 
-void UI::RenderSceneManager()
+static bool StringGetter(void* data, int idx, const char** out_text)
 {
-	ImGui::Begin("SceneManager");
-	TArray<AActor*>& Actors = UEngine::Get().GetWorld()->GetActors();
+	const std::vector<std::string>* v = static_cast<std::vector<std::string>*>(data);
+	if (idx < 0 || idx >= static_cast<int>(v->size())) return false;
+	*out_text = (*v)[idx].c_str();
+	return true;
+}
+
+void UI::RenderOutLiner()
+{
+
+	ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x * 0.8f, 0), ImGuiCond_Once);
+	ImGui::SetNextWindowSize(ImVec2(ImGui::GetIO().DisplaySize.x * 0.2f, 
+			ImGui::GetIO().DisplaySize.y * 0.4f), ImGuiCond_Once);
+
+	ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoMove;
+
+	ImGui::Begin("OutLiner", nullptr, window_flags);
+
+	if (bWasWindowSizeUpdated)
+	{
+		auto* Window = ImGui::GetCurrentWindow();
+		ImVec2 DisplaySize = ImGui::GetIO().DisplaySize;
+
+		ImGui::SetWindowPos(ImVec2(DisplaySize.x *0.8f, 0));
+		ImGui::SetWindowSize(ImVec2(DisplaySize.x * 0.2f, DisplaySize.y * 0.4f));
+	}
+
+	TArray<AStaticMesh*> Actors;
+	for (TObjectIterator<AStaticMesh> It; It; ++It)
+	{
+		if (It->GetWorld() == UEngine::Get().GetWorld())
+		{
+			Actors.Add(*It);
+		}
+	}
 
 	if (Actors.Num() == 0)
+	{
+		ImGui::End();
 		return;
+	}
 
 	if (PrevSize != Actors.Num())
 	{
@@ -544,7 +578,6 @@ void UI::RenderSceneManager()
 		UUIDs.Reserve(Actors.Num());
 
 
-		int Cnt = 0;
 		for (int i = 0; i < Actors.Num(); i++) {
 
 			FString UUIDName = Actors[i]->GetClass()->GetName();
@@ -554,7 +587,7 @@ void UI::RenderSceneManager()
 			UUIDs.Add(Actors[i]->GetUUID());
 		}
 
-		// 모든 문자열이 추가된 후에 포인터 설정
+		 //모든 문자열이 추가된 후에 포인터 설정
 		for (const auto& str : UUIDNames) {
 			cUUIDNames.Add(*str);
 		}
@@ -563,6 +596,13 @@ void UI::RenderSceneManager()
 	PrevSize = Actors.Num();
 
 	static int SelectUUIDIndex = 0;
+
+	const char* preview = SelectUUIDIndex < UUIDNames.Num() ? (*UUIDNames[SelectUUIDIndex]) : "Select Static Mesh";
+
+	// ListBox 사용
+	/*if (ImGui::ListBox("StaticMeshList", &SelectUUIDIndex, StringGetter,
+		static_cast<void*>(&UUIDNames), static_cast<int>(UUIDNames.Num())))*/
+
 
 	if (ImGui::ListBox("ActorList", &SelectUUIDIndex, &cUUIDNames[0], static_cast<int>(cUUIDNames.Num())))
 	{
@@ -584,9 +624,37 @@ void UI::RenderSceneManager()
 
 
 
+	//if (ImGui::BeginCombo("StaticMeshList", "Select Static Mesh"))
+	//{
+	//	for (int i = 0; i < UUIDNames.Num(); i++)
+	//	{
+	//		bool is_selected = (SelectUUIDIndex == i);
+	//		if (ImGui::Selectable((*UUIDNames[i]), is_selected))
+	//		{
+	//			SelectUUIDIndex = i;
+	//			uint32 UUID = UUIDs[SelectUUIDIndex];
 
+	//			for (AActor* Actor : Actors)
+	//			{
+	//				if (Actor->GetUUID() == UUID)
+	//				{
+	//					CurActor = Actor;
+	//					UEngine::Get().GetEditor()->SelectActor(CurActor);
+	//					UEngine::Get().GetRenderer()->GetUUIDBillBoard()->SetTarget(CurActor);
+	//					break;
+	//				}
+	//			}
+	//		}
 
-	// if (CurActor != nullptr)
+	//		if (is_selected)
+	//		{
+	//			ImGui::SetItemDefaultFocus();
+	//		}
+	//	}
+	//	ImGui::EndCombo();
+	//}
+
+	//if (CurActor != nullptr)
 	// {
 	// 	// 선택된 오브젝트의 정보를 출력
 	// 	FVector Location = CurActor->RelativeLocation();
@@ -610,13 +678,90 @@ void UI::RenderSceneManager()
 	// 	CurObject->IsHighlightValue = true;
 	// }
 
+	//if (ImGui::CollapsingHeader("Transform"))
+	//{
+	//	ImGui::Text("Position");
+	//	// Position 관련 위젯들
+
+	//	ImGui::Text("Rotation");
+	//	// Rotation 관련 위젯들
+
+	//	ImGui::Text("Scale");
+	//	// Scale 관련 위젯들
+	//}
+
+	AStaticMesh* selectedStaticMesh = Cast<AStaticMesh>(UEngine::Get().GetEditor()->GetSelectedActor());
+	static bool isFirstSelection = true;
+
+	////메쉬 트랜스폼
+	//if (selectedStaticMesh != nullptr)
+	//{
+	//	ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnArrow;
+
+	//	if (isFirstSelection)
+	//	{
+	//		flags |= ImGuiTreeNodeFlags_DefaultOpen;
+	//		isFirstSelection = false;
+	//	}
+
+	//	if (ImGui::TreeNodeEx("Selected Static Mesh", flags))
+	//	{
+	//		FTransform selectedTransform = selectedStaticMesh->GetActorTransform();
+	//		float position[] = { selectedTransform.GetPosition().X, selectedTransform.GetPosition().Y, selectedTransform.GetPosition().Z };
+	//		float scale[] = { selectedTransform.GetScale().X, selectedTransform.GetScale().Y, selectedTransform.GetScale().Z };
+
+	//		if (ImGui::DragFloat3("Translation", position, 0.1f))
+	//		{
+	//			selectedTransform.SetPosition(position[0], position[1], position[2]);
+	//			selectedStaticMesh->SetActorTransform(selectedTransform);
+	//		}
+
+	//		FVector PrevEulerAngle = selectedTransform.GetRotation().GetEuler();
+	//		FVector UIEulerAngle = PrevEulerAngle;
+	//		if (ImGui::DragFloat3("Rotation", reinterpret_cast<float*>(&UIEulerAngle), 0.1f))
+	//		{
+	//			FVector DeltaEulerAngle = UIEulerAngle - PrevEulerAngle;
+
+	//			selectedTransform.Rotate(DeltaEulerAngle);
+	//			UE_LOG("Rotation: %.2f, %.2f, %.2f", DeltaEulerAngle.X, DeltaEulerAngle.Y, DeltaEulerAngle.Z);
+	//			selectedStaticMesh->SetActorTransform(selectedTransform);
+	//		}
+	//		if (ImGui::DragFloat3("Scale", scale, 0.1f))
+	//		{
+	//			selectedTransform.SetScale(scale[0], scale[1], scale[2]);
+	//			selectedStaticMesh->SetActorTransform(selectedTransform);
+	//		}
+
+	//		ImGui::TreePop();
+	//	}
+	//}
+	//else
+	//{
+	//	isFirstSelection = true;
+	//}
+
 	ImGui::End();
 }
 
 void UI::RenderShowFlagsPanel() const
 {
-	if (ImGui::Begin("Show Flags"))
+
+
+	ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoMove;
+
+
+	if (ImGui::Begin("Show Flags", nullptr, window_flags))
 	{
+		if (bWasWindowSizeUpdated)
+		{
+
+			auto* Window = ImGui::GetCurrentWindow();
+			ImVec2 DisplaySize = ImGui::GetIO().DisplaySize;
+
+			ImGui::SetWindowPos(ImVec2(DisplaySize.x * 0.25f, 0.0f));
+			ImGui::SetWindowSize(ImVec2(DisplaySize.x * 0.08f, DisplaySize.y * 0.1f));
+		}
+
 		bool bPrimitives = FEngineShowFlags::Get().GetSingleFlag(EEngineShowFlags::SF_Primitives);
 		if (ImGui::Checkbox("Primitives", &bPrimitives))
 		{
@@ -634,13 +779,26 @@ void UI::RenderShowFlagsPanel() const
 
 void UI::RenderViewModePanel() const
 {
-	if (ImGui::Begin("View Mode"))
+	ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoMove;
+
+
+	if (ImGui::Begin("View Mode", nullptr, window_flags))
 	{
+		if (bWasWindowSizeUpdated)
+		{
+
+			auto* Window = ImGui::GetCurrentWindow();
+			ImVec2 DisplaySize = ImGui::GetIO().DisplaySize;
+
+			ImGui::SetWindowPos(ImVec2(DisplaySize.x * (0.8f - 0.08f), 0.0f));
+			ImGui::SetWindowSize(ImVec2(DisplaySize.x * 0.08f, DisplaySize.y * 0.1f));
+		}
+
 		FViewModeManager* viewMode = UEngine::Get().GetRenderer()->GetViewMode();
 		static const char* viewModeNames[] = { "Default", "Solid", "Wireframe" };
 		int currentViewMode = static_cast<int>(viewMode->GetCurrentViewMode());
 
-		if (ImGui::Combo("View Mode", &currentViewMode, viewModeNames, IM_ARRAYSIZE(viewModeNames)))
+		if (ImGui::Combo(" ", &currentViewMode, viewModeNames, IM_ARRAYSIZE(viewModeNames)))
 		{
 			viewMode->SetViewMode((static_cast<EViewModeIndex>(currentViewMode)));
 		}
@@ -696,5 +854,73 @@ void UI::RenderViewerPanel()
 			World->SpawnStaticMeshActor("AVLSuitJerry.obj", true);
 		}
 		NumOfSpawn = 1;
+	}
+}
+
+void UI::PropertyStaticMesh(AStaticMesh* InAStaticMesh)
+{
+	if (InAStaticMesh != nullptr)
+	{
+		const TMap < FName, std::shared_ptr<UMesh> >& Meshes = UMesh::GetAllResources();
+
+		StaticMeshNames.Empty();
+		StaticMeshNames.Reserve(Meshes.Num());
+		
+		cStaticMeshNames.Empty();
+		cStaticMeshNames.Reserve(Meshes.Num());
+
+
+		for (const auto& Pair : Meshes)
+		{
+			StaticMeshNames.Add(*Pair.Key.ToString());
+		}
+
+		//모든 문자열이 추가된 후에 포인터 설정
+		for (const auto& str : StaticMeshNames) {
+			cStaticMeshNames.Add(*str);
+		}
+
+
+		UTextureComponent* RootStaticMeshComponent = Cast<UTextureComponent>(InAStaticMesh->GetRootComponent());
+
+		if(RootStaticMeshComponent == nullptr)
+		{
+			return;
+		}
+
+
+		// Get the current mesh name
+		FName currentMeshName = RootStaticMeshComponent->GetMesh()->GetFName();
+		const char* currentItemName = (*currentMeshName.ToString());
+
+
+		// 드롭다운 UI 생성
+		if (ImGui::BeginCombo("Static Mesh", currentItemName))
+		{
+			for (int i = 0; i < cStaticMeshNames.Num(); i++)
+			{
+				bool isSelected = (currentItemName == cStaticMeshNames[i]);
+				if (ImGui::Selectable(cStaticMeshNames[i], isSelected))
+				{
+					// 새 메시 설정
+					FName newMeshName = FName(cStaticMeshNames[i]);
+					if (Meshes.Contains(newMeshName))
+					{
+						RootStaticMeshComponent->SetMesh(newMeshName.ToString());
+						//UStaticMesh* newMesh = Meshes[newMeshName]->GetMesh();
+						//if (newMesh)
+						//{
+						//	StaticMeshComponent->SetStaticMesh(newMesh);
+						//}
+					}
+				}
+
+				if (isSelected)
+				{
+					ImGui::SetItemDefaultFocus(); // 기본 포커스 설정
+				}
+			}
+			ImGui::EndCombo();
+		}
 	}
 }
