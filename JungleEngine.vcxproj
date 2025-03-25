@@ -429,12 +429,12 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="resource.h" />
     <ClInclude Include="Source\Core\Rendering\FViewport.h" />
     <ClInclude Include="Source\Core\Math\Rect.h" />
     <ClInclude Include="Source\Core\Delegates\Delegate.h" />
     <ClInclude Include="Source\Core\Delegates\DelegateCombination.h" />
     <ClInclude Include="Source\Core\Rendering\SWindow.h" />
-    <ClInclude Include="Source\Core\Rendering\SWindowManager.h" />
     <ClInclude Include="Source\Debug\DebugDrawManager.h" />
     <ClInclude Include="Source\Object\Actor\StaticMesh.h" />
     <ClInclude Include="Source\Object\Actor\WorldGrid.h" />
@@ -590,6 +590,7 @@
     <None Include=".editorconfig" />
     <None Include=".gitignore" />
     <None Include="imgui.ini" />
+    <None Include="NODROP.cur" />
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
@@ -603,6 +604,9 @@
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="JungleEngine.natvis" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="JungleEngine.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

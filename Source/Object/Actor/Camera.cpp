@@ -14,6 +14,7 @@ ACamera::ACamera()
     Near = .1f;
     Far = 1000.f;
     FieldOfView = 45.f;
+	ZoomSize = 1000.f;
     ProjectionMode = ECameraProjectionMode::Perspective;
 	CameraSpeed = 1.0f;
 	Sensitivity = std::stof(UConfigManager::Get().GetValue("Camera", "Sensitivity").GetData());
@@ -27,12 +28,12 @@ ACamera::ACamera()
 
 void ACamera::UpdateViewport(FRect InRect)
 {
-	Viewport.UpdateViewport(InRect);
+	Viewport->UpdateViewport(InRect);
 }
 
 void ACamera::SettingViewport()
 {
-	Viewport.Setting();
+	Viewport->Setting();
 }
 
 
@@ -103,7 +104,7 @@ void ACamera::UpdateCameraMatrix()
 	ViewMatrix = GetActorTransform().GetViewMatrix();
 	
 	// 프로젝션 매트릭스 업데이트
-	float AspectRatio = Viewport.GetViewportRatio();
+	float AspectRatio = Viewport->GetViewportRatio();
 
 	float FOV = FMath::DegreesToRadians(GetFieldOfView());
 	float Near = GetNear();
@@ -115,7 +116,7 @@ void ACamera::UpdateCameraMatrix()
 	}
 	else if (ProjectionMode == ECameraProjectionMode::Orthographic)
 	{
-		ProjectionMatrix = FMatrix::OrthoForLH(Viewport.GetViewportInfo().Width / ZoomSize, Viewport.GetViewportInfo().Height / ZoomSize, Near, Far);
+		ProjectionMatrix = FMatrix::OrthoForLH(Viewport->GetViewportInfo().Width / ZoomSize, Viewport->GetViewportInfo().Height / ZoomSize, Near, Far);
 
 		// TODO: 추가 필요.
 		// ProjectionMatrix = FMatrix::OrthoForLH(FOV, AspectRatio, Near, Far);
