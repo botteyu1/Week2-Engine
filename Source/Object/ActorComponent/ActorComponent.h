@@ -24,9 +24,12 @@ public:
 	FVector GetActorPosition() const;
 
 	virtual void Destroyed();
+	bool HasActorBegunPlay() const { return bIsBeginPlay; }
 
 protected:
 	bool bCanEverTick = true;
 	AActor* Owner = nullptr;
+protected:
+	bool bIsBeginPlay = false;
 };
 

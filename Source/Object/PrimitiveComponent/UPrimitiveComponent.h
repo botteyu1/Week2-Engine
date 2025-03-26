@@ -70,6 +70,7 @@ public:
 	const FVector4& GetCustomColor() const { return CustomColor; }
 public:
 	virtual void RegisterComponentWithWorld(UWorld* World);
+	virtual void RegisterComponentWithWorld();
 
 public:
 	void SetCanBeRendered(bool bRender) { bCanBeRendered = bRender; }

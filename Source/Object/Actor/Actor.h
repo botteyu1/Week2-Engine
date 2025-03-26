@@ -37,8 +37,10 @@ public:
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason);
 	TSet<UActorComponent*>& GetComponents() { return Components; }
 
-	UWorld* GetWorld() const { return World; }
+	UWorld* const GetWorld() const { return World; }
 	void SetWorld(UWorld* InWorld) { World = InWorld; }
+
+	bool HasActorBegunPlay() const { return bIsBeginPlay; }
 
 private:
 	virtual void Pick();
@@ -48,6 +50,8 @@ private:
 	bool bIsPicked = false;
 	ETickState TickState; //현재 Tick 여부 상태
 	bool bHidden = false ;
+protected:
+	bool bIsBeginPlay = false;
 
 public:
 	bool IsPicked() const { return bIsPicked; }
@@ -78,6 +82,11 @@ public:
 		T* ObjectInstance = FObjectFactory::ConstructObject<T>();
 		Components.Add(ObjectInstance);
 		ObjectInstance->SetOwner(this);
+
+		if (bIsBeginPlay == true)
+		{
+			ObjectInstance->BeginPlay();
+		}
 
 		USceneComponent* NewSceneComp = dynamic_cast<USceneComponent*>(ObjectInstance);
 		if (NewSceneComp != nullptr)

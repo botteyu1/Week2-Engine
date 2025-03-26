@@ -4,6 +4,7 @@
 
 void UActorComponent::BeginPlay()
 {
+	bIsBeginPlay = true;
 }
 
 void UActorComponent::Tick(float DeltaTime)

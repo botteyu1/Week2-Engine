@@ -10,8 +10,11 @@ AActor::AActor() : Depth{ 0 }
 
 void AActor::BeginPlay()
 {
+	bIsBeginPlay = true;
+
 	for (auto& Component : Components)
 	{
+		Component->SetOwner(this);
 		Component->BeginPlay();
 
 		if (UPrimitiveComponent* PrimitiveComponent = dynamic_cast<UPrimitiveComponent*>(Component))
@@ -54,7 +57,7 @@ void AActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 		Component->EndPlay(EndPlayReason);
 		if (const auto PrimitiveComp = dynamic_cast<UPrimitiveComponent*>(Component))
 		{
-			GetWorld()->RemoveRenderComponent(PrimitiveComp);
+			World->RemoveRenderComponent(PrimitiveComp);
 		}
 		if (UEngine::Get().GetEditor()->GetSelectedActor() == this)
 		{
@@ -468,10 +471,10 @@ const char* AActor::GetTypeName()
 
 bool AActor::Destroy()
 {
-	if (UWorld* World = GetWorld())
-	{
+	//if (UWorld* World = *GetWorld())
+	//{
 		World->DestroyActor(this);
-	}
+	//}
 
 	return true;
 }

@@ -33,6 +33,7 @@ public:// UIWindows
 	void RenderViewerPanel();
 
 	void PropertyStaticMesh(class AStaticMesh* StaticMeshComponent);
+	void RenderActorHierarchy(AActor* RootActor);
 
 private:
 	// Mouse 전용
