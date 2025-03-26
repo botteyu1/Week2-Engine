@@ -9,6 +9,9 @@ struct VS_INPUT
 
 struct VS_OUTPUT
 {
+	float4 LightColor :LIGHTCOLOR;
+	float3 LightDirection : LIGHTDIRECTION;
+	float3 Normal : NORMAL;
 	float4 Color : COLOR;
 	float4 Pos : SV_POSITION;
 	float2 Tex : TEXCOORD;
@@ -41,13 +44,8 @@ VS_OUTPUT Texture_VS(VS_INPUT input)
 	output.Tex = input.Texcoord;
 	output.TextIndex = input.TextIndex;
 	output.Color = bUseVertexColor == true ? input.Color : CustomColor;
-	if (length(input.Normal) != 0)
-	{
-		float3 lightDir = -LightDirection;
-		float lightIntensity = saturate(dot(lightDir, input.Normal));
-		float4 light = saturate(LightColor * lightIntensity);
-		output.Color = output.Color * light;
-		output.Color.a = 1.0f;
-	}
+	output.LightColor = LightColor;
+	output.LightDirection = LightDirection;
+	output.Normal = input.Normal;
 	return output;
 }

@@ -48,11 +48,15 @@ PS_INPUT mainVS(VS_INPUT input)
 }
 
 
-PS_OUTPUT mainPS(PS_INPUT input)
+PS_OUTPUT mainPS(PS_INPUT input, bool isFront : SV_IsFrontFace)
 {
     PS_OUTPUT output;
 	if (length(input.normal) != 0)
 	{
+		if (!isFront)
+		{
+			input.normal = -input.normal;
+		}
 		float3 lightDir = -LightDirection;
 		float lightIntensity = saturate(dot(lightDir, input.normal));
 		float4 light = saturate(LightColor * lightIntensity);

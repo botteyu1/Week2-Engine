@@ -45,24 +45,6 @@ bool UMeshAsset::Load()
 			uint32 indexStart = 0;
 			FVector min(FLT_MAX, FLT_MAX, FLT_MAX);
 			FVector max = -min;
-			/*for (int i = 0; i < OBJLoader.LoadedVertices.size(); i++) {
-				FVector4 color((float)rand() / (float)RAND_MAX, (float)rand() / (float)RAND_MAX,
-					(float)rand() / (float)RAND_MAX, 1.0f);
-				FVertexTextureArray  inVertex = {
-					-OBJLoader.LoadedVertices[i].Position.Z, -OBJLoader.LoadedVertices[i].Position.X, OBJLoader.LoadedVertices[i].Position.Y,
-					color.X, color.Y, color.Z, color.W ,
-					OBJLoader.LoadedVertices[i].TextureCoordinate.X, OBJLoader.LoadedVertices[i].TextureCoordinate.Y,
-					OBJLoader.LoadedVertices[i].Normal.X, OBJLoader.LoadedVertices[i].Normal.Y, OBJLoader.LoadedVertices[i].Normal.Z,
-					0
-				};
-				vertices.Add(inVertex);
-				max.X = FMath::Max(max.X, vertices[i].X);
-				max.Y = FMath::Max(max.Y, vertices[i].Y);
-				max.Z = FMath::Max(max.Z, vertices[i].Z);
-				min.X = FMath::Min(min.X, vertices[i].X);
-				min.Y = FMath::Min(min.Y, vertices[i].Y);
-				min.Z = FMath::Min(min.Z, vertices[i].Z);
-			}*/
 			for (int i = 0; i < OBJLoader.LoadedMeshes.size(); i++)
 			{
 				objl::Mesh curMesh = OBJLoader.LoadedMeshes[i];
