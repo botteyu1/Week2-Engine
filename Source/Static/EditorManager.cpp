@@ -12,6 +12,7 @@
 #include "Core/Utils/JsonSaveHelper.h"
 #include "Resource/Texture.h"
 
+#include "Static/FUUIDBillBoard.h"
 #include <functional>
 
 void UEditorManager::Release() {
@@ -406,8 +407,9 @@ void UEditorManager::SelectActor(AActor* NewActor)
     if (SelectedActor != nullptr)
     {
         SelectedActor->Pick();
-		    const FTransform newActorTransform = NewActor->GetActorTransform();
-		 Gizmo->SetActorTransform(newActorTransform);
+		const FTransform newActorTransform = NewActor->GetActorTransform();
+		Gizmo->SetActorTransform(newActorTransform);
+		UEngine::Get().GetRenderer()->GetUUIDBillBoard()->SetTarget(SelectedActor);
 	}
 
 }
@@ -483,7 +485,10 @@ void UEditorManager::LateTick([[maybe_unused]] float DeltaTime)
 {
 	ResizingSWindow();
 	SetCursorWithSWindow();
+#if IS_OBJ_VIEWER
+#else
 	PixelPicking();
+#endif
 
 	if (SelectedActor != nullptr and Gizmo != nullptr)
 	{
