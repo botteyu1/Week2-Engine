@@ -10,6 +10,7 @@
 #include "Object/ObjectFactory.h"
 #include "Object/Actor/StaticMesh.h"
 #include "Object/Actor/Camera.h"
+#include "Object/Actor/Light.h"
 #include "Core/EngineEnum.h"
 #include <map>
 
@@ -30,6 +31,10 @@ struct FViewportClient {
 	FViewport viewport;
 	FViewportClient(ACamera* camera, FViewport viewport) : camera(camera), viewport(viewport) {};
 	void PrepareRender();
+};
+
+struct FLightInfo {
+
 };
 
 class UWorld :public UObject
@@ -104,6 +109,8 @@ public:
 		CameraFocused = InCamera;
 	}
 
+	inline ALight* GetLight() const { return Light; }
+
 	void RayCasting(const FVector& MouseNDCPos);
 
 	void PickByPixel(const FVector& MousePos);
@@ -126,7 +133,7 @@ private:
 	//ACamera* Camera = nullptr;
 	//TMap<EViewPortSplitter, ACamera*> CameraMap;
 	
-
+	ALight* Light = nullptr;
 	//std::shared_ptr<SWindow> RootWindow;
 	ACamera* CameraRenderFocused = nullptr;
 	ACamera* CameraFocused = nullptr;

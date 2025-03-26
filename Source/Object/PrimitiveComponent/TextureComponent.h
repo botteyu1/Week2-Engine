@@ -12,6 +12,8 @@ public:
 	inline void AddTexture(UTextureAsset* texture) { textures.Add(texture); }
 	void AddTexture(const FString& textureName);
 
+	void RemoveTexture(int index);
+
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void Render();

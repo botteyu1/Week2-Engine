@@ -2,6 +2,7 @@
 #include <fstream>
 #include <sstream>
 #include "Debug/DebugConsole.h"
+#include "Object/Assets/AssetManager.h"
 
 bool UObjMTLAsset::RegisterAsset()
 {
@@ -38,6 +39,9 @@ bool UObjMTLAsset::Load()
 			if (materialStarted) 
 			{
 				ObjMaterialMap.Add(FString(currentMat.Name.c_str()), currentMat);
+				FString WorldMaterialName = GetAssetName() + "-" + FString(currentMat.Name.c_str());
+				UAssetManager::Get().AddObjMaterial(WorldMaterialName,
+					ObjMaterialMap.Find(FString(currentMat.Name.c_str())));
 				currentMat = FObjMaterial();
 			}
 			else
@@ -149,6 +153,9 @@ bool UObjMTLAsset::Load()
 	if (materialStarted) 
 	{
 		ObjMaterialMap.Add(FString(currentMat.Name.c_str()), currentMat);
+		FString WorldMaterialName = GetAssetName() + "-" + FString(currentMat.Name.c_str());
+		UAssetManager::Get().AddObjMaterial(WorldMaterialName,
+			ObjMaterialMap.Find(FString(currentMat.Name.c_str())));
 	}
 
 	file.close();

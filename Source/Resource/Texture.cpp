@@ -171,13 +171,6 @@ void UTexture::CreateDepthStencilView()
 
 void UTexture::ResLoad(const FAssetMetaData& InMetadata)
 {
-	if (InMetadata.GetAssetType() == EAssetType::Material) {
-		// MTL 파일의 Texture 목록으로 부터 생성하려는 것임
-		// Metadata의 이름으로 MTL Asset에 접근하여 Texture 이름 목록을 빼내온다.
-		UObjMTLAsset* mtlAsset = UAssetManager::Get().FindAsset<UObjMTLAsset>(InMetadata.GetAssetName());
-		ResLoad(mtlAsset->GetTextureNames());
-		return;
-	}
 
 	std::string str = InMetadata.GetAssetPath().GetData();
 
