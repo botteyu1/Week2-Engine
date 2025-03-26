@@ -138,7 +138,7 @@ bool UMeshAsset::Load()
 	);
 	UIndexBuffer::Create(FString(TEXT(AssetName)), indices);
 	
-	UMesh::Create(TEXT(AssetName));
+	UMesh::Create(TEXT(AssetName), SubMeshes);
 	MetaData.SetIsLoaded(true);
 	return true;
 }
@@ -264,7 +264,7 @@ void UMeshAsset::ChangeMaterial(FString NewAssetName, FString subMeshName, FStri
 
 	UIndexBuffer::Create(FString(TEXT(NewAssetName)), GeometryData.Indices);
 
-	UMesh::Create(TEXT(NewAssetName));
+	UMesh::Create(TEXT(NewAssetName), SubMeshes);
 
 	// Texture2DArray 재생성
 	TArray<FString> TextureNames;

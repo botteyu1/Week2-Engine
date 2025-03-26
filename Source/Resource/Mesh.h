@@ -11,6 +11,7 @@
 #include "Resource/DirectResource/Vertexbuffer.h"
 #include "Resource/DirectResource/IndexBuffer.h"
 #include "Debug/DebugConsole.h"
+#include "Object/Assets/MeshAsset.h"
 
 class UMesh : public UResource<UMesh>
 {
@@ -19,17 +20,25 @@ public:
 
 	static std::shared_ptr<UMesh> Create(const FString& InName, D3D_PRIMITIVE_TOPOLOGY Topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST)
 	{
-		return Create(InName, InName, InName, Topology);
+		TArray<FSubMesh> tempSubMeshes;
+		return Create(InName, tempSubMeshes, Topology);
+	}
+
+	static std::shared_ptr<UMesh> Create(const FString& InName, TArray<FSubMesh>& InSubMeshes
+		,D3D_PRIMITIVE_TOPOLOGY Topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST)
+	{
+		return Create(InName, InName, InName, InSubMeshes, Topology);
 	}
 
 	static std::shared_ptr<UMesh> Create(
-		const FString& InName, const FString& VertexName, const FString& IndexName
-		, D3D_PRIMITIVE_TOPOLOGY Topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST
+		const FString& InName, const FString& VertexName, const FString& IndexName,
+		TArray<FSubMesh>& InSubMeshes, D3D_PRIMITIVE_TOPOLOGY Topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST
 	)
 	{
 		std::shared_ptr<UMesh> Res = CreateRes(InName);
 		Res->VertexBuffer = UVertexBuffer::Find(VertexName);
 		Res->IndexBuffer = UIndexBuffer::Find(IndexName);
+		Res->SubMeshes = InSubMeshes;
 		Res->Topology = Topology;
 
 		if (nullptr == Res->VertexBuffer
@@ -77,9 +86,15 @@ public:
 	{
 		return IndexBuffer;
 	}
+
+	TArray<FSubMesh> GetSubMeshes() 
+	{
+		return SubMeshes;
+	}
 	
 private:
 	std::shared_ptr<UVertexBuffer> VertexBuffer = nullptr;
 	std::shared_ptr<UIndexBuffer> IndexBuffer = nullptr;
+	TArray<FSubMesh> SubMeshes;
 	D3D_PRIMITIVE_TOPOLOGY Topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 };

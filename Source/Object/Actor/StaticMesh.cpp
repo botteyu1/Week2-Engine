@@ -76,3 +76,9 @@ void AStaticMesh::SetbUseTexture(bool value)
 	}
 	bUseTexture = value;
 }
+
+TArray<FSubMesh> AStaticMesh::GetSubMeshes()
+{
+	UTextureComponent* textureComponent = Cast<UTextureComponent>(RootComponent);
+	return textureComponent->GetMesh()->GetSubMeshes();
+}
