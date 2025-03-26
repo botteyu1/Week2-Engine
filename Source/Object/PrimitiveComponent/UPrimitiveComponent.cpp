@@ -28,6 +28,7 @@ UPrimitiveComponent::~UPrimitiveComponent()
 void UPrimitiveComponent::BeginPlay()
 {
 	Super::BeginPlay();
+	RegisterComponentWithWorld();
 }
 
 void UPrimitiveComponent::Tick(float DeltaTime)
@@ -141,6 +142,11 @@ void UPrimitiveComponent::CalculateModelMatrix(FMatrix& OutMatrix)
 void UPrimitiveComponent::RegisterComponentWithWorld(UWorld* World)
 {
 	World->AddRenderComponent(this);
+}
+
+void UPrimitiveComponent::RegisterComponentWithWorld()
+{
+	Owner->GetWorld()->AddRenderComponent(this);
 }
 
 void UPrimitiveComponent::SetBoundsScale(float NewBoudnsScale)

@@ -119,6 +119,8 @@ public:
 
 	TArray<FViewportClient*> ViewportClients;
 
+	bool HasBegunPlay() const { return bIsBeginPlay; }
+
 private:
 	UWorldInfo GetWorldInfo() const;
 
@@ -141,6 +143,8 @@ protected:
 	TArray<AActor*> ActorsToSpawn;
 	TArray<AActor*> PendingDestroyActors; // TODO: 추후에 TQueue로 변경
 	std::map<ERenderQueue,TSet<UPrimitiveComponent*>> RenderQueueComponents;
+
+	bool bIsBeginPlay = false;
 
 // Editor Only
 public:
@@ -184,14 +188,21 @@ T* UWorld::SpawnActor()
 {
 	T* Actor = FObjectFactory::ConstructObject<T>();
 	
-	if (UWorld* World = UEngine::Get().GetWorld())
-	{
-		Actor->SetWorld(World);
+	//if (UWorld* World = UEngine::Get().GetWorld())
+	//{
+		Actor->SetWorld(this);
 		Actors.Add(Actor);
 		ActorsToSpawn.Add(Actor);
-		return Actor;
-	}
 
-	UE_LOG("Actor Construction Failed. World is nullptr");
-	return nullptr;
+		if(bIsBeginPlay)
+		{
+			Actor->BeginPlay();
+		}
+
+
+		return Actor;
+	//}
+
+	//UE_LOG("Actor Construction Failed. World is nullptr");
+	//return nullptr;
 }
