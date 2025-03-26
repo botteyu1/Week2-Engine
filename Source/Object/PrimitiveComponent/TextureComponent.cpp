@@ -14,6 +14,11 @@ void UTextureComponent::AddTexture(const FString& textureName) {
 	AddTexture(UAssetManager::Get().FindAsset<UTextureAsset>(textureName));
 }
 
+void UTextureComponent::RemoveTexture(int index)
+{
+	textures.RemoveAt(index);
+}
+
 void UTextureComponent::BeginPlay() {
 	Super::BeginPlay();
 }

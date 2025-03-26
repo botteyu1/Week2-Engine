@@ -33,6 +33,17 @@ public:
 		// NewRes->Address = _Address;
 		return NewRes;
 	}
+
+	static std::shared_ptr<UTexture> LoadForTextureArray(TArray<FString>& InPaths, const FString& InName)
+		// D3D11_FILTER _Filter = D3D11_FILTER::D3D11_FILTER_MIN_MAG_MIP_LINEAR,
+		// D3D11_TEXTURE_ADDRESS_MODE _Address = D3D11_TEXTURE_ADDRESS_MODE::D3D11_TEXTURE_ADDRESS_CLAMP)
+	{
+		std::shared_ptr<UTexture> NewRes = CreateRes(InName);
+		NewRes->ResLoad(InPaths);
+		// NewRes->Filter = _Filter;
+		// NewRes->Address = _Address;
+		return NewRes;
+	}
 	
 	//리소스 등록
 	static std::shared_ptr<UTexture> Create(const FString& InName, ID3D11Texture2D* InRes)

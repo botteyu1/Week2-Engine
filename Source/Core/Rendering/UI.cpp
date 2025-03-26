@@ -43,6 +43,7 @@
 // #include "Object/World/World.h"
 // #include "Static/UEditorManager.h"
 // #include "Static/FUUIDBillBoard.h"
+#include "Object/Assets/AssetManager.h"
 
 
 void UI::Initialize(HWND hWnd, const FDevice& Device, UINT ScreenWidth, UINT ScreenHeight)
@@ -234,7 +235,7 @@ void UI::RenderPrimitiveSelection()
 				World->SpawnStaticMeshActor("SpaceShip.obj", true);
 			}
 			else if (strcmp(items[currentItem], "Pirate") == 0) {
-				World->SpawnStaticMeshActor("Pirate.obj", true);
+				World->SpawnStaticMeshActor("pirate.obj", true);
 			}
 			else if (strcmp(items[currentItem], "AVLSuitJerry") == 0) {
 				World->SpawnStaticMeshActor("AVLSuitJerry.obj", true);
