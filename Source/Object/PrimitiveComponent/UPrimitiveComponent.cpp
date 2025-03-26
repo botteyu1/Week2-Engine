@@ -149,6 +149,13 @@ void UPrimitiveComponent::RegisterComponentWithWorld()
 	Owner->GetWorld()->AddRenderComponent(this);
 }
 
+void UPrimitiveComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	Owner->GetWorld()->RemoveRenderComponent(this);
+}
+
 void UPrimitiveComponent::SetBoundsScale(float NewBoudnsScale)
 {
 	BoundsScale = NewBoudnsScale;

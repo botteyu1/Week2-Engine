@@ -14,7 +14,7 @@ public:
 	virtual const char* GetTypeName() override;
 	FString GetObjName() { return objName; }
 	uint32 GetbUseTexture() { return bUseTexture; }
-	void AddMesh(FString MeshType, bool texture);
+	class UTextureComponent* AddMesh(FString MeshType, bool texture);
 
 private:
 	FString objName;

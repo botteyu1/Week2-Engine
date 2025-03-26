@@ -41,12 +41,19 @@ void AActor::LateTick(float DeltaTime)
 
 void AActor::Destroyed()
 {
+
 	EndPlay(EEndPlayReason::Destroyed);
+
+	// 컴포넌트 배열의 복사본 으로 삭제 에러 방지
+	TSet<UActorComponent*> ComponentsCopy = Components;
 	
-	for (auto& Component : Components)
+	for (auto& Component : ComponentsCopy)
 	{
 		Component->Destroyed();
 	}
+	Components.Empty();
+	
+	UEngine::Get().GObjects.Remove(GetUUID());
 }
 
 
@@ -55,17 +62,12 @@ void AActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	for (auto& Component : Components)
 	{		
 		Component->EndPlay(EndPlayReason);
-		if (const auto PrimitiveComp = dynamic_cast<UPrimitiveComponent*>(Component))
-		{
-			World->RemoveRenderComponent(PrimitiveComp);
-		}
 		if (UEngine::Get().GetEditor()->GetSelectedActor() == this)
 		{
 			UEngine::Get().GetEditor()->SelectActor(nullptr);
 		}
-		UEngine::Get().GObjects.Remove(Component->GetUUID());
+		//UEngine::Get().GObjects.Remove(Component->GetUUID());
 	}
-	Components.Empty();
 }
 
 const FTransform& AActor::GetActorTransform() const
@@ -478,6 +480,20 @@ bool AActor::Destroy()
 
 	return true;
 }
+
+//void AActor::MarkComponentForDestroy(UActorComponent* Component)
+//{
+//
+//	if (PendingKillComponents.Find(Component) != -1)
+//	{
+//		return;
+//	}
+//	if (Component != nullptr)
+//	{
+//		//Component->UnregisterComponent();
+//		PendingKillComponents.Add(Component);
+//	}
+//}
 
 void AActor::SetRootComponent(USceneComponent* InRootComponent)
 {

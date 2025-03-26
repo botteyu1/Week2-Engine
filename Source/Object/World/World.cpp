@@ -181,6 +181,8 @@ void UWorld::LateTick(float DeltaTime)
 
 	for (const auto& PendingActor : PendingDestroyActors)
 	{
+		
+	//InActor->Destroyed();z
 		// Engine에서 제거
 		UEngine::Get().GObjects.Remove(PendingActor->GetUUID());
 	}

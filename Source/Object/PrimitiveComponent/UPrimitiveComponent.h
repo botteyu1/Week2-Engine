@@ -72,6 +72,9 @@ public:
 	virtual void RegisterComponentWithWorld(UWorld* World);
 	virtual void RegisterComponentWithWorld();
 
+
+	void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
 public:
 	void SetCanBeRendered(bool bRender) { bCanBeRendered = bRender; }
 
@@ -93,6 +96,9 @@ public:
 
 	ERenderQueue GetRenderQueue() const { return RenderQueue; }
 	void SetRenderQueue(ERenderQueue InRenderQueue) { RenderQueue = InRenderQueue; }
+
+
+
 
 public:
 	void SetBoundsScale(float NewBoudnsScale);

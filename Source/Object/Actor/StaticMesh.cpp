@@ -41,7 +41,7 @@ const char* AStaticMesh::GetTypeName()
 	return "StaticMesh";
 }
 
-void AStaticMesh::AddMesh(FString MeshType, bool texture)
+UTextureComponent* AStaticMesh::AddMesh(FString MeshType, bool texture)
 {
 	UTextureComponent* component = AddComponent<UTextureComponent>();
 	//objName = MeshType;
@@ -58,4 +58,5 @@ void AStaticMesh::AddMesh(FString MeshType, bool texture)
 		bUseTexture = 0;
 	}
 	component->SetRelativeTransform(FTransform());
+	return component;
 }

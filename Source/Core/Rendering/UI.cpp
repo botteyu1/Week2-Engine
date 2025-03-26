@@ -942,10 +942,15 @@ void UI::PropertyStaticMesh(AStaticMesh* InAStaticMesh)
 {
 	if (InAStaticMesh != nullptr)
 	{
-
+		static UTextureComponent* TestMeshComponent = nullptr;
 		if (ImGui::Button("Add"))
 		{
-			InAStaticMesh->AddMesh("dice.obj", true);
+			TestMeshComponent = InAStaticMesh->AddMesh("dice.obj", true);
+		}
+
+		if (ImGui::Button("Remove"))
+		{
+			TestMeshComponent->Destroyed();
 		}
 
 		//const TMap < FName, std::shared_ptr<UMesh> >& Meshes = UMesh::GetAllResources();
