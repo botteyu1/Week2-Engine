@@ -10,7 +10,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_d Girl.png
+map_Kd Girl.png
 
 newmtl 1m4g3n-texura-An1we.png
 Ns 250.000000
@@ -21,4 +21,4 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_d Girl.png
+map_Kd Girl.png

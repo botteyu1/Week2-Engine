@@ -16,7 +16,10 @@ public:
 	uint32 GetbUseTexture() { return bUseTexture; }
 	void AddMesh(FString MeshType, bool texture);
 
+	void ChangeMaterial(FString subMeshName, FString destMaterialName);
+	void SetbUseTexture(bool value);
 private:
 	FString objName;
 	uint32 bUseTexture;
+	FString AssetName;
 };

@@ -100,12 +100,16 @@ void UAssetManager::LoadAssets() {
 
 		case EAssetType::Mesh:
 		{
+			// UI 쪽에서 Mesh 목록 필요하므로 추가
 			ObjMetaDatas.Add(&asset.Value);
 			break;
 		}
 
 		case EAssetType::Material:
 		{
+			// UI 쪽에서 Material 목록 필요하므로 추가
+			MtlMetaDatas.Add(&asset.Value);
+
 			// ObjMTLAsset 이라는 것이 있어서 거기서 mlt 파일 읽고 ObjMaterial 여러개 생성하여 들고 있을 것임
 			UObjMTLAsset* objMTLAsset = FObjectFactory::ConstructObject<UObjMTLAsset>();
 			if (objMTLAsset != nullptr) {
@@ -116,22 +120,6 @@ void UAssetManager::LoadAssets() {
 			}
 			else {
 				cout << "MTL Asset Load Failed: " << asset.Value.GetAssetName().GetData() << endl;
-			}
-
-			// Texture 있으면 Array 로 만들어 두기
-			if (objMTLAsset->GetTextureNum() > 0)
-			{
-				UTextureAsset* textureAsset = FObjectFactory::ConstructObject<UTextureAsset>();
-				if (textureAsset != nullptr) {
-					textureAsset->SetMetaData(asset.Value);
-					textureAsset->Load();
-					std::string assetName = textureAsset->GetAssetName().GetData();
-					assetName = assetName.substr(0, assetName.size() - 4);
-					Assets.Add(assetName + TEXT(".textArray"), textureAsset);
-				}
-				else {
-					cout << "Texture Asset Load Failed about MTL Asset: " << asset.Value.GetAssetName().GetData() << endl;
-				}
 			}
 
 			break;
@@ -153,9 +141,90 @@ void UAssetManager::LoadAssets() {
 			meshAsset->SetMetaData(*objMetaData);
 			meshAsset->Load();
 			Assets.Add(meshAsset->GetAssetName(), meshAsset);
+
+			//  사용하는 Texture의 Names 목록을 가지고 Texture2DArray 생성
+			TArray<FString> textureNames = meshAsset->GetUsedTextureNames();
+
+			if (textureNames.Num() > 0) {
+				UTextureAsset* textureAsset = FObjectFactory::ConstructObject<UTextureAsset>();
+				if (textureAsset != nullptr) {
+					textureAsset->SetMetaData(*objMetaData);
+					textureAsset->LoadForTextureArray(textureNames);
+					std::string assetName = textureAsset->GetAssetName().GetData();
+					std::string suffixObj = ".obj";
+					std::string suffixObjBinary = ".obj.objbinary";
+
+					if (assetName.size() >= suffixObjBinary.size() &&
+						assetName.compare(assetName.size() - suffixObjBinary.size(), suffixObjBinary.size(), suffixObjBinary) == 0)
+					{
+						// ".obj.objbinary"로 끝나면 마지막 14글자를 제거
+						assetName = assetName.substr(0, assetName.size() - suffixObjBinary.size());
+					}
+					else if (assetName.size() >= suffixObj.size() &&
+						assetName.compare(assetName.size() - suffixObj.size(), suffixObj.size(), suffixObj) == 0)
+					{
+						// ".obj"로 끝나면 마지막 4글자를 제거
+						assetName = assetName.substr(0, assetName.size() - suffixObj.size());
+					}
+
+					Assets.Add(assetName + TEXT(".textArray"), textureAsset);
+				}
+				else {
+					cout << "Texture Asset Load Failed about MTL Asset: " << objMetaData->GetAssetName().GetData() << endl;
+				}
+			}
 		}
 		else {
 			cout << "Mesh Asset Load Failed: " << objMetaData->GetAssetName().GetData() << endl;
+		}
+	}
+}
+
+TArray<FString> UAssetManager::GetObjDataNames()
+{
+	TArray<FString> ObjDataNames;
+	for (auto& ObjMetaData : ObjMetaDatas) 
+	{
+		ObjDataNames.Add(ObjMetaData->GetAssetName());
+	}
+	return ObjDataNames;
+}
+
+TArray<FString> UAssetManager::GetMtlDataNames()
+{
+	TArray<FString> MtlDataNames;
+	for (auto& MtlMetaData : MtlMetaDatas) 
+	{
+		MtlDataNames.Add(MtlMetaData->GetAssetName());
+	}
+	return MtlDataNames;
+}
+
+FObjMaterial* UAssetManager::GetObjMaterial(const FString InName)
+{
+	return *ObjMaterialMap.Find(InName);
+}
+
+void UAssetManager::AddObjMaterial(const FString InName, FObjMaterial* ObjMat)
+{
+	ObjMaterialMap.Add(InName, ObjMat);
+}
+
+void UAssetManager::MakeTexture2DArray(const FString AssetName, TArray<FString> textureNames)
+{
+	//  런타임 중 Material 바꾸는 경우에 사용
+	//  사용하는 Texture의 Names 목록을 가지고 Texture2DArray 생성
+
+	if (textureNames.Num() > 0) {
+		UTextureAsset* textureAsset = FObjectFactory::ConstructObject<UTextureAsset>();
+		if (textureAsset != nullptr) {
+			textureAsset->LoadForTextureArray(textureNames);
+			std::string assetName = AssetName.GetData();
+
+			Assets.Add(assetName + TEXT(".textArray"), textureAsset);
+		}
+		else {
+			MsgBoxAssert("Material 변경 시 Texture 2D Array 만드는 것 실패");
 		}
 	}
 }

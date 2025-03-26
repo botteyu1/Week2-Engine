@@ -11,6 +11,7 @@
 
 class UAsset;
 struct FVertexTextureArray;
+struct FObjMaterial;
 
 class UAssetManager : public TSingleton<UAssetManager>
 {
@@ -111,6 +112,17 @@ public:
 private:
 	TMap<FString, FAssetMetaData> AssetMetaDatas;
 	TArray<FAssetMetaData*> ObjMetaDatas;
+	TArray<FAssetMetaData*> MtlMetaDatas;
 	TMap<FString, UAsset*> Assets;
+
+	TMap<FString, FObjMaterial*> ObjMaterialMap;
+
+public:
+	TArray<FString> GetObjDataNames();
+	TArray<FString> GetMtlDataNames();
+
+	FObjMaterial* GetObjMaterial(const FString InName);
+	void AddObjMaterial(const FString InName, FObjMaterial* ObjMat);
+	void MakeTexture2DArray(const FString AssetName, TArray<FString> TextureNames);
 };
 

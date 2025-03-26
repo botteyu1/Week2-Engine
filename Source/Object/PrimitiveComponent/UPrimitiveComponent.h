@@ -33,8 +33,9 @@ struct alignas(16) FConstantsComponentData
 	FVector4 Color;
 	// true인 경우 Vertex Color를 사용하고, false인 경우 Color를 사용합니다.
 	FVector4 UUIDColor;
+	FVector4 LightColor;
+	FVector LightDirection;
 	uint32 bUseVertexColor;
-	FVector Padding;
 };
 
 class UPrimitiveComponent : public USceneComponent

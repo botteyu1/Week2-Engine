@@ -55,6 +55,8 @@ void UPrimitiveComponent::Render()
 		return;
 	}
 	// if (GetOwner()->Implements<IGizmoInterface>() == false) // TODO: RTTI 개선하면 사용
+#if IS_OBJ_VIEWER
+#else
 	if (!dynamic_cast<IGizmoInterface*>(GetOwner()))
 	{
 		if (bIsPicked)
@@ -67,6 +69,7 @@ void UPrimitiveComponent::Render()
 			bUseVertexColor = true;
 		}
 	}
+#endif
 
 	FMatrix ModelMatrix;
 	CalculateModelMatrix(ModelMatrix);
@@ -77,6 +80,9 @@ void UPrimitiveComponent::Render()
 		ModelMatrix *
 		ViewProjectionMatrix
 );
+
+	FVector4 lightColor = UEngine::Get().GetWorld()->GetLight()->GetLightColor();
+	FVector lightDirection = UEngine::Get().GetWorld()->GetLight()->GetLightDirection();
 	
 	uint32 ID = GetUUID();
 
@@ -88,7 +94,9 @@ void UPrimitiveComponent::Render()
 		.MVP = MVP,
 		.Color = GetCustomColor(),
 		.UUIDColor = UUIDCOlor,
-		.bUseVertexColor = IsUseVertexColor()
+		.LightColor = lightColor,
+		.LightDirection = lightDirection,
+		.bUseVertexColor = IsUseVertexColor(),
 	};
 	
 

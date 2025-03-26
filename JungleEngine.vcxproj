@@ -262,6 +262,7 @@
     <ClCompile Include="Source\Core\Math\Transform.cpp" />
     <ClCompile Include="Source\Core\Rendering\SWindow.cpp" />
     <ClCompile Include="Source\Debug\DebugDrawManager.cpp" />
+    <ClCompile Include="Source\Object\Actor\Light.cpp" />
     <ClCompile Include="Source\Object\Actor\StaticMesh.cpp" />
     <ClCompile Include="Source\Object\Actor\SubUVParticle.cpp" />
     <ClCompile Include="Source\Object\Actor\WorldGrid.cpp" />
@@ -436,6 +437,7 @@
     <ClInclude Include="Source\Core\Delegates\DelegateCombination.h" />
     <ClInclude Include="Source\Core\Rendering\SWindow.h" />
     <ClInclude Include="Source\Debug\DebugDrawManager.h" />
+    <ClInclude Include="Source\Object\Actor\Light.h" />
     <ClInclude Include="Source\Object\Actor\StaticMesh.h" />
     <ClInclude Include="Source\Object\Actor\WorldGrid.h" />
     <ClInclude Include="Source\Object\Assets\FontAtlasAsset.h" />

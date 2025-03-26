@@ -37,13 +37,15 @@
 
 void UWorld::InitWorld()
 {
+	if (Light == nullptr) {
+		Light = SpawnActor<ALight>();
+	}
 #if IS_OBJ_VIEWER
 #else
 	//TODO : 
 	FString GridSizeStr = UConfigManager::Get().GetValue(TEXT("World"), TEXT("GridSize"));
 	GridSize = (GridSizeStr == "") ? 100.f : FString::ToFloat(GridSizeStr);
 #endif
-
 	DXGI_SWAP_CHAIN_DESC SwapChainDesc;
 	FDevice::Get().GetSwapChain()->GetDesc(&SwapChainDesc);
 
@@ -337,7 +339,7 @@ void UWorld::ClearWorld()
 
 		// 이제 AGizmoActor와 AGizmoHandle을 삭제하기 때문에
 
-		if (Actor->IsA<ACamera>() || Actor->IsA<AAxis>()) {
+		if (Actor->IsA<ACamera>() || Actor->IsA<AAxis>() || Actor->IsA<ALight>()) {
 			continue;
 		}
 		

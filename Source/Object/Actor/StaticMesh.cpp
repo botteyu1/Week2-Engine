@@ -1,5 +1,8 @@
 #include "StaticMesh.h"
 #include "Object/PrimitiveComponent/TextureComponent.h"
+#include "Core/UObject/Casts.h"
+#include "Object/Assets/AssetManager.h"
+#include "Object/Assets/MeshAsset.h"
 
 AStaticMesh::AStaticMesh()
 {
@@ -22,8 +25,12 @@ void AStaticMesh::SetMesh(FString MeshType, bool texture)
 		component->SetMaterial("DefaultMaterial");
 		bUseTexture = 0;  
 	}
+#if IS_OBJ_VIEWER
+	component->SetUseVertexColor(false);
+#endif
 	RootComponent = component;
 	component->SetRelativeTransform(FTransform());
+	AssetName = assetName;
 }
 
 void AStaticMesh::BeginPlay()
@@ -58,4 +65,33 @@ void AStaticMesh::AddMesh(FString MeshType, bool texture)
 		bUseTexture = 0;
 	}
 	component->SetRelativeTransform(FTransform());
+}
+
+void AStaticMesh::ChangeMaterial(FString subMeshName, FString destMaterialName)
+{
+	if (RootComponent->IsA(UTextureComponent::StaticClass())) 
+	{
+		UMeshAsset* meshAsset = UAssetManager::Get().FindAsset<UMeshAsset>(objName);
+		std::string typeName(GetTypeName());
+		FString NewAssetName = FString(typeName) + "-" + FString::FromInt(GetUUID());
+		meshAsset->ChangeMaterial(NewAssetName, subMeshName, destMaterialName);
+
+		UTextureComponent* textureComponent = Cast<UTextureComponent>(RootComponent);
+		textureComponent->SetMesh(NewAssetName);
+		textureComponent->RemoveTexture(0);		// 일단은 0번에 다 넣어주니까 0번 삭제
+		textureComponent->AddTexture(NewAssetName + ".textArray");
+	}
+}
+
+void AStaticMesh::SetbUseTexture(bool value)
+{
+	if (value != bUseTexture) {
+		if (value) {
+			Cast<UPrimitiveComponent>(RootComponent)->SetMaterial("TextureMaterial");
+		}
+		else {
+			Cast<UPrimitiveComponent>(RootComponent)->SetMaterial("DefaultMaterial");
+		}
+	}
+	bUseTexture = value;
 }
