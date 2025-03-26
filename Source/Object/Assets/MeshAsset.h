@@ -41,6 +41,8 @@ private:
 	TArray<FSubMesh> SubMeshes;
 	TArray<FTextureCount> UsedTextureNames;
 	FString AssetName;
+	uint32 SelectSubMeshIndex;
+	uint32 SelectSubMeshOriginalTextureIndex;
 
 private:
 	int GetTextureIndex(FString textureName);
@@ -50,5 +52,7 @@ public:
 
 public:
 	void ChangeMaterial(FString NewAssetName, FString subMeshName, FString materialName);
+	void SelectMaterial(FString NewAssetName, FString subMeshName);
+	void UnSelectMaterial(FString NewAssetName);
 };
 

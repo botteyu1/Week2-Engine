@@ -17,6 +17,7 @@ struct VS_OUTPUT
 	float2 Tex : TEXCOORD;
 	int TextIndex : TEXTINDEX;
 	float4 UUID : UUID;
+	float BreathRatio : BREATHRATIO;
 };
 
 cbuffer constants : register(b0)
@@ -27,6 +28,7 @@ cbuffer constants : register(b0)
 	float4 LightColor;
 	float3 LightDirection;
 	uint bUseVertexColor;
+	float breathRatio;
 };
 VS_OUTPUT Texture_VS(VS_INPUT input)
 {
@@ -40,6 +42,7 @@ VS_OUTPUT Texture_VS(VS_INPUT input)
 	output.LightDirection = LightDirection;
 	output.Normal = input.Normal;
 	output.UUID = UUIDColor;
+	output.BreathRatio = breathRatio;
 	
 	return output;
 }

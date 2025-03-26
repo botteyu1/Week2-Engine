@@ -36,6 +36,7 @@ struct alignas(16) FConstantsComponentData
 	FVector4 LightColor;
 	FVector LightDirection;
 	uint32 bUseVertexColor;
+	float breathRatio;
 };
 
 class UPrimitiveComponent : public USceneComponent
@@ -109,6 +110,8 @@ protected:
 	ERenderQueue RenderQueue = ERenderQueue::Default;
 
 	FVector4 CustomColor = FVector4(1.0f, 1.0f, 1.0f, 1.0f);
+
+	const float breathTime = 1.5f;
 
 protected:
 	FRenderResourceCollection RenderResourceCollection;
