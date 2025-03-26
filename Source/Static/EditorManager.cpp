@@ -360,7 +360,7 @@ void UEditorManager::SelectActor(AActor* NewActor)
     {
         SelectedActor->Pick();
 		    const FTransform newActorTransform = NewActor->GetActorTransform();
-		    Gizmo->SetActorTransform(newActorTransform);
+		 Gizmo->SetActorTransform(newActorTransform);
 	}
 
 }
@@ -437,6 +437,13 @@ void UEditorManager::LateTick([[maybe_unused]] float DeltaTime)
 	ResizingSWindow();
 	SetCursorWithSWindow();
 	PixelPicking();
+
+	if (SelectedActor != nullptr and Gizmo != nullptr)
+	{
+		FTransform newActorTransform = SelectedActor->GetActorTransform();
+		newActorTransform.SetRotation({0.0f,0.0f,0.0f});
+		Gizmo->SetActorTransform(newActorTransform);
+	}
 }
 
 void UEditorManager::ResizingSWindow() {
@@ -519,8 +526,9 @@ void UEditorManager::PixelPicking() {
 			if ( const UGizmoComponent* GizmoCom = Cast<UGizmoComponent>(PickedComponent) ) {
 				Gizmo->SetSelectedAxis(GizmoCom->GetSelectedAxis());
 			}
-		} else {
-			//SelectActor(nullptr);
+		} 
+		else {
+			SelectActor(nullptr);
 		}
 	}
 
