@@ -570,15 +570,7 @@ void UWorld::RayCasting(const FVector& MouseNDCPos)
 		}
 
 	}
-
-	if (SelectedActor)
-	{
-		UEngine::Get().GetEditor()->SelectActor(SelectedActor);
-		UEngine::Get().GetRenderer()->GetUUIDBillBoard()->SetTarget(SelectedActor);
-	}
-	else {
-		UEngine::Get().GetEditor()->SelectActor(nullptr);
-	}
+	UEngine::Get().GetEditor()->SelectActor(SelectedActor);
 }
 
 void UWorld::PickByPixel(const FVector& MousePos)
