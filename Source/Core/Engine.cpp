@@ -143,6 +143,7 @@ void UEngine::Run()
 		QueryPerformanceCounter(&StartTime);
 
 		EngineDeltaTime = static_cast<float>(StartTime.QuadPart - EndTime.QuadPart) / static_cast<float>(Frequency.QuadPart);
+		EngineTime += EngineDeltaTime;
 		// 메시지(이벤트) 처리
 		MSG Msg;
 		while (PeekMessage(&Msg, nullptr, 0, 0, PM_REMOVE))

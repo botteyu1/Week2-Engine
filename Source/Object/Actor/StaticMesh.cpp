@@ -80,6 +80,34 @@ void AStaticMesh::SetbUseTexture(bool value)
 	bUseTexture = value;
 }
 
+void AStaticMesh::SelectSubMesh(FString subMeshName)
+{
+	if (RootComponent->IsA(UTextureComponent::StaticClass()))
+	{
+		UMeshAsset* meshAsset = UAssetManager::Get().FindAsset<UMeshAsset>(objName);
+		std::string typeName(GetTypeName());
+		FString NewAssetName = FString(typeName) + "-" + FString::FromInt(GetUUID());
+		meshAsset->SelectMaterial(NewAssetName, subMeshName);
+
+		UTextureComponent* textureComponent = Cast<UTextureComponent>(RootComponent);
+		textureComponent->SetMesh(NewAssetName);
+	}
+}
+
+void AStaticMesh::UnSelectSubMesh()
+{
+	if (RootComponent->IsA(UTextureComponent::StaticClass()))
+	{
+		UMeshAsset* meshAsset = UAssetManager::Get().FindAsset<UMeshAsset>(objName);
+		std::string typeName(GetTypeName());
+		FString NewAssetName = FString(typeName) + "-" + FString::FromInt(GetUUID());
+		meshAsset->UnSelectMaterial(NewAssetName);
+
+		UTextureComponent* textureComponent = Cast<UTextureComponent>(RootComponent);
+		textureComponent->SetMesh(NewAssetName);
+	}
+}
+
 TArray<FSubMesh> AStaticMesh::GetSubMeshes()
 {
 	UTextureComponent* textureComponent = Cast<UTextureComponent>(RootComponent);

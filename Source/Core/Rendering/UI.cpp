@@ -983,6 +983,7 @@ void UI::PropertySubMesh(AStaticMesh* InAStaticMesh)
 				if (ImGui::Button(buttonStr.c_str()))
 				{
 					choosedMesh = FString(subMesh.SubMeshName);
+					InAStaticMesh->SelectSubMesh(subMesh.SubMeshName);
 					ImGui::OpenPopup("ChangeMaterialPopup");
 				}
 			}
@@ -992,6 +993,13 @@ void UI::PropertySubMesh(AStaticMesh* InAStaticMesh)
 		if (ImGui::BeginPopup("ChangeMaterialPopup"))
 		{
 			ImGui::Text("Choose Material!");
+			// 팝업 창 영역 외부를 클릭했는지 확인 (현재 창이 호버되지 않으면)
+			if (!ImGui::IsWindowHovered() && (ImGui::IsMouseClicked(0) || ImGui::IsMouseClicked(1)))
+			{
+				InAStaticMesh->UnSelectSubMesh();
+				ImGui::CloseCurrentPopup();
+			}
+			
 			TMap<FString, FObjMaterial*> ObjMaterialMap = UAssetManager::Get().GetObjMaterailMap();
 			for (auto& ObjMaterial : ObjMaterialMap)
 			{
@@ -1003,6 +1011,8 @@ void UI::PropertySubMesh(AStaticMesh* InAStaticMesh)
 					ImGui::CloseCurrentPopup();
 				}
 			}
+
+
 			ImGui::EndPopup();
 		}
 	}

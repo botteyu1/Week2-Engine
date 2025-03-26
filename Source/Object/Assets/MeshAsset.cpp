@@ -276,3 +276,63 @@ void UMeshAsset::ChangeMaterial(FString NewAssetName, FString subMeshName, FStri
 	// AssetManager에게 만들어달라고 요청
 	UAssetManager::Get().MakeTexture2DArray(FString(TEXT(NewAssetName)), TextureNames);
 }
+
+void UMeshAsset::SelectMaterial(FString NewAssetName, FString subMeshName)
+{
+	uint32 vertexIndex = 0;
+	bool changeSubMesh = false;
+	for (int i = 0; i < SubMeshes.Num(); i++)
+	{
+		if (SubMeshes[i].SubMeshName == subMeshName) 
+		{
+			SelectSubMeshOriginalTextureIndex = GeometryData.Vertices[vertexIndex].TI;
+			for (int j = 0; j < GeometryData.MaterialIntervals[i]; j++) 
+			{
+				GeometryData.Vertices[vertexIndex + j].TI = -2;
+			}
+			SelectSubMeshIndex = i;
+			changeSubMesh = true;
+			break;
+		}
+		vertexIndex += GeometryData.MaterialIntervals[i];
+	}
+
+	if (!changeSubMesh) 
+	{
+		MsgBoxAssert("Select한 SubMesh가 SubMeshes에 존재하지 않음");
+	}
+
+	// VertexBuffer에 입력, 추후 SetMesh로 다시 불러와주어야 적용될 것임
+	UVertexBuffer::Create(FString(TEXT(NewAssetName)), GeometryData.Vertices,
+		UInputLayout::Find("TextureArray_IL")
+	);
+
+	UIndexBuffer::Create(FString(TEXT(NewAssetName)), GeometryData.Indices);
+
+	UMesh::Create(TEXT(NewAssetName), SubMeshes);
+}
+
+void UMeshAsset::UnSelectMaterial(FString NewAssetName)
+{
+	uint32 vertexIndex = 0;
+	bool changeSubMesh = false;
+
+	for (int i = 0; i < SelectSubMeshIndex; i++) 
+	{
+		vertexIndex += GeometryData.MaterialIntervals[i];
+	}
+
+	for (int i = 0; i < GeometryData.MaterialIntervals[SelectSubMeshIndex]; i++) 
+	{
+		GeometryData.Vertices[vertexIndex + i].TI = SelectSubMeshOriginalTextureIndex;
+	}
+
+	// VertexBuffer에 입력, 추후 SetMesh로 다시 불러와주어야 적용될 것임
+	UVertexBuffer::Create(FString(TEXT(NewAssetName)), GeometryData.Vertices,
+		UInputLayout::Find("TextureArray_IL")
+	);
+
+	UIndexBuffer::Create(FString(TEXT(NewAssetName)), GeometryData.Indices);
+
+	UMesh::Create(TEXT(NewAssetName), SubMeshes);
+}
