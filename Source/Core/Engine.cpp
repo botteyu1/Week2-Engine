@@ -9,7 +9,7 @@
 #include "Rendering/FDevice.h"
 #include "Static/EditorManager.h"
 #include "Static/FLineBatchManager.h"
-
+#include "Core/Config/ConfigManager.h"
 
 class AArrow;
 class APicker;
@@ -314,6 +314,9 @@ void UEngine::UpdateWindowSize()
 	FDevice::Get().OnResizeComplete();
 	
 	UEngine::Get().GetEditor()->OnResizeComplete();
+
+	UConfigManager::Get().SetValue("Display", "Width", std::to_string(ScreenWidth));
+	UConfigManager::Get().SetValue("Display", "Height", std::to_string(ScreenHeight));
 }
 
 UObject* UEngine::GetObjectByUUID(uint32 InUUID) const

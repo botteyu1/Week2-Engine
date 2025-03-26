@@ -17,7 +17,7 @@ ACamera::ACamera()
 	ZoomSize = 1000.f;
     ProjectionMode = ECameraProjectionMode::Perspective;
 	
-	Sensitivity = std::stof(UConfigManager::Get().GetValue("Camera", "Sensitivity").GetData());
+	Sensitivity = 50.f;
 
     RootComponent = AddComponent<USceneComponent>();
     
@@ -28,7 +28,7 @@ ACamera::ACamera()
 	StartPos.SetRotation(FVector(0, 10, 0));
 	StartPos.SetPosition(FVector(-5, 0, 5*tanf(10*PI/180.0f)));
 #else
-	CameraSpeed = 1.0f;
+	CameraSpeed = 10.0f;
 	StartPos.SetPosition(FVector(-5, 0, 0));
 #endif
     SetActorTransform(StartPos);

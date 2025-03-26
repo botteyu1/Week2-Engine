@@ -40,7 +40,8 @@ void UWorld::InitWorld()
 #if IS_OBJ_VIEWER
 #else
 	//TODO : 
-	GridSize = FString::ToFloat(UConfigManager::Get().GetValue(TEXT("World"), TEXT("GridSize")));
+	FString GridSizeStr = UConfigManager::Get().GetValue(TEXT("World"), TEXT("GridSize"));
+	GridSize = (GridSizeStr == "") ? 100.f : FString::ToFloat(GridSizeStr);
 #endif
 
 	DXGI_SWAP_CHAIN_DESC SwapChainDesc;
