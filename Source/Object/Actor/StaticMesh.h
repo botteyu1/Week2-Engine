@@ -1,6 +1,7 @@
 #pragma once
 #include "Actor.h"
 
+struct FSubMesh;
 
 class AStaticMesh : public AActor
 {
@@ -16,6 +17,8 @@ public:
 	uint32 GetbUseTexture() { return bUseTexture; }
 	void ChangeMaterial(FString subMeshName, FString destMaterialName);
 	void SetbUseTexture(bool value);
+
+	TArray<FSubMesh> GetSubMeshes();
 private:
 	FString objName;
 	uint32 bUseTexture;

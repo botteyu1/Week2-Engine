@@ -140,7 +140,21 @@ void UAssetManager::LoadAssets() {
 			}
 			meshAsset->SetMetaData(*objMetaData);
 			meshAsset->Load();
-			Assets.Add(meshAsset->GetAssetName(), meshAsset);
+
+			std::string assetName = meshAsset->GetAssetName().GetData();
+			std::string suffixObj = ".obj";
+			std::string suffixObjBinary = ".obj.objbinary";
+
+			bool endsWithObjbinary = (assetName.size() >= suffixObjBinary.size() &&
+				assetName.compare(assetName.size() - suffixObjBinary.size(), suffixObjBinary.size(), suffixObjBinary) == 0);
+
+			if (endsWithObjbinary) 
+			{
+				assetName.erase(assetName.size() - suffixObjBinary.size());
+				assetName += suffixObj;
+			}
+
+			Assets.Add(FString(assetName), meshAsset);
 
 			//  사용하는 Texture의 Names 목록을 가지고 Texture2DArray 생성
 			TArray<FString> textureNames = meshAsset->GetUsedTextureNames();
@@ -150,9 +164,7 @@ void UAssetManager::LoadAssets() {
 				if (textureAsset != nullptr) {
 					textureAsset->SetMetaData(*objMetaData);
 					textureAsset->LoadForTextureArray(textureNames);
-					std::string assetName = textureAsset->GetAssetName().GetData();
-					std::string suffixObj = ".obj";
-					std::string suffixObjBinary = ".obj.objbinary";
+					assetName = textureAsset->GetAssetName().GetData();
 
 					if (assetName.size() >= suffixObjBinary.size() &&
 						assetName.compare(assetName.size() - suffixObjBinary.size(), suffixObjBinary.size(), suffixObjBinary) == 0)
@@ -202,6 +214,7 @@ TArray<FString> UAssetManager::GetMtlDataNames()
 
 FObjMaterial* UAssetManager::GetObjMaterial(const FString InName)
 {
+	// 구하고자 하는 Material이 존재하지 않으면 Crash 뜸! obj와 mtl 파일 잘 살펴볼것!
 	return *ObjMaterialMap.Find(InName);
 }
 

@@ -197,5 +197,12 @@ void FUUIDBillBoard::Create()
 	);
 	UIndexBuffer::Create(ResourceName, IndexBuffer, true);
 	UConstantBuffer::Create(ResourceName, sizeof(FFontConstantInfo));
-	UMesh::Create(ResourceName, ResourceName, ResourceName);
+	
+	// 아래처럼 빈 TArray를 만들어서 전달하면 경우 material 관찰이나 수정이 불가할 것임
+	// 현재는 해당 요소들의 마땅한 Submesh나 material이 없어서 빈 것으로 둠
+	// subMesh로 나뉘길 바라는 경우 추가 조치 필요
+	// 더 자세한 설명은 날 찾아오시오. by 찬희 한
+
+	TArray<FSubMesh> emptySubMesh;
+	UMesh::Create(ResourceName, ResourceName, ResourceName, emptySubMesh);
 }

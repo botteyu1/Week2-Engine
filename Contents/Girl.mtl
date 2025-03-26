@@ -12,7 +12,7 @@ d 1.000000
 illum 2
 map_Kd Girl.png
 
-newmtl 1m4g3n-texura-An1we.png
+newmtl Borde
 Ns 250.000000
 Ka 1.000000 1.000000 1.000000
 Kd 0.435294 0.184314 0.258824

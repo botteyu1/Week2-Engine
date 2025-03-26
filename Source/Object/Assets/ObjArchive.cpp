@@ -4,7 +4,8 @@
 #include "Object/Assets/MeshAsset.h"
 
 void FObjArchive::ObjToBinary(const FString& filePath, const TArray<FVertexTextureArray> vertices, 
-	const TArray<uint32> indices, TArray<uint32> intervals, const TArray<FTextureCount>& textureCounts)
+	const TArray<uint32> indices, TArray<uint32> intervals, const TArray<FTextureCount>& textureCounts,
+	const TArray<FSubMesh>& subMeshes)
 {
 	std::ofstream objBinary;
 	objBinary.open(filePath.ToWideString(), std::ios::binary);
@@ -49,11 +50,29 @@ void FObjArchive::ObjToBinary(const FString& filePath, const TArray<FVertexTextu
 		objBinary.write(reinterpret_cast<const char*>(&textureCounts[i].RefCount), sizeof(int32));
 	}
 
+	uint32 subMeshCount = subMeshes.Num();
+	objBinary.write(reinterpret_cast<const char*>(&subMeshCount), sizeof(uint32));
+	for (int32 i = 0; i < subMeshes.Num(); i++)
+	{
+		// SubMeshName 저장
+		std::string subMeshName = subMeshes[i].SubMeshName;
+		uint32 subMeshNameLength = static_cast<uint32>(subMeshName.length());
+		objBinary.write(reinterpret_cast<const char*>(&subMeshNameLength), sizeof(uint32));
+		objBinary.write(subMeshName.c_str(), subMeshNameLength);
+
+		// MaterialName 저장
+		std::string materialName = subMeshes[i].MaterialName;
+		uint32 materialNameLength = static_cast<uint32>(materialName.length());
+		objBinary.write(reinterpret_cast<const char*>(&materialNameLength), sizeof(uint32));
+		objBinary.write(materialName.c_str(), materialNameLength);
+	}
+
 	objBinary.close();
 }
 
 bool FObjArchive::ReadBinary(const FString& filePath, TArray<FVertexTextureArray>& outVertices, 
-	TArray<uint32>& outIndices, TArray<uint32>& outIntervals ,TArray<FTextureCount>& outTextureCounts)
+	TArray<uint32>& outIndices, TArray<uint32>& outIntervals ,TArray<FTextureCount>& outTextureCounts,
+	TArray<FSubMesh>& outSubMeshes)
 {
 	std::ifstream objBinary;
 	objBinary.open(filePath.ToWideString(), std::ios::binary);
@@ -100,6 +119,29 @@ bool FObjArchive::ReadBinary(const FString& filePath, TArray<FVertexTextureArray
 		objBinary.read(reinterpret_cast<char*>(&refCount), sizeof(int32));
 
 		outTextureCounts.Add(FTextureCount(nameStr, refCount));
+	}
+
+	uint32 subMeshCount;
+	objBinary.read(reinterpret_cast<char*>(&subMeshCount), sizeof(uint32));
+	outSubMeshes.Empty();
+	for (uint32 i = 0; i < subMeshCount; i++)
+	{
+		// SubMeshName 읽기
+		uint32 subMeshNameLength;
+		objBinary.read(reinterpret_cast<char*>(&subMeshNameLength), sizeof(uint32));
+		std::string subMeshName(subMeshNameLength, '\0');
+		objBinary.read(&subMeshName[0], subMeshNameLength);
+
+		// MaterialName 읽기
+		uint32 materialNameLength;
+		objBinary.read(reinterpret_cast<char*>(&materialNameLength), sizeof(uint32));
+		std::string materialName(materialNameLength, '\0');
+		objBinary.read(&materialName[0], materialNameLength);
+
+		FSubMesh newSubMesh;
+		newSubMesh.SubMeshName = subMeshName;
+		newSubMesh.MaterialName = materialName;
+		outSubMeshes.Add(newSubMesh);
 	}
 
 	objBinary.close();

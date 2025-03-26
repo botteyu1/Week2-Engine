@@ -34,6 +34,8 @@ public:// UIWindows
 
 	void PropertyStaticMesh(class AStaticMesh* StaticMeshComponent);
 
+	void PropertySubMesh(class AStaticMesh* InAStaticMesh);
+
 private:
 	// Mouse 전용
 	ImVec2 ResizeToScreenByCurrentRatio(const ImVec2& vec2) const
@@ -93,4 +95,7 @@ private:
 
 	TArray<FString> StaticMeshNames;
 	TArray<const char*> cStaticMeshNames;
+
+	FString choosedMesh;
+	FString choosedMaterial;
 };
