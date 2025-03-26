@@ -10,7 +10,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.500000
 d 1.000000
 illum 2
-map_d Suit.png
+map_Kd Suit.png
 
 newmtl Cornea
 Ns 360.000000
@@ -21,7 +21,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.500000
 d 1.000000
 illum 2
-map_d Cornea.png
+map_Kd Cornea.png
 
 newmtl Iris
 Ns 1000.000000
@@ -32,7 +32,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.500000
 d 1.000000
 illum 2
-map_d Iris.png
+map_Kd Iris.png
 
 newmtl Shoes
 Ns 0.000000
@@ -43,7 +43,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.500000
 d 1.000000
 illum 1
-map_d Shoe.png
+map_Kd Shoe.png
 
 newmtl Skin
 Ns 250.000000
@@ -54,7 +54,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.500000
 d 1.000000
 illum 2
-map_d Skin.png
+map_Kd Skin.png
 
 newmtl access
 Ns 250.000000
@@ -65,4 +65,4 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.500000
 d 1.000000
 illum 2
-map_d Goggle.png
+map_Kd Goggle.png
