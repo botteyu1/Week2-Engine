@@ -210,6 +210,25 @@ void UAssetManager::AddObjMaterial(const FString InName, FObjMaterial* ObjMat)
 	ObjMaterialMap.Add(InName, ObjMat);
 }
 
+void UAssetManager::MakeTexture2DArray(const FString AssetName, TArray<FString> textureNames)
+{
+	//  런타임 중 Material 바꾸는 경우에 사용
+	//  사용하는 Texture의 Names 목록을 가지고 Texture2DArray 생성
+
+	if (textureNames.Num() > 0) {
+		UTextureAsset* textureAsset = FObjectFactory::ConstructObject<UTextureAsset>();
+		if (textureAsset != nullptr) {
+			textureAsset->LoadForTextureArray(textureNames);
+			std::string assetName = AssetName.GetData();
+
+			Assets.Add(assetName + TEXT(".textArray"), textureAsset);
+		}
+		else {
+			MsgBoxAssert("Material 변경 시 Texture 2D Array 만드는 것 실패");
+		}
+	}
+}
+
 
 struct VertexKey {
 	int v, vt, vn;

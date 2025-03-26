@@ -8,6 +8,7 @@
 #include <iostream>
 #include <string>
 #include "Object/Assets/AssetManager.h"
+#include "Object/Assets/ObjMTLAsset.h"
 
 
 bool UMeshAsset::RegisterAsset()
@@ -22,18 +23,19 @@ bool UMeshAsset::Load()
 	}
 	TArray<FVertexTextureArray>& vertices = GeometryData.Vertices;
 	TArray<uint32>& indices = GeometryData.Indices;
+	TArray<uint32>& materialInterval = GeometryData.MaterialIntervals;
 
 	/*UAssetManager::Get().ObjParsing("cube-tex.obj", vertices, indices);*/
 	FString binaryFile = "Contents/"+MetaData.GetAssetName();
-	FString name = MetaData.GetAssetName();
+	AssetName = MetaData.GetAssetName();
 	if (MetaData.GetAssetExtension() == ".obj") {
 		binaryFile += +".objbinary";
 	}
 	else if (MetaData.GetAssetExtension() == ".objbinary") {
-		std::string Name = name.GetData();
-		name = Name.substr(0, Name.size() - 10);
+		std::string Name = AssetName.GetData();
+		AssetName = Name.substr(0, Name.size() - 10);
 	}
-	if (!FObjArchive::ReadBinary(binaryFile, vertices, indices, UsedTextureNames)) {
+	if (!FObjArchive::ReadBinary(binaryFile, vertices, indices, materialInterval, UsedTextureNames)) {
 		objl::Loader OBJLoader;
 		bool loadout = OBJLoader.LoadFile(MetaData.GetAssetPath().GetData());
 		
@@ -49,13 +51,15 @@ bool UMeshAsset::Load()
 				bool bContained = false;
 				for(int j = 0 ; j < UsedTextureNames.Num(); j++)
 				{
-					if (UsedTextureNames[j] == OBJLoader.LoadedMaterials[i].map_Kd) 
+					if (UsedTextureNames[j].TextureName == OBJLoader.LoadedMaterials[i].map_Kd) 
 					{
+						UsedTextureNames[j].RefCount++;
 						bContained = true;
+						break;
 					}
 				}
 				if (!bContained) {
-					UsedTextureNames.Add(OBJLoader.LoadedMaterials[i].map_Kd);
+					UsedTextureNames.Add(FTextureCount(OBJLoader.LoadedMaterials[i].map_Kd, 1));
 				}
 			}
 
@@ -85,6 +89,7 @@ bool UMeshAsset::Load()
 				objl::Mesh curMesh = OBJLoader.LoadedMeshes[i];
 				FSubMesh curSubMesh;
 				curSubMesh.SubMeshName = curMesh.MeshName;
+				curSubMesh.MaterialName = OBJLoader.LoadedMTL + "-" + curMesh.MeshMaterial.name;
 
 				
 				int textureIndex = GetTextureIndex(curMesh.MeshMaterial.map_Kd);
@@ -120,6 +125,7 @@ bool UMeshAsset::Load()
 					}
 				}
 				indexStart += curMesh.Vertices.size();
+				materialInterval.Add(curMesh.Vertices.size());
 			}
 			float xDist = max.X - min.X;
 			float yDist = max.Y - min.Y;
@@ -141,16 +147,16 @@ bool UMeshAsset::Load()
 				vertices[i].Y -= center.Y;
 				vertices[i].Z -= center.Z;
 			}
-			FObjArchive::ObjToBinary(binaryFile, vertices, indices, UsedTextureNames);
+			FObjArchive::ObjToBinary(binaryFile, vertices, indices, materialInterval, UsedTextureNames);
 		}
 	}
 	
-	UVertexBuffer::Create(FString(TEXT(name)), vertices,
+	UVertexBuffer::Create(FString(TEXT(AssetName)), vertices,
 		UInputLayout::Find("TextureArray_IL")
 	);
-	UIndexBuffer::Create(FString(TEXT(name)), indices);
+	UIndexBuffer::Create(FString(TEXT(AssetName)), indices);
 	
-	UMesh::Create(TEXT(name));
+	UMesh::Create(TEXT(AssetName));
 	MetaData.SetIsLoaded(true);
 	return true;
 }
@@ -169,10 +175,122 @@ int UMeshAsset::GetTextureIndex(FString textureName)
 {
 	for (int i = 0; i < UsedTextureNames.Num(); i++)
 	{
-		if (UsedTextureNames[i] == textureName)
+		if (UsedTextureNames[i].TextureName == textureName)
 		{
 			return i;
 		}
 	}
 	return -1;
+}
+
+TArray<FString> UMeshAsset::GetUsedTextureNames()
+{
+	TArray<FString> TextureNames;
+	for (int i = 0; i < UsedTextureNames.Num(); i++) 
+	{
+		TextureNames.Add(UsedTextureNames[i].TextureName);
+	}
+	return TextureNames;
+}
+
+void UMeshAsset::ChangeMaterial(FString NewAssetName, FString subMeshName, FString materialName)
+{
+	std::string subMeshMaterialName;
+	for (int i = 0; i < SubMeshes.Num(); i++) 
+	{
+		if (SubMeshes[i].SubMeshName == subMeshName.GetData()) 
+		{
+			subMeshMaterialName = SubMeshes[i].MaterialName;
+			break;
+		}
+	}
+
+	FObjMaterial* subMeshMaterial = UAssetManager::Get().GetObjMaterial(subMeshMaterialName);
+	if (subMeshMaterial == nullptr) 
+	{
+		MsgBoxAssert("잘못된 subMeshMaterial을 참조했습니다.");
+	}
+
+	std::string textureName = subMeshMaterial->map_Kd;
+
+	// 바꾸려고 하는 Submesh는 기존에 가르키고 있던 Texture Ref 값 하나 빼기
+	for (int i = 0; i < UsedTextureNames.Num(); i++) 
+	{
+		if (UsedTextureNames[i].TextureName == textureName) 
+		{
+			UsedTextureNames[i].RefCount--;
+			if (UsedTextureNames[i].RefCount <= 0) 
+			{
+				UsedTextureNames.RemoveAt(i);
+			}
+		}
+	}
+
+	// 새로운 Material의 Texture 추가하기
+
+	subMeshMaterial = UAssetManager::Get().GetObjMaterial(materialName);
+	if (subMeshMaterial == nullptr)
+	{
+		MsgBoxAssert("잘못된 Material을 참조했습니다.");
+	}
+
+	textureName = subMeshMaterial->map_Kd;
+
+	bool hasTexture = false;
+	for (int i = 0; i < UsedTextureNames.Num(); i++) 
+	{
+		if (UsedTextureNames[i].TextureName == textureName)
+		{
+			UsedTextureNames[i].RefCount++;
+			hasTexture = true;
+			break;
+		}
+	}
+
+	if (!hasTexture) 
+	{
+		UsedTextureNames.Add(FTextureCount(textureName, 1));
+	}
+
+	// 기존 SubMesh에 바뀐 Material이름 삽입
+	for (int i = 0; i < SubMeshes.Num(); i++) 
+	{
+		if (SubMeshes[i].SubMeshName == subMeshName.GetData()) 
+		{
+			SubMeshes[i].MaterialName = materialName.GetData();
+			break;
+		}
+	}
+
+
+	// 새로 구성된 Texture들을 기반으로 Vertex 재정립
+	int32 vertexIndex = 0;
+	for (int i = 0; i < SubMeshes.Num(); i++) 
+	{
+		subMeshMaterial = UAssetManager::Get().GetObjMaterial(SubMeshes[i].MaterialName);
+		int32 textureIndex = GetTextureIndex(subMeshMaterial->map_Kd);
+		for (int j = 0; j < GeometryData.MaterialIntervals[i]; j++) {
+			GeometryData.Vertices[vertexIndex + j].TI = textureIndex;
+		}
+		vertexIndex += GeometryData.MaterialIntervals[i];
+	}
+
+	// VertexBuffer에 입력, 추후 SetMesh로 다시 불러와주어야 적용될 것임
+	UVertexBuffer::Create(FString(TEXT(NewAssetName)), GeometryData.Vertices,
+		UInputLayout::Find("TextureArray_IL")
+	);
+
+	UIndexBuffer::Create(FString(TEXT(NewAssetName)), GeometryData.Indices);
+
+	UMesh::Create(TEXT(NewAssetName));
+
+	// Texture2DArray 재생성
+	TArray<FString> TextureNames;
+	for (int i = 0; i < UsedTextureNames.Num(); i++) 
+	{
+		TextureNames.Add(UsedTextureNames[i].TextureName);
+	}
+
+	// AssetManager에게 만들어달라고 요청
+	UAssetManager::Get().MakeTexture2DArray(FString(TEXT(NewAssetName)), TextureNames);
 }

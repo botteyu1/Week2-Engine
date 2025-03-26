@@ -14,6 +14,7 @@ public:
 	virtual const char* GetTypeName() override;
 	FString GetObjName() { return objName; }
 	uint32 GetbUseTexture() { return bUseTexture; }
+	void ChangeMaterial(FString subMeshName, FString destMaterialName);
 private:
 	FString objName;
 	uint32 bUseTexture;

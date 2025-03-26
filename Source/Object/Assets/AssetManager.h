@@ -123,5 +123,6 @@ public:
 
 	FObjMaterial* GetObjMaterial(const FString InName);
 	void AddObjMaterial(const FString InName, FObjMaterial* ObjMat);
+	void MakeTexture2DArray(const FString AssetName, TArray<FString> TextureNames);
 };
 

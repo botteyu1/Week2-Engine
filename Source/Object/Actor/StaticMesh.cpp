@@ -1,5 +1,8 @@
 #include "StaticMesh.h"
 #include "Object/PrimitiveComponent/TextureComponent.h"
+#include "Core/UObject/Casts.h"
+#include "Object/Assets/AssetManager.h"
+#include "Object/Assets/MeshAsset.h"
 
 AStaticMesh::AStaticMesh()
 {
@@ -39,4 +42,20 @@ void AStaticMesh::Tick(float DeltaTime)
 const char* AStaticMesh::GetTypeName()
 {
 	return "StaticMesh";
+}
+
+void AStaticMesh::ChangeMaterial(FString subMeshName, FString destMaterialName)
+{
+	if (RootComponent->IsA(UTextureComponent::StaticClass())) 
+	{
+		UMeshAsset* meshAsset = UAssetManager::Get().FindAsset<UMeshAsset>(objName);
+		std::string typeName(GetTypeName());
+		FString NewAssetName = FString(typeName) + "-" + FString::FromInt(GetUUID());
+		meshAsset->ChangeMaterial(NewAssetName, subMeshName, destMaterialName);
+
+		UTextureComponent* textureComponent = Cast<UTextureComponent>(RootComponent);
+		textureComponent->SetMesh(NewAssetName);
+		textureComponent->RemoveTexture(0);		// 일단은 0번에 다 넣어주니까 0번 삭제
+		textureComponent->AddTexture(NewAssetName + ".textArray");
+	}
 }

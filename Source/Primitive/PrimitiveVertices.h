@@ -33,6 +33,7 @@ struct FGeometryData
 {
 	TArray<FVertexTextureArray> Vertices;
 	TArray<uint32> Indices;
+	TArray<uint32> MaterialIntervals;
 };
 
 enum class EPrimitiveType : uint8
