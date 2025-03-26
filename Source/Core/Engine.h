@@ -65,6 +65,7 @@ public:
     int GetInitializedScreenHeight() const { return InitializedScreenHeight; }
 
 	static float GetDeltaTime() { return UEngine::Get().EngineDeltaTime; }
+	static float GetTime() { return UEngine::Get().EngineTime; }
 
 private:
     void InitWindow(int InScreenWidth, int InScreenHeight);
@@ -103,6 +104,7 @@ private:
     int ScreenHeight = 0;
 
 	float EngineDeltaTime = 0.0f;
+	float EngineTime = 0.0f;
 
 private:
 	std::unique_ptr<URenderer> Renderer;

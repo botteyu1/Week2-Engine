@@ -483,8 +483,35 @@ void USceneComponent::Pick(bool bPicked)
 	}
 }
 
+void USceneComponent::Destroyed()
+{
+
+
+	Super::Destroyed();
+
+
+	if (Parent != nullptr)
+	{
+		//자식들 부모에게 전달
+		for (auto& Child : Children)
+		{
+			Child->Parent = Parent;
+			Parent->Children.Add(Child);
+		}
+
+		Parent->Children.Remove(this);
+	}
+
+	Children.Empty();
+}
+
 void USceneComponent::SetupAttachment(USceneComponent* InParent, bool bUpdateChildTransform)
 {
+
+	if (Parent != nullptr)
+	{
+		Parent->Children.Remove(this);
+	}
 	if (InParent)
 	{
 		Parent = InParent;

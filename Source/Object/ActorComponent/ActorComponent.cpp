@@ -32,6 +32,8 @@ FVector UActorComponent::GetActorPosition() const
 
 void UActorComponent::Destroyed()
 {
+	EndPlay(EEndPlayReason::Destroyed);
+
 	if (Owner)
 	{
 		Owner->RemoveComponent(this);

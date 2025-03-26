@@ -51,25 +51,6 @@ const char* AStaticMesh::GetTypeName()
 	return "StaticMesh";
 }
 
-void AStaticMesh::AddMesh(FString MeshType, bool texture)
-{
-	UTextureComponent* component = AddComponent<UTextureComponent>();
-	//objName = MeshType;
-	std::string assetName = MeshType.GetData();
-	assetName = assetName.substr(0, assetName.size() - 4);
-	component->SetMesh(MeshType);
-	if (texture) {
-		component->SetMaterial("TextureMaterial");
-		component->AddTexture(assetName + ".textArray");
-		bUseTexture = 1;
-	}
-	else {
-		component->SetMaterial("DefaultMaterial");
-		bUseTexture = 0;
-	}
-	component->SetRelativeTransform(FTransform());
-}
-
 void AStaticMesh::ChangeMaterial(FString subMeshName, FString destMaterialName)
 {
 	if (RootComponent->IsA(UTextureComponent::StaticClass())) 
@@ -99,8 +80,56 @@ void AStaticMesh::SetbUseTexture(bool value)
 	bUseTexture = value;
 }
 
+void AStaticMesh::SelectSubMesh(FString subMeshName)
+{
+	if (RootComponent->IsA(UTextureComponent::StaticClass()))
+	{
+		UMeshAsset* meshAsset = UAssetManager::Get().FindAsset<UMeshAsset>(objName);
+		std::string typeName(GetTypeName());
+		FString NewAssetName = FString(typeName) + "-" + FString::FromInt(GetUUID());
+		meshAsset->SelectMaterial(NewAssetName, subMeshName);
+
+		UTextureComponent* textureComponent = Cast<UTextureComponent>(RootComponent);
+		textureComponent->SetMesh(NewAssetName);
+	}
+}
+
+void AStaticMesh::UnSelectSubMesh()
+{
+	if (RootComponent->IsA(UTextureComponent::StaticClass()))
+	{
+		UMeshAsset* meshAsset = UAssetManager::Get().FindAsset<UMeshAsset>(objName);
+		std::string typeName(GetTypeName());
+		FString NewAssetName = FString(typeName) + "-" + FString::FromInt(GetUUID());
+		meshAsset->UnSelectMaterial(NewAssetName);
+
+		UTextureComponent* textureComponent = Cast<UTextureComponent>(RootComponent);
+		textureComponent->SetMesh(NewAssetName);
+	}
+}
+
 TArray<FSubMesh> AStaticMesh::GetSubMeshes()
 {
 	UTextureComponent* textureComponent = Cast<UTextureComponent>(RootComponent);
 	return textureComponent->GetMesh()->GetSubMeshes();
+}
+
+UTextureComponent* AStaticMesh::AddMesh(FString MeshType, bool texture)
+{
+	UTextureComponent* component = AddComponent<UTextureComponent>();
+	//objName = MeshType;
+	std::string assetName = MeshType.GetData();
+	assetName = assetName.substr(0, assetName.size() - 4);
+	component->SetMesh(MeshType);
+	if (texture) {
+		component->SetMaterial("TextureMaterial");
+		component->AddTexture(assetName + ".textArray");
+		bUseTexture = 1;
+	}
+	else {
+		component->SetMaterial("DefaultMaterial");
+		bUseTexture = 0;
+	}
+	component->SetRelativeTransform(FTransform());
+	return component;
 }

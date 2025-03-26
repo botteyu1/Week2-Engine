@@ -125,6 +125,8 @@ protected:
 public:
 	bool IsPicked() const { return bIsPicked; }
 
+	void Destroyed() override;
+
 
 public:
 	void SetupAttachment(USceneComponent* InParent, bool bUpdateChildTransform = false);

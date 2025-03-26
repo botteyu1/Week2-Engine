@@ -88,6 +88,13 @@ void UPrimitiveComponent::Render()
 
 	FVector4 UUIDCOlor = UEditorManager::EncodeUUID(ID);
 
+	float breathRatio = std::fmod(UEngine::GetTime(), breathTime);
+	if (breathRatio < breathTime / 2.0f) {
+		breathRatio = (breathTime / 2.0f - breathRatio / breathTime) * breathTime;
+	}
+	else {
+		breathRatio = (breathRatio - breathTime / 2.0f) * breathTime;
+	}
 	FConstantsComponentData& Data = GetConstantsComponentData();
 
 	Data = {
@@ -97,6 +104,7 @@ void UPrimitiveComponent::Render()
 		.LightColor = lightColor,
 		.LightDirection = lightDirection,
 		.bUseVertexColor = IsUseVertexColor(),
+		.breathRatio = breathRatio,
 	};
 	
 
@@ -155,6 +163,13 @@ void UPrimitiveComponent::RegisterComponentWithWorld(UWorld* World)
 void UPrimitiveComponent::RegisterComponentWithWorld()
 {
 	Owner->GetWorld()->AddRenderComponent(this);
+}
+
+void UPrimitiveComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	Owner->GetWorld()->RemoveRenderComponent(this);
 }
 
 void UPrimitiveComponent::SetBoundsScale(float NewBoudnsScale)

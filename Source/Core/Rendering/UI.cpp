@@ -468,8 +468,14 @@ void UI::RenderPropertyWindow()
 
 
     AActor* selectedActor = UEngine::Get().GetEditor()->GetSelectedActor();
+
+
+
     if (selectedActor != nullptr)
     {
+		ImGui::Text("Selected Actor: %s", *selectedActor->GetFName().ToString());
+		RenderSceneComponentHierarchy(selectedActor->GetRootComponent());
+
         FTransform selectedTransform = selectedActor->GetActorTransform();
         float position[] = { selectedTransform.GetPosition().X, selectedTransform.GetPosition().Y, selectedTransform.GetPosition().Z };
         float scale[] = { selectedTransform.GetScale().X, selectedTransform.GetScale().Y, selectedTransform.GetScale().Z };
@@ -498,11 +504,16 @@ void UI::RenderPropertyWindow()
 
 		AStaticMesh* selectMesh = Cast<AStaticMesh>(selectedActor);
 
-		PropertyStaticMesh(selectMesh);
+		//PropertyStaticMesh(selectMesh);
+		if (SelectComponent != nullptr)
+		{
+			ImGui::Text("Selected Component: %s", *SelectComponent->GetFName().ToString());
+		}
+	
 		PropertySubMesh(selectMesh);
 
 		// SpotLight 속성 표시
-		ASpotLight* spotLight = dynamic_cast<ASpotLight*>(selectedActor);
+		ASpotLight* spotLight = Cast<ASpotLight>(selectedActor);
 		if (spotLight != nullptr)
 		{
 			ImGui::Separator();
@@ -647,15 +658,10 @@ void UI::RenderOutLiner()
 
 	if (Actors.Num() == 0)
 	{
+		PrevSize = 0;
 		ImGui::End();
 		return;
 	}
-
-	for (auto& Actor : Actors)
-	{
-		RenderActorHierarchy(Actor);
-	}
-
 
 
 	//// 드래그 시작
@@ -1025,10 +1031,21 @@ void UI::PropertyStaticMesh(AStaticMesh* InAStaticMesh)
 {
 	if (InAStaticMesh != nullptr)
 	{
-
+		static UTextureComponent* TestMeshComponent = nullptr;
+		static UTextureComponent* TestMeshComponent2 = nullptr;
 		if (ImGui::Button("Add"))
 		{
-			InAStaticMesh->AddMesh("dice.obj", true);
+			TestMeshComponent = InAStaticMesh->AddMesh("dice.obj", true);
+			TestMeshComponent->AddLocalOffset(FVector(0.f, 2.f, 0.f));
+			TestMeshComponent->AddLocalRotation(FVector(0.f, 0.f, 0.f));
+			TestMeshComponent2 = InAStaticMesh->AddMesh("dice.obj", true);
+			TestMeshComponent2->SetupAttachment(TestMeshComponent);
+			TestMeshComponent2->AddLocalOffset(FVector(0.f, 10.f, 0.f));
+		}
+
+		if (ImGui::Button("Remove"))
+		{
+			TestMeshComponent->Destroyed();
 		}
 
 		//const TMap < FName, std::shared_ptr<UMesh> >& Meshes = UMesh::GetAllResources();
@@ -1095,23 +1112,41 @@ void UI::PropertyStaticMesh(AStaticMesh* InAStaticMesh)
 	}
 }
 
-void UI::RenderActorHierarchy(AActor* RootActor)
-{
-	if (ImGui::TreeNode((*RootActor->GetName())))
-	{
-		// 컴포넌트 표시
-		TSet<UActorComponent*> Components = RootActor->GetComponents();
-		for (UActorComponent* Component : Components)
-		{
-			if (ImGui::TreeNode((*Component->GetName())))
-			{
-				// 컴포넌트 세부 정보 표시
-				ImGui::Text("Type: %s", (*Component->GetClass()->GetName()));
-				// 추가 속성들...
-				ImGui::TreePop();
-			}
-		}
 
+void UI::RenderSceneComponentHierarchy(USceneComponent* RootActor)
+{
+	ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_DefaultOpen;
+
+
+	if (ImGui::TreeNodeEx(*RootActor->GetName(), flags))
+	{
+		if (ImGui::IsItemClicked())
+		{
+			// 이 노드가 현재 프레임에서 클릭되었을 때 실행할 코드
+			SelectComponent = RootActor;
+		}
+		//static bool lastOpen = true;
+		//ImGuiTreeNodeFlags flags = 0;
+
+		//// TreeNodeEx 사용
+		//bool isOpen = ImGui::TreeNodeEx((*RootActor->GetName()), flags);
+
+		// 컴포넌트 표시
+		TArray<USceneComponent*> Components = RootActor->GetChildren();
+		for (USceneComponent* Component : Components)
+		{
+
+			RenderSceneComponentHierarchy(Component);
+			//if (ImGui::TreeNode((*Component->GetName())))
+			//{
+			//	SelectComponent = Component;
+			//	// 컴포넌트 세부 정보 표시
+			//	//ImGui::Text("Type: %s", (*Component->GetClass()->GetName()));
+			//	// 추가 속성들...
+			//	ImGui::TreePop();
+			//}
+
+		}
 		//// 자식 액터 표시
 		//TArray<AActor*> ChildActors;
 		//RootActor->GetAttachedActors(ChildActors);
@@ -1122,6 +1157,7 @@ void UI::RenderActorHierarchy(AActor* RootActor)
 
 		ImGui::TreePop();
 	}
+
 }
 
 void UI::PropertySubMesh(AStaticMesh* InAStaticMesh)
@@ -1142,6 +1178,7 @@ void UI::PropertySubMesh(AStaticMesh* InAStaticMesh)
 				if (ImGui::Button(buttonStr.c_str()))
 				{
 					choosedMesh = FString(subMesh.SubMeshName);
+					InAStaticMesh->SelectSubMesh(subMesh.SubMeshName);
 					ImGui::OpenPopup("ChangeMaterialPopup");
 				}
 			}
@@ -1151,6 +1188,13 @@ void UI::PropertySubMesh(AStaticMesh* InAStaticMesh)
 		if (ImGui::BeginPopup("ChangeMaterialPopup"))
 		{
 			ImGui::Text("Choose Material!");
+			// 팝업 창 영역 외부를 클릭했는지 확인 (현재 창이 호버되지 않으면)
+			if (!ImGui::IsWindowHovered() && (ImGui::IsMouseClicked(0) || ImGui::IsMouseClicked(1)))
+			{
+				InAStaticMesh->UnSelectSubMesh();
+				ImGui::CloseCurrentPopup();
+			}
+			
 			TMap<FString, FObjMaterial*> ObjMaterialMap = UAssetManager::Get().GetObjMaterailMap();
 			for (auto& ObjMaterial : ObjMaterialMap)
 			{
@@ -1162,6 +1206,8 @@ void UI::PropertySubMesh(AStaticMesh* InAStaticMesh)
 					ImGui::CloseCurrentPopup();
 				}
 			}
+
+
 			ImGui::EndPopup();
 		}
 	}

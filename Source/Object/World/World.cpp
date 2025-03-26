@@ -184,6 +184,8 @@ void UWorld::LateTick(float DeltaTime)
 
 	for (const auto& PendingActor : PendingDestroyActors)
 	{
+		
+	//InActor->Destroyed();z
 		// Engine에서 제거
 		UEngine::Get().GObjects.Remove(PendingActor->GetUUID());
 	}
@@ -487,7 +489,7 @@ void UWorld::RayCasting(const FVector& MouseNDCPos)
 	FMatrix ProjMatrix = GetCameraFocused()->GetProjectionMatrix();
 	FRay worldRay = FRay(GetCameraFocused()->GetViewMatrix(), ProjMatrix, MouseNDCPos.X, MouseNDCPos.Y);
 
-	UEngine::Get().GetRenderer()->GetBatchManager()->AddLine(worldRay.GetOrigin(), worldRay.GetOrigin() + worldRay.GetDirection() * GetCameraFocused()->GetFar(), FVector4::CYAN);
+	//UEngine::Get().GetRenderer()->GetBatchManager()->AddLine(worldRay.GetOrigin(), worldRay.GetOrigin() + worldRay.GetDirection() * GetCameraFocused()->GetFar(), FVector4::CYAN);
 
 	AActor* SelectedActor = nullptr;
 	float minDistance = FLT_MAX;

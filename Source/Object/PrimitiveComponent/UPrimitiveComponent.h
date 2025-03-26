@@ -36,6 +36,7 @@ struct alignas(16) FConstantsComponentData
 	FVector4 LightColor;
 	FVector LightDirection;
 	uint32 bUseVertexColor;
+	float breathRatio;
 };
 
 class UPrimitiveComponent : public USceneComponent
@@ -73,6 +74,9 @@ public:
 	virtual void RegisterComponentWithWorld(UWorld* World);
 	virtual void RegisterComponentWithWorld();
 
+
+	void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
 public:
 	void SetCanBeRendered(bool bRender) { bCanBeRendered = bRender; }
 
@@ -95,6 +99,9 @@ public:
 	ERenderQueue GetRenderQueue() const { return RenderQueue; }
 	void SetRenderQueue(ERenderQueue InRenderQueue) { RenderQueue = InRenderQueue; }
 
+
+
+
 public:
 	void SetBoundsScale(float NewBoudnsScale);
 
@@ -110,6 +117,8 @@ protected:
 	ERenderQueue RenderQueue = ERenderQueue::Default;
 
 	FVector4 CustomColor = FVector4(1.0f, 1.0f, 1.0f, 1.0f);
+
+	const float breathTime = 1.5f;
 
 protected:
 	FRenderResourceCollection RenderResourceCollection;

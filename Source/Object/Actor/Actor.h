@@ -42,6 +42,12 @@ public:
 
 	bool HasActorBegunPlay() const { return bIsBeginPlay; }
 
+	// 컴포넌트를 한 액터에서 다른 액터로 이동 
+	// 제대로 작동 할지 모름
+	bool TransferComponent(UActorComponent* Component);
+
+	void RemoveOwnedComponent(UActorComponent* Component);
+
 private:
 	virtual void Pick();
 	virtual void UnPick();
@@ -212,6 +218,8 @@ public:
 	virtual const char* GetTypeName();
 
 	bool Destroy();
+	// 컴포넌트 삭제 요청 함수
+	//void MarkComponentForDestroy(UActorComponent* Component);
 
 public:
 	USceneComponent* GetRootComponent() const { return RootComponent; }
@@ -228,6 +236,9 @@ protected:
 private:
 	UWorld* World = nullptr;
 	TSet<UActorComponent*> Components;
+
+	//삭제 대기열
+	TArray<UActorComponent*> PendingKillComponents;
 
 public:
 	AActor* Owner = nullptr;

@@ -41,12 +41,19 @@ void AActor::LateTick(float DeltaTime)
 
 void AActor::Destroyed()
 {
+
 	EndPlay(EEndPlayReason::Destroyed);
+
+	// 컴포넌트 배열의 복사본 으로 삭제 에러 방지
+	TSet<UActorComponent*> ComponentsCopy = Components;
 	
-	for (auto& Component : Components)
+	for (auto& Component : ComponentsCopy)
 	{
 		Component->Destroyed();
 	}
+	Components.Empty();
+	
+	UEngine::Get().GObjects.Remove(GetUUID());
 }
 
 
@@ -55,17 +62,12 @@ void AActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	for (auto& Component : Components)
 	{		
 		Component->EndPlay(EndPlayReason);
-		if (const auto PrimitiveComp = dynamic_cast<UPrimitiveComponent*>(Component))
-		{
-			World->RemoveRenderComponent(PrimitiveComp);
-		}
 		if (UEngine::Get().GetEditor()->GetSelectedActor() == this)
 		{
 			UEngine::Get().GetEditor()->SelectActor(nullptr);
 		}
-		UEngine::Get().GObjects.Remove(Component->GetUUID());
+		//UEngine::Get().GObjects.Remove(Component->GetUUID());
 	}
-	Components.Empty();
 }
 
 const FTransform& AActor::GetActorTransform() const
@@ -125,6 +127,57 @@ FQuat AActor::GetActorRotationQuat() const
 		return RootComponent->GetComponentTransform().GetRotation();
 	}
 	return FQuat::Identity;
+}
+
+bool AActor::TransferComponent(UActorComponent* Component)
+{
+	if (!Component ||  Component->GetOwner() == this)
+		return false;
+
+	AActor* OldOwner = Component->GetOwner();
+
+	// 1. 기존 소유자에서 컴포넌트 제거
+	if (OldOwner)
+	{
+		OldOwner->RemoveOwnedComponent(Component);
+	}
+
+	//// 2. Rename을 사용하여 소유권 변경
+	//Component->Rename(nullptr, NewOwner);
+
+	// 3. 새 소유자에 컴포넌트 추가
+	Components.Add(Component);
+
+	// 4. 소유자 참조 업데이트
+	Component->SetOwner(this);
+
+	// 5. 씬 컴포넌트인 경우 Attachment 처리
+	USceneComponent* SceneComp = Cast<USceneComponent>(Component);
+	if (SceneComp)
+	{
+		// 루트 컴포넌트가 없으면 이 컴포넌트를 루트로 설정
+		if (GetRootComponent() == nullptr)
+		{
+			SetRootComponent(SceneComp);
+		}
+		else
+		{
+
+			// 아니면 루트 컴포넌트에 붙임
+			//SceneComp->AttachToComponent(NewOwner->GetRootComponent(), FAttachmentTransformRules::KeepWorldTransform);
+		}
+	}
+
+	return true;
+}
+
+void AActor::RemoveOwnedComponent(UActorComponent* Component)
+{
+	if (RootComponent == Component)
+	{
+		RootComponent = nullptr;
+	}
+	Components.Remove(Component);
 }
 
 void AActor::Pick()
@@ -478,6 +531,20 @@ bool AActor::Destroy()
 
 	return true;
 }
+
+//void AActor::MarkComponentForDestroy(UActorComponent* Component)
+//{
+//
+//	if (PendingKillComponents.Find(Component) != -1)
+//	{
+//		return;
+//	}
+//	if (Component != nullptr)
+//	{
+//		//Component->UnregisterComponent();
+//		PendingKillComponents.Add(Component);
+//	}
+//}
 
 void AActor::SetRootComponent(USceneComponent* InRootComponent)
 {
