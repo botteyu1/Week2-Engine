@@ -33,7 +33,7 @@ public:// UIWindows
 	void RenderViewerPanel();
 
 	void PropertyStaticMesh(class AStaticMesh* StaticMeshComponent);
-	void RenderActorHierarchy(AActor* RootActor);
+	void RenderSceneComponentHierarchy(class USceneComponent* RootActor);
 
 private:
 	// Mouse 전용
@@ -94,4 +94,6 @@ private:
 
 	TArray<FString> StaticMeshNames;
 	TArray<const char*> cStaticMeshNames;
+
+	class UActorComponent* SelectComponent = nullptr;
 };

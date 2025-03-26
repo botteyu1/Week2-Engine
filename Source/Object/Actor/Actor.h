@@ -42,6 +42,12 @@ public:
 
 	bool HasActorBegunPlay() const { return bIsBeginPlay; }
 
+	// 컴포넌트를 한 액터에서 다른 액터로 이동 
+	// 제대로 작동 할지 모름
+	bool TransferComponent(UActorComponent* Component);
+
+	void RemoveOwnedComponent(UActorComponent* Component);
+
 private:
 	virtual void Pick();
 	virtual void UnPick();
