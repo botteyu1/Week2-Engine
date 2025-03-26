@@ -25,8 +25,12 @@ void AStaticMesh::SetMesh(FString MeshType, bool texture)
 		component->SetMaterial("DefaultMaterial");
 		bUseTexture = 0;  
 	}
+#if IS_OBJ_VIEWER
+	component->SetUseVertexColor(false);
+#endif
 	RootComponent = component;
 	component->SetRelativeTransform(FTransform());
+	AssetName = assetName;
 }
 
 void AStaticMesh::BeginPlay()
@@ -58,4 +62,17 @@ void AStaticMesh::ChangeMaterial(FString subMeshName, FString destMaterialName)
 		textureComponent->RemoveTexture(0);		// 일단은 0번에 다 넣어주니까 0번 삭제
 		textureComponent->AddTexture(NewAssetName + ".textArray");
 	}
+}
+
+void AStaticMesh::SetbUseTexture(bool value)
+{
+	if (value != bUseTexture) {
+		if (value) {
+			Cast<UPrimitiveComponent>(RootComponent)->SetMaterial("TextureMaterial");
+		}
+		else {
+			Cast<UPrimitiveComponent>(RootComponent)->SetMaterial("DefaultMaterial");
+		}
+	}
+	bUseTexture = value;
 }

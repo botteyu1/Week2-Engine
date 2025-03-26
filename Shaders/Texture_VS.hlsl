@@ -9,6 +9,10 @@ struct VS_INPUT
 
 struct VS_OUTPUT
 {
+	float4 LightColor :LIGHTCOLOR;
+	float3 LightDirection : LIGHTDIRECTION;
+	float3 Normal : NORMAL;
+	float4 Color : COLOR;
 	float4 Pos : SV_POSITION;
 	float2 Tex : TEXCOORD;
 	int TextIndex : TEXTINDEX;
@@ -19,6 +23,8 @@ cbuffer constants : register(b0)
 	matrix MVP;
 	float4 CustomColor;
 	uint bUseVertexColor;
+	float4 LightColor;
+	float3 LightDirection;
 }
 cbuffer UUIDColor : register(b1)
 {
@@ -37,6 +43,9 @@ VS_OUTPUT Texture_VS(VS_INPUT input)
 	output.Pos = mul(float4(input.Position.xyz, 1.0f), MVP);
 	output.Tex = input.Texcoord;
 	output.TextIndex = input.TextIndex;
-	
+	output.Color = bUseVertexColor == true ? input.Color : CustomColor;
+	output.LightColor = LightColor;
+	output.LightDirection = LightDirection;
+	output.Normal = input.Normal;
 	return output;
 }
