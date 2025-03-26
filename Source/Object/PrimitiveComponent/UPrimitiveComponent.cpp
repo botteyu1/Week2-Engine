@@ -79,7 +79,7 @@ void UPrimitiveComponent::Render()
 	FMatrix MVP = FMatrix::Transpose(
 		ModelMatrix *
 		ViewProjectionMatrix
-);
+	);
 
 	FVector4 lightColor = UEngine::Get().GetWorld()->GetLight()->GetLightColor();
 	FVector lightDirection = UEngine::Get().GetWorld()->GetLight()->GetLightDirection();
