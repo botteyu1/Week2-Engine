@@ -50,7 +50,9 @@ void AActor::Destroyed()
 	for (auto& Component : ComponentsCopy)
 	{
 		Component->Destroyed();
+		UEngine::Get().GObjects.Remove(Component->GetUUID());
 	}
+
 	Components.Empty();
 	
 	//UEngine::Get().GObjects.Remove(GetUUID());
