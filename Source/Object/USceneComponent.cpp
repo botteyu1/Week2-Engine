@@ -489,15 +489,16 @@ void USceneComponent::Destroyed()
 
 	Super::Destroyed();
 
-	//자식들 부모에게 전달
-	for (auto& Child : Children)
-	{
-		Child->Parent = Parent;
-		Parent->Children.Add(Child);
-	}
 
 	if (Parent != nullptr)
 	{
+		//자식들 부모에게 전달
+		for (auto& Child : Children)
+		{
+			Child->Parent = Parent;
+			Parent->Children.Add(Child);
+		}
+
 		Parent->Children.Remove(this);
 	}
 

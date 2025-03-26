@@ -461,7 +461,7 @@ void UI::RenderPropertyWindow()
 
 		AStaticMesh* selectMesh = Cast<AStaticMesh>(selectedActor);
 
-		PropertyStaticMesh(selectMesh);
+		//PropertyStaticMesh(selectMesh);
 		if (SelectComponent != nullptr)
 		{
 			ImGui::Text("Selected Component: %s", *SelectComponent->GetFName().ToString());
@@ -602,8 +602,8 @@ void UI::RenderOutLiner()
 		ImGui::SetWindowSize(ImVec2(DisplaySize.x * 0.2f, DisplaySize.y * 0.4f));
 	}
 
-	TArray<AActor*> Actors;
-	for (TObjectIterator<AActor> It; It; ++It)
+	TArray<AStaticMesh*> Actors;
+	for (TObjectIterator<AStaticMesh> It; It; ++It)
 	{
 		if (It->GetWorld() == UEngine::Get().GetWorld())
 		{
