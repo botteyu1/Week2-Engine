@@ -37,8 +37,16 @@ public:
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason);
 	TSet<UActorComponent*>& GetComponents() { return Components; }
 
-	UWorld* GetWorld() const { return World; }
+	UWorld* const GetWorld() const { return World; }
 	void SetWorld(UWorld* InWorld) { World = InWorld; }
+
+	bool HasActorBegunPlay() const { return bIsBeginPlay; }
+
+	// 컴포넌트를 한 액터에서 다른 액터로 이동 
+	// 제대로 작동 할지 모름
+	bool TransferComponent(UActorComponent* Component);
+
+	void RemoveOwnedComponent(UActorComponent* Component);
 
 private:
 	virtual void Pick();
@@ -48,6 +56,8 @@ private:
 	bool bIsPicked = false;
 	ETickState TickState; //현재 Tick 여부 상태
 	bool bHidden = false ;
+protected:
+	bool bIsBeginPlay = false;
 
 public:
 	bool IsPicked() const { return bIsPicked; }
@@ -78,6 +88,11 @@ public:
 		T* ObjectInstance = FObjectFactory::ConstructObject<T>();
 		Components.Add(ObjectInstance);
 		ObjectInstance->SetOwner(this);
+
+		if (bIsBeginPlay == true)
+		{
+			ObjectInstance->BeginPlay();
+		}
 
 		USceneComponent* NewSceneComp = dynamic_cast<USceneComponent*>(ObjectInstance);
 		if (NewSceneComp != nullptr)
@@ -203,6 +218,8 @@ public:
 	virtual const char* GetTypeName();
 
 	bool Destroy();
+	// 컴포넌트 삭제 요청 함수
+	//void MarkComponentForDestroy(UActorComponent* Component);
 
 public:
 	USceneComponent* GetRootComponent() const { return RootComponent; }
@@ -219,6 +236,9 @@ protected:
 private:
 	UWorld* World = nullptr;
 	TSet<UActorComponent*> Components;
+
+	//삭제 대기열
+	TArray<UActorComponent*> PendingKillComponents;
 
 public:
 	AActor* Owner = nullptr;

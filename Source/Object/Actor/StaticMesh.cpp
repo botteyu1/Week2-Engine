@@ -113,3 +113,23 @@ TArray<FSubMesh> AStaticMesh::GetSubMeshes()
 	UTextureComponent* textureComponent = Cast<UTextureComponent>(RootComponent);
 	return textureComponent->GetMesh()->GetSubMeshes();
 }
+
+UTextureComponent* AStaticMesh::AddMesh(FString MeshType, bool texture)
+{
+	UTextureComponent* component = AddComponent<UTextureComponent>();
+	//objName = MeshType;
+	std::string assetName = MeshType.GetData();
+	assetName = assetName.substr(0, assetName.size() - 4);
+	component->SetMesh(MeshType);
+	if (texture) {
+		component->SetMaterial("TextureMaterial");
+		component->AddTexture(assetName + ".textArray");
+		bUseTexture = 1;
+	}
+	else {
+		component->SetMaterial("DefaultMaterial");
+		bUseTexture = 0;
+	}
+	component->SetRelativeTransform(FTransform());
+	return component;
+}

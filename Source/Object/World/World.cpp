@@ -136,6 +136,7 @@ void UWorld::InitWorld()
 
 void UWorld::BeginPlay()
 {
+	bIsBeginPlay = true;
 	for (const auto& Actor : Actors)
 	{
 		Actor->BeginPlay();
@@ -182,6 +183,8 @@ void UWorld::LateTick(float DeltaTime)
 
 	for (const auto& PendingActor : PendingDestroyActors)
 	{
+		
+	//InActor->Destroyed();z
 		// Engine에서 제거
 		UEngine::Get().GObjects.Remove(PendingActor->GetUUID());
 	}
@@ -353,14 +356,20 @@ void UWorld::ClearWorld()
 AStaticMesh* UWorld::SpawnStaticMeshActor(FString meshType, bool texture)
 {
 	AStaticMesh* Actor = FObjectFactory::ConstructObject<AStaticMesh>();
-	Actor->SetMesh(meshType, texture);
+
 	if (UWorld* World = UEngine::Get().GetWorld())
 	{
 		Actor->SetWorld(World);
 		Actors.Add(Actor);
 		ActorsToSpawn.Add(Actor);
+
+		//메쉬
+		Actor->SetMesh(meshType, texture);
+
 		return Actor;
 	}
+
+	
 
 	UE_LOG("Actor Construction Failed. World is nullptr");
 	return nullptr;

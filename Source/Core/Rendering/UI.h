@@ -33,6 +33,7 @@ public:// UIWindows
 	void RenderViewerPanel();
 
 	void PropertyStaticMesh(class AStaticMesh* StaticMeshComponent);
+	void RenderSceneComponentHierarchy(class USceneComponent* RootActor);
 
 	void PropertySubMesh(class AStaticMesh* InAStaticMesh);
 
@@ -98,4 +99,6 @@ private:
 
 	FString choosedMesh;
 	FString choosedMaterial;
+
+	class UActorComponent* SelectComponent = nullptr;
 };

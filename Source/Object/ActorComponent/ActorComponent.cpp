@@ -4,6 +4,7 @@
 
 void UActorComponent::BeginPlay()
 {
+	bIsBeginPlay = true;
 }
 
 void UActorComponent::Tick(float DeltaTime)
@@ -31,6 +32,8 @@ FVector UActorComponent::GetActorPosition() const
 
 void UActorComponent::Destroyed()
 {
+	EndPlay(EEndPlayReason::Destroyed);
+
 	if (Owner)
 	{
 		Owner->RemoveComponent(this);

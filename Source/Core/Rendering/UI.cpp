@@ -425,8 +425,14 @@ void UI::RenderPropertyWindow()
 
 
     AActor* selectedActor = UEngine::Get().GetEditor()->GetSelectedActor();
+
+
+
     if (selectedActor != nullptr)
     {
+		ImGui::Text("Selected Actor: %s", *selectedActor->GetFName().ToString());
+		RenderSceneComponentHierarchy(selectedActor->GetRootComponent());
+
         FTransform selectedTransform = selectedActor->GetActorTransform();
         float position[] = { selectedTransform.GetPosition().X, selectedTransform.GetPosition().Y, selectedTransform.GetPosition().Z };
         float scale[] = { selectedTransform.GetScale().X, selectedTransform.GetScale().Y, selectedTransform.GetScale().Z };
@@ -456,10 +462,15 @@ void UI::RenderPropertyWindow()
 		AStaticMesh* selectMesh = Cast<AStaticMesh>(selectedActor);
 
 		PropertyStaticMesh(selectMesh);
+		if (SelectComponent != nullptr)
+		{
+			ImGui::Text("Selected Component: %s", *SelectComponent->GetFName().ToString());
+		}
+	
 		PropertySubMesh(selectMesh);
 
 		// SpotLight 속성 표시
-		ASpotLight* spotLight = dynamic_cast<ASpotLight*>(selectedActor);
+		ASpotLight* spotLight = Cast<ASpotLight>(selectedActor);
 		if (spotLight != nullptr)
 		{
 			ImGui::Separator();
@@ -543,6 +554,45 @@ void UI::RenderOutLiner()
 
 	ImGui::Begin("OutLiner", nullptr, window_flags);
 
+	//// 드래그 가능한 항목 렌더링
+	//ImGui::PushID("unique_id");
+	//ImGui::Text("DragItem");
+
+	//int data = 42;
+
+	//if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID))
+	//{
+	//	// 페이로드 설정 (데이터 유형, 실제 데이터, 데이터 크기)
+	//	// "DND_ITEM"은 사용자 정의 식별자(최대 32자)
+	//	ImGui::SetDragDropPayload("DND_ITEM", &data, sizeof(int));
+
+	//	// 드래그 중 보여줄 미리보기
+	//	ImGui::Text("Draging");
+
+	//	// 드래그 소스 종료
+	//	ImGui::EndDragDropSource();
+	//}
+	//ImGui::PopID();
+	//// 드롭 영역 표시
+	//ImGui::Button("Drop Here", ImVec2(150, 50));
+
+	//// 드롭 대상 시작
+	//if (ImGui::BeginDragDropTarget())
+	//{
+	//	// 특정 유형의 페이로드 수락
+	//	const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("DND_ITEM");
+
+	//	// 페이로드가 유효하면 데이터 처리
+	//	if (payload != nullptr)
+	//	{
+	//		int received_data = *(const int*)payload->Data;
+	//		// received_data로 작업 수행
+	//	}
+
+	//	// 드롭 대상 종료
+	//	ImGui::EndDragDropTarget();
+	//}
+
 	if (bWasWindowSizeUpdated)
 	{
 		auto* Window = ImGui::GetCurrentWindow();
@@ -552,8 +602,8 @@ void UI::RenderOutLiner()
 		ImGui::SetWindowSize(ImVec2(DisplaySize.x * 0.2f, DisplaySize.y * 0.4f));
 	}
 
-	TArray<AStaticMesh*> Actors;
-	for (TObjectIterator<AStaticMesh> It; It; ++It)
+	TArray<AActor*> Actors;
+	for (TObjectIterator<AActor> It; It; ++It)
 	{
 		if (It->GetWorld() == UEngine::Get().GetWorld())
 		{
@@ -561,11 +611,46 @@ void UI::RenderOutLiner()
 		}
 	}
 
+
+
 	if (Actors.Num() == 0)
 	{
+		PrevSize = 0;
 		ImGui::End();
 		return;
 	}
+
+
+	//// 드래그 시작
+	//if (ImGui::BeginDragDropSource())
+	//{
+	//	//uint32 ActorID = Actors[0]->GetUUID();
+	//	uint32 ActorID = Actors[0]->GetUUID();
+	//	//std::string ActorName = "Actors[0]->GetName()";
+	//	ImGui::SetDragDropPayload("ACTOR_ITEM", &ActorID, sizeof(uint32));
+	//	ImGui::Text("%s", *Actors[0]->GetName());
+	//	ImGui::EndDragDropSource();
+	//}
+
+	//uint32* ActorID = nullptr; 
+
+	//// 드롭 대상
+	//if (ImGui::BeginDragDropTarget())
+	//{
+	//	if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ACTOR_ITEM"))
+	//	{
+	//		//AActor* DraggedActor = Cast<AActor>(FImGuiObjectRegistry::GetObjectByID(*ActorID));
+	//		ActorID = (uint32*)payload->Data;
+
+	//		ImGui::Text("%s", *ActorID);
+	//		// 계층 구조 변경 구현
+	//		//if (DraggedActor)
+	//		//{
+	//		//	DraggedActor->AttachToActor(Actor, FAttachmentTransformRules::KeepWorldTransform);
+	//		//}
+	//	}
+	//	ImGui::EndDragDropTarget();
+	//}
 
 	if (PrevSize != Actors.Num())
 	{
@@ -748,6 +833,8 @@ void UI::RenderOutLiner()
 	ImGui::End();
 }
 
+
+
 void UI::RenderShowFlagsPanel() const
 {
 
@@ -901,68 +988,133 @@ void UI::PropertyStaticMesh(AStaticMesh* InAStaticMesh)
 {
 	if (InAStaticMesh != nullptr)
 	{
-		const TMap < FName, std::shared_ptr<UMesh> >& Meshes = UMesh::GetAllResources();
-
-		StaticMeshNames.Empty();
-		StaticMeshNames.Reserve(Meshes.Num());
-		
-		cStaticMeshNames.Empty();
-		cStaticMeshNames.Reserve(Meshes.Num());
-
-
-		for (const auto& Pair : Meshes)
+		static UTextureComponent* TestMeshComponent = nullptr;
+		static UTextureComponent* TestMeshComponent2 = nullptr;
+		if (ImGui::Button("Add"))
 		{
-			StaticMeshNames.Add(*Pair.Key.ToString());
+			TestMeshComponent = InAStaticMesh->AddMesh("dice.obj", true);
+			TestMeshComponent->AddLocalOffset(FVector(0.f, 2.f, 0.f));
+			TestMeshComponent->AddLocalRotation(FVector(0.f, 0.f, 0.f));
+			TestMeshComponent2 = InAStaticMesh->AddMesh("dice.obj", true);
+			TestMeshComponent2->SetupAttachment(TestMeshComponent);
+			TestMeshComponent2->AddLocalOffset(FVector(0.f, 10.f, 0.f));
 		}
 
-		//모든 문자열이 추가된 후에 포인터 설정
-		for (const auto& str : StaticMeshNames) {
-			cStaticMeshNames.Add(*str);
-		}
-
-
-		UTextureComponent* RootStaticMeshComponent = Cast<UTextureComponent>(InAStaticMesh->GetRootComponent());
-
-		if(RootStaticMeshComponent == nullptr)
+		if (ImGui::Button("Remove"))
 		{
-			return;
+			TestMeshComponent->Destroyed();
 		}
 
+		//const TMap < FName, std::shared_ptr<UMesh> >& Meshes = UMesh::GetAllResources();
 
-		// Get the current mesh name
-		FName currentMeshName = RootStaticMeshComponent->GetMesh()->GetFName();
-		const char* currentItemName = (*currentMeshName.ToString());
+		//StaticMeshNames.Empty();
+		//StaticMeshNames.Reserve(Meshes.Num());
+		//
+		//cStaticMeshNames.Empty();
+		//cStaticMeshNames.Reserve(Meshes.Num());
 
 
-		// 드롭다운 UI 생성
-		if (ImGui::BeginCombo("Static Mesh", currentItemName))
-		{
-			for (int i = 0; i < cStaticMeshNames.Num(); i++)
-			{
-				bool isSelected = (currentItemName == cStaticMeshNames[i]);
-				if (ImGui::Selectable(cStaticMeshNames[i], isSelected))
-				{
-					// 새 메시 설정
-					FName newMeshName = FName(cStaticMeshNames[i]);
-					if (Meshes.Contains(newMeshName))
-					{
-						RootStaticMeshComponent->SetMesh(newMeshName.ToString());
-						//UStaticMesh* newMesh = Meshes[newMeshName]->GetMesh();
-						//if (newMesh)
-						//{
-						//	StaticMeshComponent->SetStaticMesh(newMesh);
-						//}
-					}
-				}
+		//for (const auto& Pair : Meshes)
+		//{
+		//	StaticMeshNames.Add(*Pair.Key.ToString());
+		//}
 
-				if (isSelected)
-				{
-					ImGui::SetItemDefaultFocus(); // 기본 포커스 설정
-				}
-			}
-			ImGui::EndCombo();
-		}
+		////모든 문자열이 추가된 후에 포인터 설정
+		//for (const auto& str : StaticMeshNames) {
+		//	cStaticMeshNames.Add(*str);
+		//}
+
+
+		//UTextureComponent* RootStaticMeshComponent = Cast<UTextureComponent>(InAStaticMesh->GetRootComponent());
+
+		//if(RootStaticMeshComponent == nullptr)
+		//{
+		//	return;
+		//}
+
+
+		//// Get the current mesh name
+		//FName currentMeshName = RootStaticMeshComponent->GetMesh()->GetFName();
+		//const char* currentItemName = (*currentMeshName.ToString());
+
+
+		//// 드롭다운 UI 생성
+		//if (ImGui::BeginCombo("Static Mesh", currentItemName))
+		//{
+		//	for (int i = 0; i < cStaticMeshNames.Num(); i++)
+		//	{
+		//		bool isSelected = (currentItemName == cStaticMeshNames[i]);
+		//		if (ImGui::Selectable(cStaticMeshNames[i], isSelected))
+		//		{
+		//			// 새 메시 설정
+		//			FName newMeshName = FName(cStaticMeshNames[i]);
+		//			if (Meshes.Contains(newMeshName))
+		//			{
+		//				RootStaticMeshComponent->SetMesh(newMeshName.ToString());
+		//				//UStaticMesh* newMesh = Meshes[newMeshName]->GetMesh();
+		//				//if (newMesh)
+		//				//{
+		//				//	StaticMeshComponent->SetStaticMesh(newMesh);
+		//				//}
+		//			}
+		//		}
+
+		//		if (isSelected)
+		//		{
+		//			ImGui::SetItemDefaultFocus(); // 기본 포커스 설정
+		//		}
+		//	}
+		//	ImGui::EndCombo();
+		//}
 	}
+}
+
+
+void UI::RenderSceneComponentHierarchy(USceneComponent* RootActor)
+{
+	ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_DefaultOpen;
+
+
+	if (ImGui::TreeNodeEx(*RootActor->GetName(), flags))
+	{
+		if (ImGui::IsItemClicked())
+		{
+			// 이 노드가 현재 프레임에서 클릭되었을 때 실행할 코드
+			SelectComponent = RootActor;
+		}
+		//static bool lastOpen = true;
+		//ImGuiTreeNodeFlags flags = 0;
+
+		//// TreeNodeEx 사용
+		//bool isOpen = ImGui::TreeNodeEx((*RootActor->GetName()), flags);
+
+		// 컴포넌트 표시
+		TArray<USceneComponent*> Components = RootActor->GetChildren();
+		for (USceneComponent* Component : Components)
+		{
+
+			RenderSceneComponentHierarchy(Component);
+			//if (ImGui::TreeNode((*Component->GetName())))
+			//{
+			//	SelectComponent = Component;
+			//	// 컴포넌트 세부 정보 표시
+			//	//ImGui::Text("Type: %s", (*Component->GetClass()->GetName()));
+			//	// 추가 속성들...
+			//	ImGui::TreePop();
+			//}
+
+		}
+		//// 자식 액터 표시
+		//TArray<AActor*> ChildActors;
+		//RootActor->GetAttachedActors(ChildActors);
+		//for (AActor* ChildActor : ChildActors)
+		//{
+		//	RenderActorHierarchy(ChildActor);
+		//}
+
+		ImGui::TreePop();
+	}
+
 }
 
 void UI::PropertySubMesh(AStaticMesh* InAStaticMesh)
