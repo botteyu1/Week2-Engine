@@ -218,10 +218,11 @@ void UI::RenderPrimitiveSelection()
 			{
 				World->SpawnActor<ACone>();
 			}
-			else if (strcmp(items[currentItem], "SpotLight") == 0)
+			//쓰지마
+			/*else if (strcmp(items[currentItem], "SpotLight") == 0)
 			{
 				World->SpawnActor<ASpotLight>();
-			}
+			}*/
 			else if (strcmp(items[currentItem], "Dice") == 0) {
 				World->SpawnStaticMeshActor("dice.obj", true);
 			}
@@ -235,7 +236,7 @@ void UI::RenderPrimitiveSelection()
 				World->SpawnStaticMeshActor("SpaceShip.obj", true);
 			}
 			else if (strcmp(items[currentItem], "Pirate") == 0) {
-				World->SpawnStaticMeshActor("pirate.obj", true);
+				World->SpawnStaticMeshActor("Pirate.obj", true);
 			}
 			else if (strcmp(items[currentItem], "AVLSuitJerry") == 0) {
 				World->SpawnStaticMeshActor("AVLSuitJerry.obj", true);
@@ -970,7 +971,9 @@ void UI::RenderViewerPanel()
 		color[0] = comp->GetCustomColor().X;
 		color[1] = comp->GetCustomColor().Y;
 		color[2] = comp->GetCustomColor().Z;
-		bUseTexture = Cast<AStaticMesh>(comp->GetOwner())->GetbUseTexture();
+		if (comp->GetOwner() != nullptr) {
+			bUseTexture = Cast<AStaticMesh>(comp->GetOwner())->GetbUseTexture();
+		}
 	}
 	if (ImGui::ColorEdit3("RGB Color", color)) {
 		if (comp != nullptr) {
@@ -980,7 +983,9 @@ void UI::RenderViewerPanel()
 	ImGui::Separator();
 	
 	if (ImGui::Checkbox("Use Texture", &bUseTexture)) {
-		Cast<AStaticMesh>(comp->GetOwner())->SetbUseTexture(bUseTexture);
+		if (comp != nullptr) {
+			Cast<AStaticMesh>(comp->GetOwner())->SetbUseTexture(bUseTexture);
+		}
 	}
 }
 
