@@ -218,10 +218,11 @@ void UI::RenderPrimitiveSelection()
 			{
 				World->SpawnActor<ACone>();
 			}
-			else if (strcmp(items[currentItem], "SpotLight") == 0)
+			//쓰지마
+			/*else if (strcmp(items[currentItem], "SpotLight") == 0)
 			{
 				World->SpawnActor<ASpotLight>();
-			}
+			}*/
 			else if (strcmp(items[currentItem], "Dice") == 0) {
 				World->SpawnStaticMeshActor("dice.obj", true);
 			}
@@ -235,7 +236,7 @@ void UI::RenderPrimitiveSelection()
 				World->SpawnStaticMeshActor("SpaceShip.obj", true);
 			}
 			else if (strcmp(items[currentItem], "Pirate") == 0) {
-				World->SpawnStaticMeshActor("pirate.obj", true);
+				World->SpawnStaticMeshActor("Pirate.obj", true);
 			}
 			else if (strcmp(items[currentItem], "AVLSuitJerry") == 0) {
 				World->SpawnStaticMeshActor("AVLSuitJerry.obj", true);
@@ -921,10 +922,9 @@ void UI::RenderViewerPanel()
 	"SteroidMinion"};
 
 	ImGui::Combo("Obj", &currentItem, items, IM_ARRAYSIZE(items));
-
+	UWorld* World = UEngine::Get().GetWorld();
 	if (ImGui::Button("Spawn"))
 	{
-		UWorld* World = UEngine::Get().GetWorld();
 		if (NumOfSpawn == 1) {
 			World->ClearWorld();
 		}
@@ -952,14 +952,16 @@ void UI::RenderViewerPanel()
 		NumOfSpawn = 1;
 	}
 	ImGui::Separator();
+	AStaticMesh* StaticActor = nullptr;
 	UPrimitiveComponent* comp = nullptr;
-	for (TObjectIterator<UPrimitiveComponent> iter; iter; ++iter)
-	{
-		comp = *iter;
-		if (comp != nullptr) {
+	for (auto& actor : World->GetActors()) {
+		if (actor->GetTypeName() == "StaticMesh") {
+			StaticActor = Cast<AStaticMesh>(actor);
+			comp = Cast<UPrimitiveComponent>(StaticActor->GetRootComponent());
 			break;
 		}
 	}
+	
 	float color[] = {
 		1.0f,
 		1.0f,
@@ -970,7 +972,9 @@ void UI::RenderViewerPanel()
 		color[0] = comp->GetCustomColor().X;
 		color[1] = comp->GetCustomColor().Y;
 		color[2] = comp->GetCustomColor().Z;
-		bUseTexture = Cast<AStaticMesh>(comp->GetOwner())->GetbUseTexture();
+		if (comp->GetOwner() != nullptr) {
+			bUseTexture = Cast<AStaticMesh>(comp->GetOwner())->GetbUseTexture();
+		}
 	}
 	if (ImGui::ColorEdit3("RGB Color", color)) {
 		if (comp != nullptr) {
@@ -980,7 +984,10 @@ void UI::RenderViewerPanel()
 	ImGui::Separator();
 	
 	if (ImGui::Checkbox("Use Texture", &bUseTexture)) {
-		Cast<AStaticMesh>(comp->GetOwner())->SetbUseTexture(bUseTexture);
+		if (comp != nullptr) {
+			AActor* compOwner = comp->GetOwner();
+			Cast<AStaticMesh>(comp->GetOwner())->SetbUseTexture(bUseTexture);
+		}
 	}
 }
 
