@@ -21,6 +21,7 @@
 #include "Object/Actor/StaticMesh.h"
 #include "Resource/Mesh.h"
 #include "Core/UObject/UObjectIterator.h"
+#include "Core/Rendering/SWindow.h"
 #include "Object/Assets/TextureAsset.h"
 #include <Object/PrimitiveComponent/TextureComponent.h>
 // #include "FDevice.h"
@@ -371,8 +372,7 @@ void UI::RenderCameraSettings() const
 
 	if ( ImGui::Button("Split Horizontal") ) {
 		if ( editor->SelectedWindow != nullptr )
-			editor->SplitHorizontalSWindow(editor->SelectedWindow);
-			
+			editor->SplitHorizontalSWindow(editor->SelectedWindow);		
 	}
 	ImGui::SameLine(0.f, 3.0f);
 	if ( ImGui::Button("Split Vertical") ) {
@@ -383,6 +383,49 @@ void UI::RenderCameraSettings() const
 	if ( ImGui::Button("Remove") ) {
 		if ( editor->SelectedWindow != nullptr )
 			editor->RemoveSWindow(editor->SelectedWindow);
+	}
+
+	if ( ImGui::Button("Set Default")) {
+		SWorldWindow* worldWindow = dynamic_cast<SWorldWindow*>(editor->SelectedWindow.get());
+		if ( worldWindow != nullptr ) {
+			ACamera* cam = worldWindow->GetViewportClient()->camera;
+			cam->SetActorPosition(FVector(-5.f, 0.f, 1.f));
+			cam->SetActorRotation(FVector(0.f, 12.5f, 0.f));
+			cam->ProjectionMode = ECameraProjectionMode::Perspective;
+		}
+	}
+	ImGui::SameLine(0.f, 3.0f);
+	if ( ImGui::Button("Set OrthoX") ) {
+		SWorldWindow* worldWindow = dynamic_cast<SWorldWindow*>(editor->SelectedWindow.get());
+		if ( worldWindow != nullptr ) {
+			ACamera* cam = worldWindow->GetViewportClient()->camera;
+			cam->SetActorPosition(FVector(-50.f, 0.f, 0.f));
+			cam->SetActorRotation(FVector(0.f, 0.f, 0.f));
+			cam->SetZoomSize(100.f);
+			cam->ProjectionMode = ECameraProjectionMode::Orthographic;
+		}
+	}
+	ImGui::SameLine(0.f, 3.0f);
+	if ( ImGui::Button("Set OrthoY") ) {
+		SWorldWindow* worldWindow = dynamic_cast<SWorldWindow*>(editor->SelectedWindow.get());
+		if ( worldWindow != nullptr ) {
+			ACamera* cam = worldWindow->GetViewportClient()->camera;
+			cam->SetActorPosition(FVector(0.f, 50.f, 0.f));
+			cam->SetActorRotation(FVector(0.f, 0.f, -89.9f));
+			cam->SetZoomSize(100.f);
+			cam->ProjectionMode = ECameraProjectionMode::Orthographic;
+		}
+	}
+	ImGui::SameLine(0.f, 3.0f);
+	if ( ImGui::Button("Set OrthoZ") ) {
+		SWorldWindow* worldWindow = dynamic_cast<SWorldWindow*>(editor->SelectedWindow.get());
+		if ( worldWindow != nullptr ) {
+			ACamera* cam = worldWindow->GetViewportClient()->camera;
+			cam->SetActorPosition(FVector(0.f, 0.f, 50.f));
+			cam->SetActorRotation(FVector(0.f, 89.9f, 0.f));
+			cam->SetZoomSize(100.f);
+			cam->ProjectionMode = ECameraProjectionMode::Orthographic;
+		}
 	}
 
 	ImGui::Separator();

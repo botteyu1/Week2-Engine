@@ -193,6 +193,7 @@ std::shared_ptr<SWindow> JsonSaveHelper::CreateSWindowNode(
 		worldWindow->viewportClient->camera->Near = Json["Near"].ToFloat();
 		worldWindow->viewportClient->camera->Far = Json["Far"].ToFloat();
 		worldWindow->viewportClient->camera->Sensitivity = Json["Sensitivity"].ToFloat();
+		worldWindow->viewportClient->camera->ProjectionMode = static_cast<ECameraProjectionMode::Type>(Json["Mode"].ToInt());
 		window = worldWindow;
 	}
 	window->parent = parent;
@@ -266,6 +267,7 @@ json::JSON JsonSaveHelper::CreateSWindowJSON(SWindow* InWindow) {
 			Json["Near"] = cam->Near;
 			Json["Far"] = cam->Far;
 			Json["Sensitivity"] = cam->Sensitivity;
+			Json["Mode"] = static_cast<int>(cam->ProjectionMode);
 		}
 	}
 
