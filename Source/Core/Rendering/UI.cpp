@@ -922,10 +922,9 @@ void UI::RenderViewerPanel()
 	"SteroidMinion"};
 
 	ImGui::Combo("Obj", &currentItem, items, IM_ARRAYSIZE(items));
-
+	UWorld* World = UEngine::Get().GetWorld();
 	if (ImGui::Button("Spawn"))
 	{
-		UWorld* World = UEngine::Get().GetWorld();
 		if (NumOfSpawn == 1) {
 			World->ClearWorld();
 		}
@@ -953,14 +952,16 @@ void UI::RenderViewerPanel()
 		NumOfSpawn = 1;
 	}
 	ImGui::Separator();
+	AStaticMesh* StaticActor = nullptr;
 	UPrimitiveComponent* comp = nullptr;
-	for (TObjectIterator<UPrimitiveComponent> iter; iter; ++iter)
-	{
-		comp = *iter;
-		if (comp != nullptr) {
+	for (auto& actor : World->GetActors()) {
+		if (actor->GetTypeName() == "StaticMesh") {
+			StaticActor = Cast<AStaticMesh>(actor);
+			comp = Cast<UPrimitiveComponent>(StaticActor->GetRootComponent());
 			break;
 		}
 	}
+	
 	float color[] = {
 		1.0f,
 		1.0f,
@@ -984,6 +985,7 @@ void UI::RenderViewerPanel()
 	
 	if (ImGui::Checkbox("Use Texture", &bUseTexture)) {
 		if (comp != nullptr) {
+			AActor* compOwner = comp->GetOwner();
 			Cast<AStaticMesh>(comp->GetOwner())->SetbUseTexture(bUseTexture);
 		}
 	}
