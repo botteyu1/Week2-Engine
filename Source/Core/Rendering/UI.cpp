@@ -410,8 +410,8 @@ void UI::RenderCameraSettings() const
 		SWorldWindow* worldWindow = dynamic_cast<SWorldWindow*>(editor->SelectedWindow.get());
 		if ( worldWindow != nullptr ) {
 			ACamera* cam = worldWindow->GetViewportClient()->camera;
-			cam->SetActorPosition(FVector(0.f, 50.f, 0.f));
-			cam->SetActorRotation(FVector(0.f, 0.f, -89.9f));
+			cam->SetActorPosition(FVector(0.f, -50.f, 0.f));
+			cam->SetActorRotation(FVector(0.f, 0.f, 89.9f));
 			cam->SetZoomSize(100.f);
 			cam->ProjectionMode = ECameraProjectionMode::Orthographic;
 		}

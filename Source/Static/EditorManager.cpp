@@ -135,9 +135,22 @@ void UEditorManager::SplitHorizontalSWindow(std::shared_ptr<SWindow>& window) {
 			window->Rect.Bottom
 		)
 	);
-	FTransform cameraTransfrom = std::dynamic_pointer_cast<SWorldWindow>(window)->GetViewportClient()->camera->GetActorTransform();
+	ACamera* originalCam = std::dynamic_pointer_cast<SWorldWindow>(window)->GetViewportClient()->camera;
+	FTransform cameraTransfrom = originalCam->GetActorTransform();
+
 	viewportClientLeft->camera->SetActorTransform(cameraTransfrom);
+	viewportClientLeft->camera->SetFieldOfVew(originalCam->GetFieldOfView());
+	viewportClientLeft->camera->SetZoomSize(originalCam->GetZoomSize());
+	viewportClientLeft->camera->ProjectionMode = originalCam->ProjectionMode;
+	viewportClientLeft->camera->Sensitivity = originalCam->Sensitivity;
+	viewportClientLeft->camera->CameraSpeed = originalCam->CameraSpeed;
+
 	viewportClientRight->camera->SetActorTransform(cameraTransfrom);
+	viewportClientRight->camera->SetFieldOfVew(originalCam->GetFieldOfView());
+	viewportClientRight->camera->ProjectionMode = originalCam->ProjectionMode;
+	viewportClientRight->camera->SetZoomSize(originalCam->GetZoomSize());
+	viewportClientRight->camera->Sensitivity = originalCam->Sensitivity;
+	viewportClientRight->camera->CameraSpeed = originalCam->CameraSpeed;
 
 	FRect rect = window->Rect;
 	std::shared_ptr<SSplitter> parentSplitter = std::dynamic_pointer_cast<SSplitter>(window->parent);
@@ -225,9 +238,21 @@ void UEditorManager::SplitVerticalSWindow(std::shared_ptr<SWindow>& window) {
 			window->Rect.Bottom
 		)
 	);
-	FTransform cameraTransfrom = std::dynamic_pointer_cast<SWorldWindow>(window)->GetViewportClient()->camera->GetActorTransform();
+	ACamera* originalCam = std::dynamic_pointer_cast<SWorldWindow>(window)->GetViewportClient()->camera;
+	FTransform cameraTransfrom = originalCam->GetActorTransform();
 	viewportClientTop->camera->SetActorTransform(cameraTransfrom);
+	viewportClientTop->camera->ProjectionMode = originalCam->ProjectionMode;
+	viewportClientTop->camera->SetFieldOfVew(originalCam->GetFieldOfView());
+	viewportClientTop->camera->SetZoomSize(originalCam->GetZoomSize());
+	viewportClientTop->camera->Sensitivity = originalCam->Sensitivity;
+	viewportClientTop->camera->CameraSpeed = originalCam->CameraSpeed;
+
 	viewportClientBottom->camera->SetActorTransform(cameraTransfrom);
+	viewportClientBottom->camera->ProjectionMode = originalCam->ProjectionMode;
+	viewportClientBottom->camera->SetFieldOfVew(originalCam->GetFieldOfView());
+	viewportClientBottom->camera->SetZoomSize(originalCam->GetZoomSize());
+	viewportClientBottom->camera->Sensitivity = originalCam->Sensitivity;
+	viewportClientBottom->camera->CameraSpeed = originalCam->CameraSpeed;
 
 	FRect rect = window->Rect;
 	std::shared_ptr<SSplitter> parentSplitter = std::dynamic_pointer_cast<SSplitter>(window->parent);
