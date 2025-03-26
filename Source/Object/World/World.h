@@ -104,7 +104,10 @@ public:
 	}
 	// 현재 렌더되는 카메라의 getter, 렌더 루프 바깥에서 쓰면 nullptr 반환
 	inline ACamera* GetCameraRenderFocused() const { return CameraRenderFocused; }
-	inline ACamera* GetCameraFocused() const { return CameraFocused; }
+	inline ACamera* GetCameraFocused() const 
+	{
+		return CameraFocused; 
+	}
 	inline void SetFocusCamera(ACamera* InCamera) {
 		CameraFocused = InCamera;
 	}
