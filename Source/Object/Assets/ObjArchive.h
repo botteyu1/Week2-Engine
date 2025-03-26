@@ -3,11 +3,12 @@
 #include <Primitive/PrimitiveVertices.h>
 
 struct FTextureCount;
+struct FSubMesh;
 
 class FObjArchive
 {
 public: 
-	static void ObjToBinary(const FString& filePath, const TArray<FVertexTextureArray> vertices, const TArray<uint32> indices, TArray<uint32> intervals, const TArray<FTextureCount>& textureNames);
+	static void ObjToBinary(const FString& filePath, const TArray<FVertexTextureArray> vertices, const TArray<uint32> indices, TArray<uint32> intervals, const TArray<FTextureCount>& textureNames, const TArray<FSubMesh>& subMeshes);
 
-	static bool ReadBinary( const FString& filePath, TArray<FVertexTextureArray>& outVertices, TArray<uint32>& outIndices, TArray<uint32>& outIntervals, TArray<FTextureCount>& outTextureNames);
+	static bool ReadBinary( const FString& filePath, TArray<FVertexTextureArray>& outVertices, TArray<uint32>& outIndices, TArray<uint32>& outIntervals, TArray<FTextureCount>& outTextureNames, TArray<FSubMesh>& outSubMeshes);
 };

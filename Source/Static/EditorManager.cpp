@@ -540,6 +540,7 @@ void UEditorManager::PixelPicking() {
 		POINT pt;
 		GetCursorPos(&pt);
 		ScreenToClient(UEngine::Get().GetWindowHandle(), &pt);
+		
 
 		//float Width = FDevice::Get().GetViewPortInfo().Width;
 		//float SplitterHeight = FDevice::Get().GetViewPortInfo().SplitterHeight;
@@ -573,7 +574,12 @@ void UEditorManager::PixelPicking() {
 			}
 		} 
 		else {
-			SelectActor(nullptr);
+			FVector vector = UEngine::Get().GetInput()->GetMousePos();
+			SWindow* window = GetHoveringWindow(UEngine::Get().GetInput()->GetMousePos(), RootWindow).get();
+			if (window == nullptr)
+				return;
+			FVector2D vec = window->GetNDCPosInWindow(FVector2D(vector.X, vector.Y));
+			UEngine::Get().GetWorld()->RayCasting(FVector(vec.X, vec.Y, 0.f));
 		}
 	}
 

@@ -35,7 +35,7 @@ bool UMeshAsset::Load()
 		std::string Name = AssetName.GetData();
 		AssetName = Name.substr(0, Name.size() - 10);
 	}
-	if (!FObjArchive::ReadBinary(binaryFile, vertices, indices, materialInterval, UsedTextureNames)) {
+	if (!FObjArchive::ReadBinary(binaryFile, vertices, indices, materialInterval, UsedTextureNames, SubMeshes)) {
 		objl::Loader OBJLoader;
 		bool loadout = OBJLoader.LoadFile(MetaData.GetAssetPath().GetData());
 		
@@ -129,7 +129,7 @@ bool UMeshAsset::Load()
 				vertices[i].Y -= center.Y;
 				vertices[i].Z -= center.Z;
 			}
-			FObjArchive::ObjToBinary(binaryFile, vertices, indices, materialInterval, UsedTextureNames);
+			FObjArchive::ObjToBinary(binaryFile, vertices, indices, materialInterval, UsedTextureNames, SubMeshes);
 		}
 	}
 	
@@ -138,7 +138,7 @@ bool UMeshAsset::Load()
 	);
 	UIndexBuffer::Create(FString(TEXT(AssetName)), indices);
 	
-	UMesh::Create(TEXT(AssetName));
+	UMesh::Create(TEXT(AssetName), SubMeshes);
 	MetaData.SetIsLoaded(true);
 	return true;
 }
@@ -247,10 +247,10 @@ void UMeshAsset::ChangeMaterial(FString NewAssetName, FString subMeshName, FStri
 
 	// 새로 구성된 Texture들을 기반으로 Vertex 재정립
 	int32 vertexIndex = 0;
-	for (int i = 0; i < SubMeshes.Num(); i++) 
+	for (int i = 0; i < SubMeshes.Num(); i++)
 	{
 		subMeshMaterial = UAssetManager::Get().GetObjMaterial(SubMeshes[i].MaterialName);
-		int32 textureIndex = GetTextureIndex(subMeshMaterial->map_Kd);
+		int32 textureIndex = (subMeshMaterial == nullptr) ? -1 : GetTextureIndex(subMeshMaterial->map_Kd);
 		for (int j = 0; j < GeometryData.MaterialIntervals[i]; j++) {
 			GeometryData.Vertices[vertexIndex + j].TI = textureIndex;
 		}
@@ -264,7 +264,7 @@ void UMeshAsset::ChangeMaterial(FString NewAssetName, FString subMeshName, FStri
 
 	UIndexBuffer::Create(FString(TEXT(NewAssetName)), GeometryData.Indices);
 
-	UMesh::Create(TEXT(NewAssetName));
+	UMesh::Create(TEXT(NewAssetName), SubMeshes);
 
 	// Texture2DArray 재생성
 	TArray<FString> TextureNames;

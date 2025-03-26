@@ -27,6 +27,9 @@ void AStaticMesh::SetMesh(FString MeshType, bool texture)
 	}
 #if IS_OBJ_VIEWER
 	component->SetUseVertexColor(false);
+#else
+	component->Max = component->GetMesh()->GetVertexBuffer()->GetMax();
+	component->Min = component->GetMesh()->GetVertexBuffer()->GetMin();
 #endif
 	RootComponent = component;
 	component->SetRelativeTransform(FTransform());
@@ -94,4 +97,10 @@ void AStaticMesh::SetbUseTexture(bool value)
 		}
 	}
 	bUseTexture = value;
+}
+
+TArray<FSubMesh> AStaticMesh::GetSubMeshes()
+{
+	UTextureComponent* textureComponent = Cast<UTextureComponent>(RootComponent);
+	return textureComponent->GetMesh()->GetSubMeshes();
 }

@@ -499,6 +499,7 @@ void UI::RenderPropertyWindow()
 		AStaticMesh* selectMesh = Cast<AStaticMesh>(selectedActor);
 
 		PropertyStaticMesh(selectMesh);
+		PropertySubMesh(selectMesh);
 
 		// SpotLight 속성 표시
 		ASpotLight* spotLight = dynamic_cast<ASpotLight*>(selectedActor);
@@ -1120,5 +1121,48 @@ void UI::RenderActorHierarchy(AActor* RootActor)
 		//}
 
 		ImGui::TreePop();
+	}
+}
+
+void UI::PropertySubMesh(AStaticMesh* InAStaticMesh)
+{
+	if (InAStaticMesh != nullptr) 
+	{
+		TArray<FSubMesh> subMeshNames = InAStaticMesh->GetSubMeshes();
+		uint32 meshCount = 0;
+		for (auto& subMesh : subMeshNames) 
+		{
+			ImGui::Text(subMesh.SubMeshName.c_str());
+			if (subMesh.MaterialName != "") 
+			{
+				std::string materialName = "\tL " + subMesh.MaterialName;
+				ImGui::Text(materialName.c_str());
+				ImGui::SameLine();
+				std::string buttonStr = "Change Material##" + std::to_string(meshCount);
+				if (ImGui::Button(buttonStr.c_str()))
+				{
+					choosedMesh = FString(subMesh.SubMeshName);
+					ImGui::OpenPopup("ChangeMaterialPopup");
+				}
+			}
+			meshCount++;
+		}
+
+		if (ImGui::BeginPopup("ChangeMaterialPopup"))
+		{
+			ImGui::Text("Choose Material!");
+			TMap<FString, FObjMaterial*> ObjMaterialMap = UAssetManager::Get().GetObjMaterailMap();
+			for (auto& ObjMaterial : ObjMaterialMap)
+			{
+				std::string MaterialName = ObjMaterial.Key.GetData();
+				if (ImGui::Selectable(MaterialName.c_str())) 
+				{
+					choosedMaterial = FString(MaterialName);
+					InAStaticMesh->ChangeMaterial(choosedMesh, choosedMaterial);
+					ImGui::CloseCurrentPopup();
+				}
+			}
+			ImGui::EndPopup();
+		}
 	}
 }
