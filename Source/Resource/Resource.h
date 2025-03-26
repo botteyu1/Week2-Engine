@@ -12,7 +12,6 @@
 template <typename ResourcesType>
 class UResource : public UObject
 {
-
 public:
 	UResource() = default;
 	virtual ~UResource() = default;

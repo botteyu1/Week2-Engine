@@ -7,6 +7,7 @@
 class UTextureAsset;
 class UFontAtlasAsset : public UAsset
 {
+	DECLARE_CLASS(UFontAtlasAsset, UAsset);
 public:
 	UFontAtlasAsset();
 
