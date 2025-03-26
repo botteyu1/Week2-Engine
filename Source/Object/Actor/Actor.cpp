@@ -53,7 +53,7 @@ void AActor::Destroyed()
 	}
 	Components.Empty();
 	
-	UEngine::Get().GObjects.Remove(GetUUID());
+	//UEngine::Get().GObjects.Remove(GetUUID());
 }
 
 

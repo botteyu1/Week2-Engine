@@ -504,7 +504,7 @@ void UI::RenderPropertyWindow()
 
 		AStaticMesh* selectMesh = Cast<AStaticMesh>(selectedActor);
 
-		//PropertyStaticMesh(selectMesh);
+		PropertyStaticMesh(selectMesh);
 		if (SelectComponent != nullptr)
 		{
 			ImGui::Text("Selected Component: %s", *SelectComponent->GetFName().ToString());
@@ -823,8 +823,8 @@ void UI::RenderOutLiner()
 	//	// Scale 관련 위젯들
 	//}
 
-	AStaticMesh* selectedStaticMesh = Cast<AStaticMesh>(UEngine::Get().GetEditor()->GetSelectedActor());
-	static bool isFirstSelection = true;
+	//AStaticMesh* selectedStaticMesh = Cast<AStaticMesh>(UEngine::Get().GetEditor()->GetSelectedActor());
+	//static bool isFirstSelection = true;
 
 	////메쉬 트랜스폼
 	//if (selectedStaticMesh != nullptr)
@@ -1033,14 +1033,28 @@ void UI::PropertyStaticMesh(AStaticMesh* InAStaticMesh)
 	{
 		static UTextureComponent* TestMeshComponent = nullptr;
 		static UTextureComponent* TestMeshComponent2 = nullptr;
+		static UTextureComponent* TestMeshComponent3 = nullptr;
 		if (ImGui::Button("Add"))
 		{
 			TestMeshComponent = InAStaticMesh->AddMesh("dice.obj", true);
 			TestMeshComponent->AddLocalOffset(FVector(0.f, 2.f, 0.f));
 			TestMeshComponent->AddLocalRotation(FVector(0.f, 0.f, 0.f));
-			TestMeshComponent2 = InAStaticMesh->AddMesh("dice.obj", true);
+			TestMeshComponent2 = InAStaticMesh->AddMesh("AVLSuitJerry.obj", true);
 			TestMeshComponent2->SetupAttachment(TestMeshComponent);
-			TestMeshComponent2->AddLocalOffset(FVector(0.f, 10.f, 0.f));
+			TestMeshComponent2->AddLocalOffset(FVector(0.f, 20.f, 0.f));
+			TestMeshComponent2->AddLocalRotation(FVector(0.f, 30.f, 0.f));
+
+			TestMeshComponent3 = InAStaticMesh->AddMesh("SteroidMinion.obj", true);
+			TestMeshComponent3->SetupAttachment(TestMeshComponent2);
+			TestMeshComponent3->AddLocalOffset(FVector(0.f, 15.f, 0.f));
+
+			TestMeshComponent2 = InAStaticMesh->AddMesh("Girl.obj", true);
+			TestMeshComponent2->SetupAttachment(TestMeshComponent);
+			TestMeshComponent2->AddLocalOffset(FVector(0.f, 15.f, 0.f));
+
+			TestMeshComponent3 = InAStaticMesh->AddMesh("dice.obj", true);
+			TestMeshComponent3->SetupAttachment(TestMeshComponent2);
+			TestMeshComponent3->AddLocalOffset(FVector(0.f, 15.f, 0.f));
 		}
 
 		if (ImGui::Button("Remove"))
