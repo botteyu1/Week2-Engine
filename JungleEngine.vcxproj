@@ -530,7 +530,6 @@
     <ClInclude Include="Source\Core\EngineTypes.h" />
     <ClInclude Include="Source\Object\USceneComponent.h" />
     <ClInclude Include="Source\Object\Actor\Sphere.h" />
-    <ClInclude Include="Source\Static\StatWindow.h" />
     <ClInclude Include="Source\ThirdParty\DirectXTK\include\DirectXTK\Audio.h" />
     <ClInclude Include="Source\ThirdParty\DirectXTK\include\DirectXTK\BufferHelpers.h" />
     <ClInclude Include="Source\ThirdParty\DirectXTK\include\DirectXTK\CommonStates.h" />

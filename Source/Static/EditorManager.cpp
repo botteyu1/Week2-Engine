@@ -438,7 +438,10 @@ void UEditorManager::LateTick([[maybe_unused]] float DeltaTime)
 {
 	ResizingSWindow();
 	SetCursorWithSWindow();
+#if IS_OBJ_VIEWER
+#else
 	PixelPicking();
+#endif
 
 	if (SelectedActor != nullptr and Gizmo != nullptr)
 	{
