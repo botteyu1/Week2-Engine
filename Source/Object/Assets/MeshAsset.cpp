@@ -42,8 +42,8 @@ bool UMeshAsset::Load()
 		if (loadout)
 		{
 			// 아래 부분에서 TextureArray로 만들 Texture들을 보내줌,  겹치지 않도록
-			for (int i = 0; i < OBJLoader.LoadedMaterials.size(); i++) {
-				if (OBJLoader.LoadedMaterials[i].map_Kd == "") 
+			for (int i = 0; i < OBJLoader.LoadedMeshes.size(); i++) {
+				if (OBJLoader.LoadedMeshes[i].MeshMaterial.map_Kd == "")
 				{
 					continue;
 				}
@@ -51,7 +51,7 @@ bool UMeshAsset::Load()
 				bool bContained = false;
 				for(int j = 0 ; j < UsedTextureNames.Num(); j++)
 				{
-					if (UsedTextureNames[j].TextureName == OBJLoader.LoadedMaterials[i].map_Kd) 
+					if (UsedTextureNames[j].TextureName == OBJLoader.LoadedMeshes[i].MeshMaterial.map_Kd)
 					{
 						UsedTextureNames[j].RefCount++;
 						bContained = true;
@@ -59,7 +59,7 @@ bool UMeshAsset::Load()
 					}
 				}
 				if (!bContained) {
-					UsedTextureNames.Add(FTextureCount(OBJLoader.LoadedMaterials[i].map_Kd, 1));
+					UsedTextureNames.Add(FTextureCount(OBJLoader.LoadedMeshes[i].MeshMaterial.map_Kd, 1));
 				}
 			}
 
