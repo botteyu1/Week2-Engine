@@ -15,7 +15,7 @@ using namespace std;
 
 void UAssetManager::RegisterAssetMetaDatas()
 {
-	if (IsDebuggerPresent())
+	if (true)
 	{
 		filesystem::path curPath = filesystem::current_path();
 		filesystem::path assetDir = curPath / TEXT("Contents");
